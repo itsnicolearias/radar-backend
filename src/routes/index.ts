@@ -5,6 +5,7 @@ import profileRoutes from "./profile.routes"
 import connectionRoutes from "./connection.routes"
 import messageRoutes from "./message.routes"
 import notificationRoutes from "./notification.routes"
+import radarRoutes from "./radar.routes"
 
 const router = Router()
 
@@ -14,5 +15,6 @@ router.use("/profiles", profileRoutes)
 router.use("/connections", connectionRoutes)
 router.use("/messages", messageRoutes)
 router.use("/notifications", notificationRoutes)
+router.use("/radar", radarRoutes)
 
 export default router

@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import "dotenv/config"
 
 export const config = {
   env: process.env.NODE_ENV || "development",
@@ -32,4 +32,6 @@ export const config = {
   emailUser: process.env.EMAIL_USER || "",
   emailPass: process.env.EMAIL_PASS || "",
   emailFrom: process.env.EMAIL_FROM || "noreply@radar.com",
+
+  clientUrl: process.env.CLIENT_URL || "http://localhost:3000",
 }

@@ -4,7 +4,11 @@ export interface UserAttributes {
   lastName: string
   email: string
   passwordHash: string
+  birthDate: Date | null
+  displayName: string | null
+  emailVerificationToken: string | null
   isVerified: boolean
+  isVisible: boolean
   invisibleMode: boolean
   lastLatitude: number | null
   lastLongitude: number | null
@@ -18,7 +22,11 @@ export interface UserCreationAttributes {
   lastName: string
   email: string
   passwordHash: string
+  birthDate?: Date | null
+  displayName?: string | null
+  emailVerificationToken?: string | null
   isVerified?: boolean
+  isVisible?: boolean
   invisibleMode?: boolean
   lastLatitude?: number | null
   lastLongitude?: number | null

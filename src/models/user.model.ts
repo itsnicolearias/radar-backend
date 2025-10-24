@@ -8,7 +8,11 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public lastName!: string
   public email!: string
   public passwordHash!: string
+  public birthDate!: Date | null
+  public displayName!: string | null
+  public emailVerificationToken!: string | null
   public isVerified!: boolean
+  public isVisible!: boolean
   public invisibleMode!: boolean
   public lastLatitude!: number | null
   public lastLongitude!: number | null
@@ -48,10 +52,30 @@ User.init(
       allowNull: false,
       field: "password_hash",
     },
+    birthDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: "birth_date",
+    },
+    displayName: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+      field: "display_name",
+    },
+    emailVerificationToken: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      field: "email_verification_token",
+    },
     isVerified: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
       field: "is_verified",
+    },
+    isVisible: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      field: "is_visible",
     },
     invisibleMode: {
       type: DataTypes.BOOLEAN,

@@ -117,4 +117,45 @@ router.post("/register", validate(registerUserSchema), authController.register)
  */
 router.post("/login", validate(loginUserSchema), authController.login)
 
+/**
+ * @swagger
+ * /api/auth/verify-email/{token}:
+ *   get:
+ *     summary: Verify user email
+ *     tags: [Auth]
+ *     security: []
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Email verification token
+ *     responses:
+ *       200:
+ *         description: Email verified successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     message:
+ *                       type: string
+ *                     user:
+ *                       $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Invalid or expired token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get("/verify-email/:token", authController.verifyEmail)
+
 export default router

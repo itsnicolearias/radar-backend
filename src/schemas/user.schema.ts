@@ -8,8 +8,20 @@ export const updateLocationSchema = z.object({
 export const updateUserSchema = z.object({
   firstName: z.string().min(2).optional(),
   lastName: z.string().min(2).optional(),
+  displayName: z.string().min(1).max(50).optional(),
+  birthDate: z.string().datetime().optional(),
   invisibleMode: z.boolean().optional(),
+})
+
+export const toggleVisibilitySchema = z.object({
+  isVisible: z.boolean(),
+})
+
+export const updateProfilePhotoSchema = z.object({
+  photoUrl: z.string().url(),
 })
 
 export type UpdateLocationInput = z.infer<typeof updateLocationSchema>
 export type UpdateUserInput = z.infer<typeof updateUserSchema>
+export type ToggleVisibilityInput = z.infer<typeof toggleVisibilitySchema>
+export type UpdateProfilePhotoInput = z.infer<typeof updateProfilePhotoSchema>

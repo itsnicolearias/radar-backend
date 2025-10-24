@@ -1,6 +1,7 @@
 import { Server as SocketIOServer } from "socket.io"
 import type { Server as HTTPServer } from "http"
 import { verifyToken } from "../utils/jwt"
+import { User } from "../models"
 import logger from "../utils/logger"
 
 export interface SocketUser {
@@ -52,15 +53,49 @@ export const initializeSocket = (httpServer: HTTPServer): SocketIOServer => {
 
     socket.join(`user:${userId}`)
 
-    socket.on("update-location", (data: { latitude: number; longitude: number }) => {
-      logger.debug(`Location update from ${userId}`, data)
+    socket.on("update-location", async (data: { latitude: number; longitude: number }) => {
+      try {
+        logger.debug(`Location update from ${userId}`, data)
 
-      io.to(`user:${userId}`).emit("location-updated", {
-        userId,
-        latitude: data.latitude,
-        longitude: data.longitude,
-        timestamp: new Date(),
-      })
+        const user = await User.findByPk(userId)
+        if (user) {
+          await user.update({
+            lastLatitude: data.latitude,
+            lastLongitude: data.longitude,
+            lastSeenAt: new Date(),
+          })
+
+          if (user.isVerified && user.isVisible && !user.invisibleMode) {
+            io.emit("location-updated", {
+              userId,
+              latitude: data.latitude,
+              longitude: data.longitude,
+              timestamp: new Date(),
+            })
+          }
+        }
+      } catch (error) {
+        logger.error("Error updating location:", error)
+      }
+    })
+
+    socket.on("toggle-visibility", async (data: { isVisible: boolean }) => {
+      try {
+        logger.debug(`Visibility toggle from ${userId}`, data)
+
+        const user = await User.findByPk(userId)
+        if (user) {
+          await user.update({ isVisible: data.isVisible })
+
+          socket.emit("visibility-updated", {
+            userId,
+            isVisible: user.isVisible,
+            timestamp: new Date(),
+          })
+        }
+      } catch (error) {
+        logger.error("Error toggling visibility:", error)
+      }
     })
 
     socket.on("send-message", (data: { receiverId: string; content: string }) => {
