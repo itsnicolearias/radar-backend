@@ -4,11 +4,7 @@ import { sequelize } from "./models"
 import { initializeSocket } from "./config/socket"
 import { connectRedis } from "./config/redis"
 import logger from "./utils/logger"
-import dotenv from "dotenv"
-
-dotenv.config()
-
-const PORT = process.env.PORT || 3000
+import { config } from "./config/config"
 
 const httpServer = http.createServer(app)
 
@@ -19,7 +15,7 @@ const startServer = async () => {
     await sequelize.authenticate()
     logger.info("Database connection established successfully")
 
-    if (process.env.NODE_ENV === "development") {
+    if (config.env === "development") {
       await sequelize.sync({ alter: false })
       logger.info("Database synchronized")
     }
@@ -31,9 +27,9 @@ const startServer = async () => {
       logger.warn("Redis connection failed, continuing without Redis", redisError)
     }
 
-    httpServer.listen(PORT, () => {
-      logger.info(`Server is running on port ${PORT}`)
-      logger.info(`Environment: ${process.env.NODE_ENV || "development"}`)
+    httpServer.listen(config.port, () => {
+      logger.info(`Server is running on port ${config.port}`)
+      logger.info(`Environment: ${config.env}`)
     })
   } catch (error) {
     logger.error("Unable to start server:", error)

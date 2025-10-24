@@ -1,33 +1,6 @@
-import { DataTypes, Model, type Optional } from "sequelize"
+import { DataTypes, Model } from "sequelize"
 import sequelize from "../config/sequelize"
-
-export interface UserAttributes {
-  userId: string
-  firstName: string
-  lastName: string
-  email: string
-  passwordHash: string
-  isVerified: boolean
-  invisibleMode: boolean
-  lastLatitude: number | null
-  lastLongitude: number | null
-  lastSeenAt: Date | null
-  createdAt: Date
-  updatedAt: Date
-}
-
-export interface UserCreationAttributes
-  extends Optional<
-    UserAttributes,
-    | "userId"
-    | "isVerified"
-    | "invisibleMode"
-    | "lastLatitude"
-    | "lastLongitude"
-    | "lastSeenAt"
-    | "createdAt"
-    | "updatedAt"
-  > {}
+import type { UserAttributes, UserCreationAttributes } from "../interfaces/user.interface"
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public userId!: string

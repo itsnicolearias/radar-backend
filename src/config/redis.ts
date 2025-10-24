@@ -1,7 +1,5 @@
 import { createClient, type RedisClientType } from "redis"
-import dotenv from "dotenv"
-
-dotenv.config()
+import { config } from "./config"
 
 let redisClient: RedisClientType | null = null
 
@@ -12,18 +10,16 @@ export const connectRedis = async (): Promise<RedisClientType> => {
 
   try {
     redisClient = createClient({
-      url: process.env.REDIS_URL || "redis://localhost:6379",
+      url: config.redisUrl || "redis://localhost:6379",
     })
 
     redisClient.on("error", (err) => {
-      console.error("Redis Client Error:", err)
+      throw err
     })
 
     await redisClient.connect()
-    console.log("Redis connected successfully")
     return redisClient
   } catch (error) {
-    console.error("Error connecting to Redis:", error)
     throw error
   }
 }

@@ -1,24 +1,11 @@
-import { DataTypes, Model, type Optional } from "sequelize"
+import { DataTypes, Model } from "sequelize"
 import sequelize from "../config/sequelize"
 import User from "./user.model"
-
-export enum NotificationType {
-  MESSAGE = "message",
-  CONNECTION_REQUEST = "connection_request",
-  CONNECTION_ACCEPT = "connection_accept",
-}
-
-export interface NotificationAttributes {
-  notificationId: string
-  userId: string
-  type: NotificationType
-  message: string
-  isRead: boolean
-  createdAt: Date
-}
-
-export interface NotificationCreationAttributes
-  extends Optional<NotificationAttributes, "notificationId" | "isRead" | "createdAt"> {}
+import type {
+  NotificationType,
+  NotificationAttributes,
+  NotificationCreationAttributes,
+} from "../interfaces/notification.interface"
 
 class Notification
   extends Model<NotificationAttributes, NotificationCreationAttributes>
@@ -51,7 +38,7 @@ Notification.init(
       field: "user_id",
     },
     type: {
-      type: DataTypes.ENUM("message", "connection_request", "connection_accept"),
+      type: DataTypes.STRING(30),
       allowNull: false,
     },
     message: {

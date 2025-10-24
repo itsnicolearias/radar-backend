@@ -1,19 +1,15 @@
-import { DataTypes, Model, type Optional } from "sequelize"
+import { DataTypes, Model } from "sequelize"
 import sequelize from "../config/sequelize"
 import User from "./user.model"
+import type {
+  MessageAttributes as ImportedMessageAttributes,
+  MessageCreationAttributes as ImportedMessageCreationAttributes,
+} from "../interfaces/message.interface"
 
-export interface MessageAttributes {
-  messageId: string
-  senderId: string
-  receiverId: string
-  content: string
-  isRead: boolean
-  createdAt: Date
-}
-
-export interface MessageCreationAttributes extends Optional<MessageAttributes, "messageId" | "isRead" | "createdAt"> {}
-
-class Message extends Model<MessageAttributes, MessageCreationAttributes> implements MessageAttributes {
+class Message
+  extends Model<ImportedMessageAttributes, ImportedMessageCreationAttributes>
+  implements ImportedMessageAttributes
+{
   public messageId!: string
   public senderId!: string
   public receiverId!: string

@@ -1,26 +1,16 @@
-import { DataTypes, Model, type Optional } from "sequelize"
+import { DataTypes, Model } from "sequelize"
 import sequelize from "../config/sequelize"
 import User from "./user.model"
+import {
+  ConnectionStatus,
+  type ConnectionAttributes,
+  type ConnectionCreationAttributes,
+} from "../interfaces/connection.interface"
 
-export enum ConnectionStatus {
-  PENDING = "pending",
-  ACCEPTED = "accepted",
-  REJECTED = "rejected",
-}
-
-export interface ConnectionAttributes {
-  connectionId: string
-  senderId: string
-  receiverId: string
-  status: ConnectionStatus
-  createdAt: Date
-  updatedAt: Date
-}
-
-export interface ConnectionCreationAttributes
-  extends Optional<ConnectionAttributes, "connectionId" | "status" | "createdAt" | "updatedAt"> {}
-
-class Connection extends Model<ConnectionAttributes, ConnectionCreationAttributes> implements ConnectionAttributes {
+export class Connection
+  extends Model<ConnectionAttributes, ConnectionCreationAttributes>
+  implements ConnectionAttributes
+{
   public connectionId!: string
   public senderId!: string
   public receiverId!: string
@@ -58,8 +48,9 @@ Connection.init(
       field: "receiver_id",
     },
     status: {
-      type: DataTypes.ENUM("pending", "accepted", "rejected"),
+      type: DataTypes.STRING(20),
       defaultValue: ConnectionStatus.PENDING,
+      allowNull: false,
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -100,5 +91,3 @@ Connection.belongsTo(User, {
   foreignKey: "receiverId",
   as: "receiver",
 })
-
-export default Connection

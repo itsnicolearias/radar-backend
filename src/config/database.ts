@@ -1,7 +1,5 @@
 import type { Dialect } from "sequelize"
-import dotenv from "dotenv"
-
-dotenv.config()
+import { config } from "./config"
 
 interface DatabaseConfig {
   username: string
@@ -25,31 +23,31 @@ interface Config {
   production: DatabaseConfig
 }
 
-const config: Config = {
+const databaseConfig: Config = {
   development: {
-    username: process.env.DB_USER || "postgres",
-    password: process.env.DB_PASSWORD || "postgres",
-    database: process.env.DB_NAME || "radar_db",
-    host: process.env.DB_HOST || "localhost",
-    port: Number.parseInt(process.env.DB_PORT || "5432"),
+    username: config.dbUser,
+    password: config.dbPassword,
+    database: config.dbName,
+    host: config.dbHost,
+    port: config.dbPort,
     dialect: "postgres",
     logging: true,
   },
   test: {
-    username: process.env.DB_USER || "postgres",
-    password: process.env.DB_PASSWORD || "postgres",
-    database: process.env.DB_NAME || "radar_db_test",
-    host: process.env.DB_HOST || "localhost",
-    port: Number.parseInt(process.env.DB_PORT || "5432"),
+    username: config.dbUser,
+    password: config.dbPassword,
+    database: `${config.dbName}_test`,
+    host: config.dbHost,
+    port: config.dbPort,
     dialect: "postgres",
     logging: false,
   },
   production: {
-    username: process.env.DB_USER || "",
-    password: process.env.DB_PASSWORD || "",
-    database: process.env.DB_NAME || "",
-    host: process.env.DB_HOST || "",
-    port: Number.parseInt(process.env.DB_PORT || "5432"),
+    username: config.dbUser,
+    password: config.dbPassword,
+    database: config.dbName,
+    host: config.dbHost,
+    port: config.dbPort,
     dialect: "postgres",
     logging: false,
     dialectOptions: {
@@ -61,4 +59,4 @@ const config: Config = {
   },
 }
 
-export default config
+export default databaseConfig

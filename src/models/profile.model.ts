@@ -1,41 +1,15 @@
-import { DataTypes, Model, type Optional } from "sequelize"
+import { DataTypes, Model } from "sequelize"
 import sequelize from "../config/sequelize"
 import User from "./user.model"
+import type {
+  ProfileAttributes as ImportedProfileAttributes,
+  ProfileCreationAttributes as ImportedProfileCreationAttributes,
+} from "../interfaces/profile.interface"
 
-export interface ProfileAttributes {
-  profileId: string
-  userId: string
-  bio: string | null
-  age: number | null
-  country: string | null
-  province: string | null
-  photoUrl: string | null
-  interests: string[] | null
-  showAge: boolean
-  showLocation: boolean
-  distanceRadius: number
-  createdAt: Date
-  updatedAt: Date
-}
-
-export interface ProfileCreationAttributes
-  extends Optional<
-    ProfileAttributes,
-    | "profileId"
-    | "bio"
-    | "age"
-    | "country"
-    | "province"
-    | "photoUrl"
-    | "interests"
-    | "showAge"
-    | "showLocation"
-    | "distanceRadius"
-    | "createdAt"
-    | "updatedAt"
-  > {}
-
-class Profile extends Model<ProfileAttributes, ProfileCreationAttributes> implements ProfileAttributes {
+class Profile
+  extends Model<ImportedProfileAttributes, ImportedProfileCreationAttributes>
+  implements ImportedProfileAttributes
+{
   public profileId!: string
   public userId!: string
   public bio!: string | null

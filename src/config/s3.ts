@@ -1,17 +1,13 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3"
-import dotenv from "dotenv"
-
-dotenv.config()
+import { config } from "./config"
 
 const s3Client = new S3Client({
-  region: process.env.AWS_REGION || "us-east-1",
+  region: config.awsRegion,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
+    accessKeyId: config.awsAccessKeyId,
+    secretAccessKey: config.awsSecretAccessKey,
   },
 })
-
-const bucketName = process.env.AWS_S3_BUCKET || "radar-uploads"
 
 export interface UploadFileOptions {
   key: string
@@ -22,16 +18,15 @@ export interface UploadFileOptions {
 export const uploadFile = async (options: UploadFileOptions): Promise<string> => {
   try {
     const command = new PutObjectCommand({
-      Bucket: bucketName,
+      Bucket: config.awsS3Bucket,
       Key: options.key,
       Body: options.body,
       ContentType: options.contentType,
     })
 
     await s3Client.send(command)
-    return `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${options.key}`
+    return `https://${config.awsS3Bucket}.s3.${config.awsRegion}.amazonaws.com/${options.key}`
   } catch (error) {
-    console.error("Error uploading file to S3:", error)
     throw error
   }
 }
@@ -39,13 +34,12 @@ export const uploadFile = async (options: UploadFileOptions): Promise<string> =>
 export const deleteFile = async (key: string): Promise<void> => {
   try {
     const command = new DeleteObjectCommand({
-      Bucket: bucketName,
+      Bucket: config.awsS3Bucket,
       Key: key,
     })
 
     await s3Client.send(command)
   } catch (error) {
-    console.error("Error deleting file from S3:", error)
     throw error
   }
 }
@@ -53,7 +47,7 @@ export const deleteFile = async (key: string): Promise<void> => {
 export const getFile = async (key: string): Promise<Buffer> => {
   try {
     const command = new GetObjectCommand({
-      Bucket: bucketName,
+      Bucket: config.awsS3Bucket,
       Key: key,
     })
 
@@ -67,7 +61,6 @@ export const getFile = async (key: string): Promise<Buffer> => {
       stream.on("end", () => resolve(Buffer.concat(chunks)))
     })
   } catch (error) {
-    console.error("Error getting file from S3:", error)
     throw error
   }
 }

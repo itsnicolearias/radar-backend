@@ -1,7 +1,5 @@
 import nodemailer, { type Transporter } from "nodemailer"
-import dotenv from "dotenv"
-
-dotenv.config()
+import { config } from "./config"
 
 interface EmailConfig {
   host: string
@@ -14,12 +12,12 @@ interface EmailConfig {
 }
 
 const emailConfig: EmailConfig = {
-  host: process.env.EMAIL_HOST || "smtp.gmail.com",
-  port: Number.parseInt(process.env.EMAIL_PORT || "587"),
+  host: config.emailHost,
+  port: config.emailPort,
   secure: false,
   auth: {
-    user: process.env.EMAIL_USER || "",
-    pass: process.env.EMAIL_PASSWORD || "",
+    user: config.emailUser,
+    pass: config.emailPass,
   },
 }
 
@@ -35,14 +33,13 @@ export interface SendEmailOptions {
 export const sendEmail = async (options: SendEmailOptions): Promise<void> => {
   try {
     await transporter.sendMail({
-      from: process.env.EMAIL_FROM || "noreply@radar.com",
+      from: config.emailFrom,
       to: options.to,
       subject: options.subject,
       html: options.html,
       text: options.text,
     })
   } catch (error) {
-    console.error("Error sending email:", error)
     throw error
   }
 }

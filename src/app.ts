@@ -1,13 +1,28 @@
 import express, { type Application, type Request, type Response, type NextFunction } from "express"
 import cors from "cors"
 import dotenv from "dotenv"
+import morgan from "morgan"
+import swaggerUi from "swagger-ui-express"
 import routes from "./routes"
 import { handleError } from "./utils/errors"
 import logger from "./utils/logger"
+import { swaggerSpec } from "./config/swagger"
 
 dotenv.config()
 
 const app: Application = express()
+
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+
+app.use(
+  morgan("combined", {
+    stream: {
+      write: (message: string) => {
+        logger.info(message.trim())
+      },
+    },
+  }),
+)
 
 app.use(cors())
 app.use(express.json())
