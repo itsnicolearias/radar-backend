@@ -1,7 +1,7 @@
 import { Router } from "express"
 import * as messageController from "../controllers/message.controller"
-import { authenticate } from "../middleware/auth.middleware"
-import { validate } from "../middleware/validation.middleware"
+import { authenticate } from "../middlewares/auth.middleware"
+import { validate } from "../middlewares/validation.middleware"
 import { sendMessageSchema, markAsReadSchema } from "../schemas/message.schema"
 
 const router = Router()
