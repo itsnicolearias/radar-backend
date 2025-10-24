@@ -1,0 +1,77 @@
+import { Profile, User } from "../models"
+import { notFound } from "../utils/errors"
+import type { CreateProfileInput, UpdateProfileInput } from "../schemas/profile.schema"
+
+export const getProfileByUserId = async (userId: string) => {
+  try {
+    const profile = await Profile.findOne({
+      where: { userId },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["userId", "firstName", "lastName", "email"],
+        },
+      ],
+    })
+
+    if (!profile) {
+      throw notFound("Profile not found")
+    }
+
+    return profile
+  } catch (error) {
+    throw error
+  }
+}
+
+export const createProfile = async (userId: string, data: CreateProfileInput) => {
+  try {
+    const existingProfile = await Profile.findOne({ where: { userId } })
+
+    if (existingProfile) {
+      return updateProfile(userId, data)
+    }
+
+    const profile = await Profile.create({
+      userId,
+      ...data,
+    })
+
+    return profile
+  } catch (error) {
+    throw error
+  }
+}
+
+export const updateProfile = async (userId: string, data: UpdateProfileInput) => {
+  try {
+    const profile = await Profile.findOne({ where: { userId } })
+
+    if (!profile) {
+      throw notFound("Profile not found")
+    }
+
+    await profile.update(data)
+
+    return profile
+  } catch (error) {
+    throw error
+  }
+}
+
+export const deleteProfile = async (userId: string) => {
+  try {
+    const profile = await Profile.findOne({ where: { userId } })
+
+    if (!profile) {
+      throw notFound("Profile not found")
+    }
+
+    await profile.destroy()
+
+    return { message: "Profile deleted successfully" }
+  } catch (error) {
+    throw error
+  }
+}
