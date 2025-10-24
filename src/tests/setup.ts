@@ -1,6 +1,6 @@
 import { sequelize } from "../models"
 
-const beforeAll = async () => {
+export const beforeAll = async () => {
   try {
     await sequelize.authenticate()
     await sequelize.sync({ force: true })
@@ -9,7 +9,7 @@ const beforeAll = async () => {
   }
 }
 
-const afterAll = async () => {
+export const afterAll = async () => {
   try {
     await sequelize.close()
   } catch (error) {
@@ -17,7 +17,7 @@ const afterAll = async () => {
   }
 }
 
-const afterEach = async () => {
+export const afterEach = async () => {
   try {
     const models = Object.values(sequelize.models)
     for (const model of models) {

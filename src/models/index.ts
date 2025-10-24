@@ -1,9 +1,9 @@
 import sequelize from "../config/sequelize"
 import User from "./user.model"
 import Profile from "./profile.model"
-import Connection from "./connection.model"
 import Message from "./message.model"
 import Notification from "./notification.model"
+import Connection from "./connection.model"
 
 const models = {
   User,

@@ -18,7 +18,7 @@ export default {
         onDelete: "CASCADE",
       },
       type: {
-        type: Sequelize.ENUM("message", "connection_request", "connection_accept"),
+        type: Sequelize.STRING(50),
         allowNull: false,
       },
       message: {
