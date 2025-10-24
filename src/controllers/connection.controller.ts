@@ -1,5 +1,5 @@
 import type { Response, NextFunction } from "express"
-import type { AuthRequest } from "../middleware/auth.middleware"
+import type { AuthRequest } from "../middlewares/auth.middleware"
 import * as connectionService from "../services/connection.service"
 import type { CreateConnectionInput, UpdateConnectionInput } from "../schemas/connection.schema"
 
@@ -22,7 +22,7 @@ export const createConnection = async (req: AuthRequest, res: Response, next: Ne
       data: connection,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }
 
@@ -46,7 +46,7 @@ export const updateConnection = async (req: AuthRequest, res: Response, next: Ne
       data: connection,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }
 
@@ -68,7 +68,7 @@ export const getConnections = async (req: AuthRequest, res: Response, next: Next
       data: connections,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }
 
@@ -91,6 +91,6 @@ export const deleteConnection = async (req: AuthRequest, res: Response, next: Ne
       data: result,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }

@@ -1,5 +1,5 @@
 import type { Response, NextFunction } from "express"
-import type { AuthRequest } from "../middleware/auth.middleware"
+import type { AuthRequest } from "../middlewares/auth.middleware"
 import * as notificationService from "../services/notification.service"
 import type { MarkNotificationsAsReadInput } from "../schemas/notification.schema"
 
@@ -21,7 +21,7 @@ export const getNotifications = async (req: AuthRequest, res: Response, next: Ne
       data: notifications,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }
 
@@ -44,7 +44,7 @@ export const markAsRead = async (req: AuthRequest, res: Response, next: NextFunc
       data: result,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }
 
@@ -66,7 +66,7 @@ export const getUnreadCount = async (req: AuthRequest, res: Response, next: Next
       data: result,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }
 
@@ -89,6 +89,6 @@ export const deleteNotification = async (req: AuthRequest, res: Response, next: 
       data: result,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }

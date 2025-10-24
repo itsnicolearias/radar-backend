@@ -1,5 +1,5 @@
 import type { Response, NextFunction } from "express"
-import type { AuthRequest } from "../middleware/auth.middleware"
+import type { AuthRequest } from "../middlewares/auth.middleware"
 import * as messageService from "../services/message.service"
 import type { SendMessageInput, MarkAsReadInput } from "../schemas/message.schema"
 
@@ -22,7 +22,7 @@ export const sendMessage = async (req: AuthRequest, res: Response, next: NextFun
       data: message,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }
 
@@ -45,7 +45,7 @@ export const getMessages = async (req: AuthRequest, res: Response, next: NextFun
       data: messages,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }
 
@@ -68,7 +68,7 @@ export const markAsRead = async (req: AuthRequest, res: Response, next: NextFunc
       data: result,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }
 
@@ -90,6 +90,6 @@ export const getUnreadCount = async (req: AuthRequest, res: Response, next: Next
       data: result,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }

@@ -1,5 +1,5 @@
 import type { Response, NextFunction } from "express"
-import type { AuthRequest } from "../middleware/auth.middleware"
+import type { AuthRequest } from "../middlewares/auth.middleware"
 import * as profileService from "../services/profile.service"
 import type { CreateProfileInput, UpdateProfileInput } from "../schemas/profile.schema"
 
@@ -36,7 +36,7 @@ export const createProfile = async (req: AuthRequest, res: Response, next: NextF
       data: profile,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }
 
@@ -59,7 +59,7 @@ export const updateProfile = async (req: AuthRequest, res: Response, next: NextF
       data: profile,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }
 
@@ -81,6 +81,6 @@ export const deleteProfile = async (req: AuthRequest, res: Response, next: NextF
       data: result,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }

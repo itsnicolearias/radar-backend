@@ -1,5 +1,5 @@
 import type { Response, NextFunction } from "express"
-import type { AuthRequest } from "../middleware/auth.middleware"
+import type { AuthRequest } from "../middlewares/auth.middleware"
 import * as userService from "../services/user.service"
 import type { UpdateLocationInput, UpdateUserInput } from "../schemas/user.schema"
 
@@ -31,12 +31,12 @@ export const updateLocation = async (req: AuthRequest, res: Response, next: Next
 
     const result = await userService.updateUserLocation(id, data)
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: result,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }
 
@@ -54,11 +54,11 @@ export const updateUser = async (req: AuthRequest, res: Response, next: NextFunc
 
     const result = await userService.updateUser(id, data)
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: result,
     })
   } catch (error) {
-    next(error)
+    return next(error)
   }
 }
