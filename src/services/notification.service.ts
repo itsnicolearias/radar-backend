@@ -1,5 +1,5 @@
+import { NotificationType } from "../interfaces/notification.interface"
 import { Notification } from "../models"
-import type { NotificationType } from "../models/notification.model"
 import type { MarkNotificationsAsReadInput } from "../schemas/notification.schema"
 
 export const createNotification = async (userId: string, type: NotificationType, message: string) => {

@@ -91,3 +91,5 @@ Connection.belongsTo(User, {
   foreignKey: "receiverId",
   as: "receiver",
 })
+
+export default Connection;

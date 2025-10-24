@@ -1,8 +1,8 @@
 import { Message, User, Connection } from "../models"
 import { notFound, badRequest } from "../utils/errors"
-import { ConnectionStatus } from "../models/connection.model"
 import type { SendMessageInput, MarkAsReadInput } from "../schemas/message.schema"
 import { Op } from "sequelize"
+import { ConnectionStatus } from "../interfaces/connection.interface"
 
 export const sendMessage = async (senderId: string, data: SendMessageInput) => {
   try {

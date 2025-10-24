@@ -1,11 +1,10 @@
 import { Sequelize } from "sequelize"
-import dotenv from "dotenv"
+import { config } from "./config"
 
-dotenv.config()
 
-const sequelize = new Sequelize(process.env.DATABASE_URL || "", {
+const sequelize = new Sequelize(config.dbUrl || "", {
   dialect: "postgres",
-  logging: process.env.NODE_ENV === "development" ? console.log : false,
+  logging: config.env === "development" ? console.log : false,
   pool: {
     max: 5,
     min: 0,
@@ -13,7 +12,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URL || "", {
     idle: 10000,
   },
   dialectOptions:
-    process.env.NODE_ENV === "production"
+    config.env === "production"
       ? {
           ssl: {
             require: true,

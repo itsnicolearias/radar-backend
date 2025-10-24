@@ -27,7 +27,8 @@ export default {
         onDelete: "CASCADE",
       },
       status: {
-        type: Sequelize.ENUM("pending", "accepted", "rejected"),
+        type: Sequelize.STRING(50),
+        allowNull: false,
         defaultValue: "pending",
       },
       created_at: {

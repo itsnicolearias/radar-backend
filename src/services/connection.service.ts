@@ -1,8 +1,8 @@
 import { Connection, User } from "../models"
 import { notFound, badRequest, conflict } from "../utils/errors"
-import { ConnectionStatus } from "../models/connection.model"
 import type { CreateConnectionInput, UpdateConnectionInput } from "../schemas/connection.schema"
 import { Op } from "sequelize"
+import { ConnectionStatus } from "../interfaces/connection.interface"
 
 export const createConnection = async (senderId: string, data: CreateConnectionInput) => {
   try {
