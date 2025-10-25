@@ -1,6 +1,7 @@
 import { User, Profile } from "../models"
 import sequelize from "../config/sequelize"
 import type { GetNearbyUsersInput } from "../schemas/radar.schema"
+import { Op } from "sequelize"
 
 export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) => {
   try {
@@ -9,12 +10,12 @@ export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) 
     // Only include users who are verified, visible, and not in invisible mode
     const nearbyUsers = await User.findAll({
       where: {
-        userId: { [sequelize.Sequelize.Op.ne]: userId },
+        userId: { [Op.ne]: userId },
         isVerified: true,
         isVisible: true,
         invisibleMode: false,
-        lastLatitude: { [sequelize.Sequelize.Op.ne]: null },
-        lastLongitude: { [sequelize.Sequelize.Op.ne]: null },
+        lastLatitude: { [Op.ne]: null },
+        lastLongitude: { [Op.ne]: null },
       },
       include: [
         {
