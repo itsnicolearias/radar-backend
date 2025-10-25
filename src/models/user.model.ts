@@ -113,7 +113,7 @@ User.init(
     tableName: "users",
     timestamps: true,
     underscored: true,
-  },
+  }
 )
 
 export default User

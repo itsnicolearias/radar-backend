@@ -21,7 +21,7 @@ app.use(
         logger.info(message.trim())
       },
     },
-  }),
+  })
 )
 
 app.use(cors())

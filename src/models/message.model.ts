@@ -65,7 +65,7 @@ Message.init(
     sequelize,
     tableName: "messages",
     timestamps: false,
-  },
+  }
 )
 
 // Define associations

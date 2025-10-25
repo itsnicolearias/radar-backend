@@ -1,7 +1,6 @@
 import { Sequelize } from "sequelize"
 import { config } from "./config"
 
-
 const sequelize = new Sequelize(config.dbUrl || "", {
   dialect: "postgres",
   logging: config.env === "development" ? console.log : false,

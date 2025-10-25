@@ -79,7 +79,7 @@ export const markMessagesAsRead = async (userId: string, data: MarkAsReadInput) 
           messageId: data.messageIds,
           receiverId: userId,
         },
-      },
+      }
     )
 
     return { message: "Messages marked as read" }

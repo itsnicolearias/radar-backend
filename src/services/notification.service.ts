@@ -38,7 +38,7 @@ export const markNotificationsAsRead = async (userId: string, data: MarkNotifica
           notificationId: data.notificationIds,
           userId,
         },
-      },
+      }
     )
 
     return { message: "Notifications marked as read" }

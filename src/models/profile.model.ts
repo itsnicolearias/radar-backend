@@ -100,7 +100,7 @@ Profile.init(
     tableName: "profiles",
     timestamps: true,
     underscored: true,
-  },
+  }
 )
 
 // Define associations
