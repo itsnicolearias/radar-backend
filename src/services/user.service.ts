@@ -1,5 +1,5 @@
 import { User, Profile } from "../models"
-import { notFound } from "../utils/errors"
+import { badRequest, notFound } from "../utils/errors"
 import type { UpdateLocationInput, UpdateUserInput, ToggleVisibilityInput } from "../schemas/user.schema"
 
 export const getUserById = async (userId: string) => {
@@ -20,7 +20,7 @@ export const getUserById = async (userId: string) => {
 
     return user
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -45,7 +45,7 @@ export const updateUserLocation = async (userId: string, data: UpdateLocationInp
       lastSeenAt: user.lastSeenAt,
     }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -57,9 +57,10 @@ export const updateUser = async (userId: string, data: UpdateUserInput) => {
       throw notFound("User not found")
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateData: any = { ...data }
     if (data.birthDate) {
-      updateData.birthDate = new Date(data.birthDate)
+      updateData.birthDate = data.birthDate;
     }
 
     await user.update(updateData)
@@ -79,7 +80,7 @@ export const updateUser = async (userId: string, data: UpdateUserInput) => {
       isVisible: user.isVisible,
     }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -98,6 +99,6 @@ export const toggleVisibility = async (userId: string, data: ToggleVisibilityInp
       isVisible: user.isVisible,
     }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }

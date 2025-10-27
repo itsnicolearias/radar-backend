@@ -35,7 +35,7 @@ export const createConnection = async (senderId: string, data: CreateConnectionI
 
     return connection
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -59,7 +59,7 @@ export const updateConnection = async (connectionId: string, userId: string, dat
 
     return connection
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -86,7 +86,7 @@ export const getConnectionsByUserId = async (userId: string) => {
 
     return connections
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -106,6 +106,6 @@ export const deleteConnection = async (connectionId: string, userId: string) => 
 
     return { message: "Connection deleted successfully" }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }

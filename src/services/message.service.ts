@@ -36,7 +36,7 @@ export const sendMessage = async (senderId: string, data: SendMessageInput) => {
 
     return message
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -66,7 +66,7 @@ export const getMessagesBetweenUsers = async (userId1: string, userId2: string) 
 
     return messages
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -84,7 +84,7 @@ export const markMessagesAsRead = async (userId: string, data: MarkAsReadInput) 
 
     return { message: "Messages marked as read" }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -99,6 +99,6 @@ export const getUnreadMessageCount = async (userId: string) => {
 
     return { count }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }

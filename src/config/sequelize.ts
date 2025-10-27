@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Sequelize } from "sequelize"
 import { config } from "./config"
 

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-console */
 export enum LogLevel {
   INFO = "INFO",
   WARN = "WARN",

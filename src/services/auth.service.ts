@@ -6,6 +6,7 @@ import { unauthorized, conflict, notFound } from "../utils/errors"
 import { sendEmail } from "../config/email"
 import { config } from "../config/config"
 import type { RegisterUserInput, LoginUserInput } from "../schemas/auth.schema"
+import { badRequest } from "@hapi/boom"
 
 export interface AuthResponse {
   token: string
@@ -48,7 +49,6 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
       email: user.email,
     })
 
-    try {
       const verificationUrl = `${config.clientUrl || "http://localhost:3000"}/verify-email/${emailVerificationToken}`
       await sendEmail({
         to: user.email,
@@ -61,9 +61,6 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
           <p>Or copy and paste this link: ${verificationUrl}</p>
         `,
       })
-    } catch (emailError) {
-      console.error("Failed to send verification email:", emailError)
-    }
 
     return {
       token,
@@ -78,7 +75,7 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
       },
     }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -116,7 +113,7 @@ export const loginUser = async (data: LoginUserInput): Promise<AuthResponse> => 
       },
     }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -164,6 +161,6 @@ export const verifyEmail = async (token: string): Promise<{ message: string; use
       },
     }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }

@@ -1,6 +1,7 @@
 import { Profile, User } from "../models"
 import { notFound } from "../utils/errors"
 import type { CreateProfileInput, UpdateProfileInput } from "../schemas/profile.schema"
+import { badRequest } from "@hapi/boom"
 
 export const getProfileByUserId = async (userId: string) => {
   try {
@@ -21,7 +22,7 @@ export const getProfileByUserId = async (userId: string) => {
 
     return profile
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -40,7 +41,7 @@ export const createProfile = async (userId: string, data: CreateProfileInput) =>
 
     return profile
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -56,7 +57,7 @@ export const updateProfile = async (userId: string, data: UpdateProfileInput) =>
 
     return profile
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -72,6 +73,6 @@ export const deleteProfile = async (userId: string) => {
 
     return { message: "Profile deleted successfully" }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }

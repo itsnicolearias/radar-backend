@@ -23,6 +23,6 @@ export const authenticate = (req: AuthRequest, _res: Response, next: NextFunctio
     req.user = decoded
     next()
   } catch (error) {
-    next(unauthorized("Invalid or expired token"))
+    next(unauthorized(error))
   }
 }
