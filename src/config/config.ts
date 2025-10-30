@@ -26,7 +26,7 @@ export const config = {
   emailHost: process.env.EMAIL_HOST || "",
   emailPort: Number.parseInt(process.env.EMAIL_PORT || ""),
   emailUser: process.env.EMAIL_USER || "",
-  emailPass: process.env.EMAIL_PASS || "",
+  emailPass: process.env.EMAIL_PASSWORD || "",
   emailFrom: process.env.EMAIL_FROM || "",
 
   clientUrl: process.env.CLIENT_URL || "",

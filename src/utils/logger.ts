@@ -26,7 +26,7 @@ const formatLog = (level: LogLevel, message: string, data?: any): LogMessage => 
 export const logger = {
   info: (message: string, data?: any) => {
     const log = formatLog(LogLevel.INFO, message, data)
-    console.log(JSON.stringify(log))
+    console.log(log)
   },
 
   warn: (message: string, data?: any) => {
@@ -36,13 +36,13 @@ export const logger = {
 
   error: (message: string, data?: any) => {
     const log = formatLog(LogLevel.ERROR, message, data)
-    console.error(JSON.stringify(log))
+    console.error(log)
   },
 
   debug: (message: string, data?: any) => {
     if (process.env.NODE_ENV === "development") {
       const log = formatLog(LogLevel.DEBUG, message, data)
-      console.debug(JSON.stringify(log))
+      console.debug(log)
     }
   },
 }
