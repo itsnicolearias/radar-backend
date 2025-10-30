@@ -127,7 +127,7 @@ router.get("/unread/count", authenticate, notificationController.getUnreadCount)
 
 /**
  * @swagger
- * /api/notifications:
+ * /api/notifications/{notificationId}:
  *   delete:
  *     summary: delete a notification
  *     tags: [Notifications]

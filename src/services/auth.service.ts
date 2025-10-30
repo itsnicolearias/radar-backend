@@ -29,15 +29,18 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
       throw conflict("Email already registered")
     }
 
+
     const passwordHash = await bcrypt.hash(data.password, 10)
+    
     const emailVerificationToken = crypto.randomBytes(32).toString("hex")
+    const hashedToken = crypto.createHash("sha256").update(emailVerificationToken).digest("hex");
 
     const user = await User.create({
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
       passwordHash,
-      emailVerificationToken,
+      emailVerificationToken: hashedToken,
     })
 
     await Profile.create({
@@ -119,7 +122,9 @@ export const loginUser = async (data: LoginUserInput): Promise<AuthResponse> => 
 
 export const verifyEmail = async (token: string): Promise<{ message: string; user: AuthResponse["user"] }> => {
   try {
-    const user = await User.findOne({ where: { emailVerificationToken: token } })
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({ where: { emailVerificationToken: hashedToken } })
 
     if (!user) {
       throw notFound("Invalid or expired verification token")

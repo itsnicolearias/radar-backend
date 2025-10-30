@@ -49,7 +49,7 @@ router.post("/", authenticate, validate(sendMessageSchema), messageController.se
 
 /**
  * @swagger
- * /api/messages:
+ * /api/messages/{userId}:
  *   get:
  *     summary: Obtain messages with an user
  *     tags: [Messages]
@@ -106,7 +106,7 @@ router.get("/:userId", authenticate, messageController.getMessages)
  *             required:
  *               - messageIds
  *             properties:
- *               email:
+ *               messageIds:
  *                 type: array
  *                 items:
  *                   type: string

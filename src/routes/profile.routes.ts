@@ -50,7 +50,7 @@ router.post("/", authenticate, validate(createProfileSchema), profileController.
  *              $ref: '#/components/schemas/Profile'
  *     responses:
  *       200:
- *         description: Profileupdated successful
+ *         description: Profile updated successful
  *         content:
  *           application/json:
  *             schema:

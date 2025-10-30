@@ -33,6 +33,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 export const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { token } = req.params
+
     const result = await authService.verifyEmail(token)
 
     res.status(200).json({

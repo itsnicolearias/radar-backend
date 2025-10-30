@@ -19,7 +19,13 @@ const router = Router()
  *       content:
  *         application/json:
  *           schema:
- *              $ref: '#/components/schemas/Connection'
+ *             type: object
+ *             required:
+ *               - receiverId
+ *             properties:
+ *               receiverId:
+ *                 type: string
+ *                 example: "id123"
  *     responses:
  *       200:
  *         description: Connection created successful
@@ -49,14 +55,12 @@ router.post("/", authenticate, validate(createConnectionSchema), connectionContr
 
 /**
  * @swagger
- * /api/connections:
+ * /api/connections/accepted:
  *   get:
- *     summary: Get connections
+ *     summary: Get accepted connections
  *     tags: [Connections]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *         description: Search radius in meters
  *     responses:
  *       200:
  *         description: List of connections
@@ -74,11 +78,38 @@ router.post("/", authenticate, validate(createConnectionSchema), connectionContr
  *       401:
  *         description: Unauthorized
  */
-router.get("/", authenticate, connectionController.getConnections)
+router.get("/accepted", authenticate, connectionController.getAcceptedConnections)
 
 /**
  * @swagger
- * /api/connections:
+ * /api/connections/pendings:
+ *   get:
+ *     summary: Get pendings connections
+ *     tags: [Connections]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of connections
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Connection'
+ *       401:
+ *         description: Unauthorized
+ */
+router.get("/pendings", authenticate, connectionController.getPendingConnections)
+
+/**
+ * @swagger
+ * /api/connections/{connectionId}:
  *   patch:
  *     summary: update a connection
  *     tags: [Connections]
@@ -133,7 +164,7 @@ router.patch("/:connectionId", authenticate, validate(updateConnectionSchema), c
 
 /**
  * @swagger
- * /api/connections:
+ * /api/connections/{connectionId}:
  *   delete:
  *     summary: delete a connection
  *     tags: [Connections]
