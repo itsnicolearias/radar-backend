@@ -13,6 +13,9 @@ export const config = {
   jwtSecret: process.env.JWT_SECRET || "",
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "7d",
 
+  // Encryption
+  encryptionKey: process.env.ENCRYPTION_KEY || "",
+
   // AWS S3
   awsRegion: process.env.AWS_REGION || "",
   awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
