@@ -15,6 +15,7 @@ export interface UserAttributes {
   lastSeenAt: Date | null
   createdAt: Date
   updatedAt: Date
+  roles: string[];
 }
 
 export interface UserCreationAttributes {

@@ -82,6 +82,49 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
   }
 }
 
+export const resendVerificationEmail = async (email: string) => {
+  try {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      throw notFound('User not found');
+    }
+
+    if (user.isVerified) {
+      throw badRequest('Email already verified');
+    }
+
+    const emailVerificationToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(emailVerificationToken)
+      .digest('hex');
+
+    await user.update({
+      emailVerificationToken: hashedToken,
+    });
+
+    const verificationUrl = `${
+      config.clientUrl || 'http://localhost:3000'
+    }/verify-email/${emailVerificationToken}`;
+    await sendEmail({
+      to: user.email,
+      subject: 'Welcome to Radar - Verify Your Email',
+      html: `
+        <h1>Welcome ${user.firstName}!</h1>
+        <p>Thank you for registering with Radar.</p>
+        <p>Please verify your email by clicking the link below:</p>
+        <a href="${verificationUrl}">Verify Email</a>
+        <p>Or copy and paste this link: ${verificationUrl}</p>
+      `,
+    });
+
+    return { message: 'Verification email sent' };
+  } catch (error) {
+    throw badRequest(error);
+  }
+};
+
 export const loginUser = async (data: LoginUserInput): Promise<AuthResponse> => {
   try {
     const user = await User.findOne({ where: { email: data.email } })

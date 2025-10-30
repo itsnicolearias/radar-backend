@@ -1,9 +1,14 @@
 import { Router } from "express"
 import * as authController from "../controllers/auth.controller"
 import { validate } from "../middlewares/validation.middleware"
-import { registerUserSchema, loginUserSchema } from "../schemas/auth.schema"
+import {
+  registerUserSchema,
+  loginUserSchema,
+  resendVerificationEmailSchema,
+} from '../schemas/auth.schema';
+import { resendVerificationLimiter } from '../middlewares/rateLimit.middleware';
 
-const router = Router()
+const router = Router();
 
 /**
  * @swagger
@@ -115,7 +120,41 @@ router.post("/register", validate(registerUserSchema), authController.register)
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/login", validate(loginUserSchema), authController.login)
+router.post("/login", validate(loginUserSchema), authController.login);
+
+/**
+ * @swagger
+ * /api/auth/resend-verification:
+ *   post:
+ *     summary: Resend verification email
+ *     tags: [Auth]
+ *     security: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *     responses:
+ *       200:
+ *         description: Verification email sent
+ *       400:
+ *         description: Email already verified
+ *       404:
+ *         description: User not found
+ */
+router.post(
+  '/resend-verification',
+  resendVerificationLimiter,
+  validate(resendVerificationEmailSchema),
+  authController.resendVerificationEmail,
+);
 
 /**
  * @swagger

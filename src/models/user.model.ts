@@ -19,6 +19,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public lastSeenAt!: Date | null
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
+  public roles!: string[]
 }
 
 User.init(
@@ -106,6 +107,10 @@ User.init(
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
       field: "updated_at",
+    },
+    roles: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      defaultValue: [],
     },
   },
   {

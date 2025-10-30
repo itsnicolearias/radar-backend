@@ -10,12 +10,14 @@ class Message
   extends Model<ImportedMessageAttributes, ImportedMessageCreationAttributes>
   implements ImportedMessageAttributes
 {
-  public messageId!: string
-  public senderId!: string
-  public receiverId!: string
-  public content!: string
-  public isRead!: boolean
-  public readonly createdAt!: Date
+  public messageId!: string;
+  public senderId!: string;
+  public receiverId!: string;
+  public content!: string;
+  public iv!: string | null;
+  public authTag!: string | null;
+  public isRead!: boolean;
+  public readonly createdAt!: Date;
 }
 
 Message.init(
@@ -49,6 +51,15 @@ Message.init(
     content: {
       type: DataTypes.TEXT,
       allowNull: false,
+    },
+    iv: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    authTag: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'auth_tag',
     },
     isRead: {
       type: DataTypes.BOOLEAN,
