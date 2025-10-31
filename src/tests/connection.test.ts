@@ -1,6 +1,9 @@
 import request from "supertest"
 import app from "../app"
 import "../tests/setup"
+import * as notificationService from "../services/notification.service"
+
+jest.mock("../services/notification.service")
 
 describe("Connection Endpoints", () => {
   let user1Token: string
@@ -48,6 +51,7 @@ describe("Connection Endpoints", () => {
       expect(response.body.data.senderId).toBe(user1Id)
       expect(response.body.data.receiverId).toBe(user2Id)
       expect(response.body.data.status).toBe("pending")
+      expect(notificationService.sendConnectionRequestNotification).toHaveBeenCalled()
     })
 
     it("should fail without authentication", async () => {
@@ -90,6 +94,7 @@ describe("Connection Endpoints", () => {
 
       expect(response.body.success).toBe(true)
       expect(response.body.data.status).toBe("accepted")
+      expect(notificationService.sendConnectionAcceptedNotification).toHaveBeenCalled()
     })
 
     it("should reject a connection request", async () => {

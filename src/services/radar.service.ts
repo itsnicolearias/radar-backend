@@ -1,5 +1,6 @@
 import { User, Profile } from "../models"
 import sequelize from "../config/sequelize"
+import * as notificationService from "./notification.service"
 import type { GetNearbyUsersInput } from "../schemas/radar.schema"
 
 export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) => {
@@ -47,6 +48,10 @@ export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) 
       order: [[sequelize.literal("distance"), "ASC"]],
       limit: 50,
     })
+
+    if (nearbyUsers.length > 0) {
+      await notificationService.sendRadarDetectionNotification(userId, nearbyUsers.length)
+    }
 
     return nearbyUsers
   } catch (error) {

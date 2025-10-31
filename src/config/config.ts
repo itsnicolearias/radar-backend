@@ -34,4 +34,9 @@ export const config = {
   emailFrom: process.env.EMAIL_FROM || "noreply@radar.com",
 
   clientUrl: process.env.CLIENT_URL || "http://localhost:3000",
+
+  // Firebase
+  firebaseProjectId: process.env.FIREBASE_PROJECT_ID || "",
+  firebaseClientEmail: process.env.FIREBASE_CLIENT_EMAIL || "",
+  firebasePrivateKey: process.env.FIREBASE_PRIVATE_KEY || "",
 }

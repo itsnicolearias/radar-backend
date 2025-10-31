@@ -46,6 +46,7 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
     const token = generateToken({
       userId: user.userId,
       email: user.email,
+      firstName: user.firstName,
     })
 
     try {
@@ -101,6 +102,7 @@ export const loginUser = async (data: LoginUserInput): Promise<AuthResponse> => 
     const token = generateToken({
       userId: user.userId,
       email: user.email,
+      firstName: user.firstName,
     })
 
     return {

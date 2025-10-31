@@ -1,3 +1,4 @@
+import "dotenv/config"
 import { sequelize } from "../models"
 
 export const beforeAll = async () => {

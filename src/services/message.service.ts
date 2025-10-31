@@ -1,12 +1,13 @@
 import { Message, User, Connection } from "../models"
 import { notFound, badRequest } from "../utils/errors"
+import * as notificationService from "./notification.service"
 import type { SendMessageInput, MarkAsReadInput } from "../schemas/message.schema"
 import { Op } from "sequelize"
 import { ConnectionStatus } from "../interfaces/connection.interface"
 
-export const sendMessage = async (senderId: string, data: SendMessageInput) => {
+export const sendMessage = async (sender: { userId: string; firstName: string }, data: SendMessageInput) => {
   try {
-    if (senderId === data.receiverId) {
+    if (sender.userId === data.receiverId) {
       throw badRequest("Cannot send message to yourself")
     }
 
@@ -18,8 +19,8 @@ export const sendMessage = async (senderId: string, data: SendMessageInput) => {
     const connection = await Connection.findOne({
       where: {
         [Op.or]: [
-          { senderId, receiverId: data.receiverId, status: ConnectionStatus.ACCEPTED },
-          { senderId: data.receiverId, receiverId: senderId, status: ConnectionStatus.ACCEPTED },
+          { senderId: sender.userId, receiverId: data.receiverId, status: ConnectionStatus.ACCEPTED },
+          { senderId: data.receiverId, receiverId: sender.userId, status: ConnectionStatus.ACCEPTED },
         ],
       },
     })
@@ -29,10 +30,12 @@ export const sendMessage = async (senderId: string, data: SendMessageInput) => {
     }
 
     const message = await Message.create({
-      senderId,
+      senderId: sender.userId,
       receiverId: data.receiverId,
       content: data.content,
     })
+
+    await notificationService.sendNewMessageNotification(data.receiverId, sender.firstName)
 
     return message
   } catch (error) {
