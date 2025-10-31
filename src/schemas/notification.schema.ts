@@ -11,5 +11,10 @@ export const createNotificationSchema = z.object({
   message: z.string().min(1, "Message is required"),
 })
 
+export const notificationTokenSchema = z.object({
+  token: z.string().min(1, "Token is required"),
+});
+
 export type MarkNotificationsAsReadInput = z.infer<typeof markNotificationsAsReadSchema>
 export type CreateNotificationInput = z.infer<typeof createNotificationSchema>
+export type NotificationTokenInput = z.infer<typeof notificationTokenSchema>;

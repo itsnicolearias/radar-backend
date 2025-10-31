@@ -13,6 +13,7 @@ export interface UserAttributes {
   lastLatitude: number | null
   lastLongitude: number | null
   lastSeenAt: Date | null
+  notificationsEnabled: boolean
   createdAt: Date
   updatedAt: Date
 }

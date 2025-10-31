@@ -1,21 +1,23 @@
 import type { Response, NextFunction } from "express"
 import type { AuthRequest } from "../middlewares/auth.middleware"
 import * as messageService from "../services/message.service"
+import * as notificationService from "../services/notification.service"
 import type { SendMessageInput, MarkAsReadInput } from "../schemas/message.schema"
 
 export const sendMessage = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const data: SendMessageInput = req.body
-    const senderId = req.user?.userId
+    const sender = req.user
 
-    if (!senderId) {
+    if (!sender?.userId) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized",
       })
     }
 
-    const message = await messageService.sendMessage(senderId, data)
+    const message = await messageService.sendMessage(sender.userId, data)
+    await notificationService.sendNewMessageNotification(data.receiverId, sender.firstName)
 
     res.status(201).json({
       success: true,

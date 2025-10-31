@@ -17,8 +17,16 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public lastLatitude!: number | null
   public lastLongitude!: number | null
   public lastSeenAt!: Date | null
+  public notificationsEnabled!: boolean
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
+
+  public static associate(models: any) {
+    User.hasMany(models.NotificationToken, {
+      foreignKey: "userId",
+      as: "notificationTokens",
+    });
+  }
 }
 
 User.init(
@@ -96,6 +104,11 @@ User.init(
       type: DataTypes.DATE,
       allowNull: true,
       field: "last_seen_at",
+    },
+    notificationsEnabled: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+      field: "notifications_enabled",
     },
     createdAt: {
       type: DataTypes.DATE,

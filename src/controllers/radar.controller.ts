@@ -1,6 +1,7 @@
 import type { Response, NextFunction } from "express"
 import type { AuthRequest } from "../middlewares/auth.middleware"
 import * as radarService from "../services/radar.service"
+import * as notificationService from "../services/notification.service"
 import type { GetNearbyUsersInput } from "../schemas/radar.schema"
 
 export const getNearbyUsers = async (req: AuthRequest, res: Response, next: NextFunction) => {
@@ -21,6 +22,10 @@ export const getNearbyUsers = async (req: AuthRequest, res: Response, next: Next
     }
 
     const nearbyUsers = await radarService.getNearbyUsers(userId, data)
+
+    if (nearbyUsers.length > 0) {
+      await notificationService.sendRadarDetectionNotification(userId, nearbyUsers.length)
+    }
 
     return res.status(200).json({
       success: true,
