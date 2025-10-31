@@ -1,0 +1,194 @@
+import { Router } from "express";
+import eventController from "../controllers/event.controller";
+import { validate } from "../../../middlewares/validation.middleware";
+import {
+  createEventSchema,
+  updateEventSchema,
+  eventIdSchema,
+} from "../schemas/event.schema";
+import { authenticate } from "../../../middlewares/auth.middleware";
+
+const router = Router();
+
+/**
+ * @swagger
+ * /events:
+ *   post:
+ *     summary: Create a new event
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateEvent'
+ *     responses:
+ *       201:
+ *         description: The event was successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Event'
+ *       400:
+ *         description: Bad request
+ *   get:
+ *      summary: Get all events
+ *      tags: [Events]
+ *      parameters:
+ *          - in: query
+ *            name: page
+ *            schema:
+ *              type: integer
+ *            description: The page number to return
+ *          - in: query
+ *            name: limit
+ *            schema:
+ *              type: integer
+ *            description: The number of items to return
+ *          - in: query
+ *            name: all
+ *            schema:
+ *              type: boolean
+ *            description: Whether to return all items
+ *      responses:
+ *          200:
+ *              description: A list of events
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              rows:
+ *                                  type: array
+ *                                  items:
+ *                                      $ref: '#/components/schemas/Event'
+ *                              count:
+ *                                  type: integer
+ *                                  example: 1
+ *
+ *
+ */
+router.post(
+  "/",
+  authenticate,
+  validate(createEventSchema),
+  eventController.create
+);
+router.get("/", eventController.findAll);
+
+/**
+ * @swagger
+ * /events/{id}:
+ *   get:
+ *     summary: Get an event by id
+ *     tags: [Events]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The event id
+ *     responses:
+ *       200:
+ *         description: The event description by id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Event'
+ *       404:
+ *         description: The event was not found
+ */
+router.get("/:id", validate(eventIdSchema), eventController.findById);
+router.put(
+  "/:id",
+  authenticate,
+  validate(updateEventSchema),
+  eventController.update
+);
+router.delete("/:id", authenticate, validate(eventIdSchema), eventController.delete);
+
+/**
+ * @swagger
+ * /events/{id}/interest:
+ *   post:
+ *     summary: Add interest to an event
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The event id
+ *     responses:
+ *       204:
+ *         description: The interest was successfully added
+ *       404:
+ *         description: The event was not found
+ *   delete:
+ *     summary: Remove interest from an event
+ *     tags: [Events]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The event id
+ *     responses:
+ *       204:
+ *         description: The interest was successfully removed
+ *       404:
+ *         description: The interest was not found
+ *   get:
+ *     summary: Get all interested users for an event
+ *     tags: [Events]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The event id
+ *     responses:
+ *       200:
+ *         description: A list of interested users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       404:
+ *         description: The event was not found
+ */
+router.post(
+  "/:id/interest",
+  authenticate,
+  validate(eventIdSchema),
+  eventController.addInterest
+);
+router.delete(
+  "/:id/interest",
+  authenticate,
+  validate(eventIdSchema),
+  eventController.removeInterest
+);
+router.get(
+  "/:id/interest",
+  validate(eventIdSchema),
+  eventController.findInterestedUsers
+);
+
+export default router;

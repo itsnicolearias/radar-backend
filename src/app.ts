@@ -6,7 +6,7 @@ import swaggerUi from "swagger-ui-express"
 import routes from "./routes"
 import { handleError } from "./utils/errors"
 import logger from "./utils/logger"
-import { swaggerSpec } from "./config/swagger"
+import swaggerSpec from "./config/swagger"
 
 dotenv.config()
 
