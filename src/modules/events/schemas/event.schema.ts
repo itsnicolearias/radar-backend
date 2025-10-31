@@ -99,12 +99,12 @@ export const updateEventSchema = z.object({
     price: z.number().optional(),
   }),
   params: z.object({
-    id: z.string().uuid(),
+    eventId: z.string().uuid(),
   }),
 });
 
 export const eventIdSchema = z.object({
   params: z.object({
-    id: z.string().uuid(),
+    eventId: z.string().uuid(),
   }),
 });

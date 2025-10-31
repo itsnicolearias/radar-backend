@@ -2,7 +2,7 @@ import { DataTypes, Model, Optional } from "sequelize"
 import sequelize from "../config/sequelize"
 
 interface EventAttributes {
-  id: string
+  eventId: string
   userId: string
   title: string
   description?: string
@@ -16,10 +16,10 @@ interface EventAttributes {
   price?: number
 }
 
-type EventCreationAttributes = Optional<EventAttributes, "id">
+type EventCreationAttributes = Optional<EventAttributes, "eventId">
 
 class Event extends Model<EventAttributes, EventCreationAttributes> implements EventAttributes {
-  public id!: string
+  public eventId!: string
   public userId!: string
   public title!: string
   public description?: string
@@ -50,10 +50,11 @@ class Event extends Model<EventAttributes, EventCreationAttributes> implements E
 
 Event.init(
   {
-    id: {
+    eventId: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
+      field: "event_id",
     },
     userId: {
       type: DataTypes.UUID,

@@ -5,7 +5,6 @@ import { faker } from "@faker-js/faker";
 
 describe("Event API", () => {
   let token: string;
-  let user: any;
 
   beforeAll(async () => {
     await sequelize.sync({ force: true });
@@ -50,7 +49,7 @@ describe("Event API", () => {
         title: "Another Test Event",
         startDate: new Date(),
       });
-    const res = await request(app).get(`/api/events/${event.body.id}`);
+    const res = await request(app).get(`/api/events/${event.body.eventId}`);
     expect(res.status).toBe(200);
     expect(res.body.title).toBe("Another Test Event");
   });
@@ -64,7 +63,7 @@ describe("Event API", () => {
         startDate: new Date(),
       });
     const res = await request(app)
-      .put(`/api/events/${event.body.id}`)
+      .put(`/api/events/${event.body.eventId}`)
       .set("Authorization", `Bearer ${token}`)
       .send({
         title: "Updated Event",
@@ -82,7 +81,7 @@ describe("Event API", () => {
         startDate: new Date(),
       });
     const res = await request(app)
-      .delete(`/api/events/${event.body.id}`)
+      .delete(`/api/events/${event.body.eventId}`)
       .set("Authorization", `Bearer ${token}`);
     expect(res.status).toBe(204);
   });
@@ -96,7 +95,7 @@ describe("Event API", () => {
         startDate: new Date(),
       });
     const res = await request(app)
-      .post(`/api/events/${event.body.id}/interest`)
+      .post(`/api/events/${event.body.eventId}/interest`)
       .set("Authorization", `Bearer ${token}`);
     expect(res.status).toBe(204);
   });
@@ -110,10 +109,10 @@ describe("Event API", () => {
         startDate: new Date(),
       });
     await request(app)
-      .post(`/api/events/${event.body.id}/interest`)
+      .post(`/api/events/${event.body.eventId}/interest`)
       .set("Authorization", `Bearer ${token}`);
     const res = await request(app)
-      .delete(`/api/events/${event.body.id}/interest`)
+      .delete(`/api/events/${event.body.eventId}/interest`)
       .set("Authorization", `Bearer ${token}`);
     expect(res.status).toBe(204);
   });
@@ -127,10 +126,10 @@ describe("Event API", () => {
         startDate: new Date(),
       });
     await request(app)
-      .post(`/api/events/${event.body.id}/interest`)
+      .post(`/api/events/${event.body.eventId}/interest`)
       .set("Authorization", `Bearer ${token}`);
     const res = await request(app).get(
-      `/api/events/${event.body.id}/interest`
+      `/api/events/${event.body.eventId}/interest`
     );
     expect(res.status).toBe(200);
     expect(res.body.length).toBe(1);

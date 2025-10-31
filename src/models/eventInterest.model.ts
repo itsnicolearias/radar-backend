@@ -2,18 +2,18 @@ import { DataTypes, Model, Optional } from "sequelize"
 import sequelize from "../config/sequelize"
 
 interface EventInterestAttributes {
-  id: string
+  eventInterestId: string
   eventId: string
   userId: string
 }
 
-type EventInterestCreationAttributes = Optional<EventInterestAttributes, "id">
+type EventInterestCreationAttributes = Optional<EventInterestAttributes, "eventInterestId">
 
 class EventInterest
   extends Model<EventInterestAttributes, EventInterestCreationAttributes>
   implements EventInterestAttributes
 {
-  public id!: string
+  public eventInterestId!: string
   public eventId!: string
   public userId!: string
 
@@ -31,10 +31,11 @@ class EventInterest
 
 EventInterest.init(
   {
-    id: {
+    eventInterestId: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
+      field: "event_interest_id",
     },
     eventId: {
       type: DataTypes.UUID,

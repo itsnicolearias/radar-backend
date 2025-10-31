@@ -19,6 +19,18 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public lastSeenAt!: Date | null
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
+
+  public static associate(models: any) {
+    User.hasMany(models.Event, {
+      foreignKey: "userId",
+      as: "organizedEvents",
+    });
+    User.belongsToMany(models.Event, {
+      through: "EventInterest",
+      as: "interestedEvents",
+      foreignKey: "userId",
+    });
+  }
 }
 
 User.init(

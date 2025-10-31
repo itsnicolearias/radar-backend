@@ -18,18 +18,10 @@ const models = {
   EventInterest,
 };
 
-User.hasMany(Event, { foreignKey: "userId", as: "organizedEvents" });
-Event.belongsTo(User, { foreignKey: "userId", as: "organizer" });
-
-User.belongsToMany(Event, {
-  through: EventInterest,
-  foreignKey: "userId",
-  as: "interestedEvents",
-});
-Event.belongsToMany(User, {
-  through: EventInterest,
-  foreignKey: "eventId",
-  as: "interestedUsers",
+Object.values(models).forEach((model: any) => {
+  if (model.associate) {
+    model.associate(models);
+  }
 });
 
 export {

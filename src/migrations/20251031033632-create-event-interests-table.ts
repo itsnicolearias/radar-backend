@@ -3,7 +3,7 @@ import { QueryInterface, DataTypes } from "sequelize"
 module.exports = {
   up: async (queryInterface: QueryInterface) => {
     await queryInterface.createTable("event_interests", {
-      id: {
+      event_interest_id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
@@ -13,7 +13,7 @@ module.exports = {
         allowNull: false,
         references: {
           model: "events",
-          key: "id",
+          key: "event_id",
         },
         onDelete: "CASCADE",
       },

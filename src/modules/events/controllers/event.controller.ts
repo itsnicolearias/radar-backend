@@ -36,7 +36,7 @@ class EventController {
 
   async findById(req: Request, res: Response, next: NextFunction) {
     try {
-      const event = await eventService.findById(req.params.id);
+      const event = await eventService.findById(req.params.eventId);
       res.json(event);
     } catch (error) {
       next(error);
@@ -46,7 +46,7 @@ class EventController {
   async update(req: Request, res: Response, next: NextFunction) {
     try {
       const event = await eventService.update(
-        req.params.id,
+        req.params.eventId,
         req.body as Partial<TEvent>
       );
       res.json(event);
@@ -57,7 +57,7 @@ class EventController {
 
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
-      await eventService.delete(req.params.id);
+      await eventService.delete(req.params.eventId);
       res.status(204).send();
     } catch (error) {
       next(error);
@@ -70,7 +70,7 @@ class EventController {
         res.status(401).json({ message: "Unauthorized" });
         return;
       }
-      await eventService.addInterest(req.params.id, req.user.userId);
+      await eventService.addInterest(req.params.eventId, req.user.userId);
       res.status(204).send();
     } catch (error) {
       next(error);
@@ -83,7 +83,7 @@ class EventController {
         res.status(401).json({ message: "Unauthorized" });
         return;
       }
-      await eventService.removeInterest(req.params.id, req.user.userId);
+      await eventService.removeInterest(req.params.eventId, req.user.userId);
       res.status(204).send();
     } catch (error) {
       next(error);
@@ -92,7 +92,7 @@ class EventController {
 
   async findInterestedUsers(req: Request, res: Response, next: NextFunction) {
     try {
-      const users = await eventService.findInterestedUsers(req.params.id);
+      const users = await eventService.findInterestedUsers(req.params.eventId);
       res.json(users);
     } catch (error) {
       next(error);

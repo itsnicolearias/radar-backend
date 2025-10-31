@@ -80,13 +80,13 @@ router.get("/", eventController.findAll);
 
 /**
  * @swagger
- * /events/{id}:
+ * /events/{eventId}:
  *   get:
  *     summary: Get an event by id
  *     tags: [Events]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: eventId
  *         required: true
  *         schema:
  *           type: string
@@ -102,18 +102,18 @@ router.get("/", eventController.findAll);
  *       404:
  *         description: The event was not found
  */
-router.get("/:id", validate(eventIdSchema), eventController.findById);
+router.get("/:eventId", validate(eventIdSchema), eventController.findById);
 router.put(
-  "/:id",
+  "/:eventId",
   authenticate,
   validate(updateEventSchema),
   eventController.update
 );
-router.delete("/:id", authenticate, validate(eventIdSchema), eventController.delete);
+router.delete("/:eventId", authenticate, validate(eventIdSchema), eventController.delete);
 
 /**
  * @swagger
- * /events/{id}/interest:
+ * /events/{eventId}/interest:
  *   post:
  *     summary: Add interest to an event
  *     tags: [Events]
@@ -121,7 +121,7 @@ router.delete("/:id", authenticate, validate(eventIdSchema), eventController.del
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: eventId
  *         required: true
  *         schema:
  *           type: string
@@ -139,7 +139,7 @@ router.delete("/:id", authenticate, validate(eventIdSchema), eventController.del
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: eventId
  *         required: true
  *         schema:
  *           type: string
@@ -155,7 +155,7 @@ router.delete("/:id", authenticate, validate(eventIdSchema), eventController.del
  *     tags: [Events]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: eventId
  *         required: true
  *         schema:
  *           type: string
@@ -174,19 +174,19 @@ router.delete("/:id", authenticate, validate(eventIdSchema), eventController.del
  *         description: The event was not found
  */
 router.post(
-  "/:id/interest",
+  "/:eventId/interest",
   authenticate,
   validate(eventIdSchema),
   eventController.addInterest
 );
 router.delete(
-  "/:id/interest",
+  "/:eventId/interest",
   authenticate,
   validate(eventIdSchema),
   eventController.removeInterest
 );
 router.get(
-  "/:id/interest",
+  "/:eventId/interest",
   validate(eventIdSchema),
   eventController.findInterestedUsers
 );
