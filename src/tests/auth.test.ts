@@ -4,11 +4,17 @@ import { beforeAll, afterAll, afterEach } from './setup';
 import { User } from '../models';
 
 describe('Auth Endpoints', () => {
-  beforeAll();
+  beforeAll(async () => {
+    await beforeAll();
+  });
 
-  afterAll();
+  afterAll(async () => {
+    await afterAll();
+  });
 
-  afterEach();
+  afterEach(async () => {
+    await afterEach();
+  });
 
   describe('POST /api/auth/register', () => {
     it('should register a new user successfully', async () => {

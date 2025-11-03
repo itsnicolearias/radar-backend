@@ -1,3 +1,5 @@
+import { Request } from 'express';
+
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = 20;
 

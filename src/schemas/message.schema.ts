@@ -10,11 +10,9 @@ export const markAsReadSchema = z.object({
 });
 
 export const getRecentConversationsSchema = z.object({
-  query: z.object({
-    page: z.string().optional(),
-    limit: z.string().optional(),
-    all: z.string().optional(),
-  }),
+  page: z.string().optional(),
+  limit: z.string().optional(),
+  all: z.string().optional(),
 });
 
 export type SendMessageInput = z.infer<typeof sendMessageSchema>;
