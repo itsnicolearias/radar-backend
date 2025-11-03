@@ -9,17 +9,11 @@ describe('GET /api/messages', () => {
   let user3: User;
   let token1: string;
 
-  beforeAll(async () => {
-    await beforeAll();
-  });
+  beforeAll();
 
-  afterAll(async () => {
-    await afterAll();
-  });
+  afterAll();
 
-  afterEach(async () => {
-    await afterEach();
-  });
+  afterEach();
 
   beforeEach(async () => {
     // Create users
@@ -66,9 +60,9 @@ describe('GET /api/messages', () => {
     });
   });
 
-  afterAll(afterAll);
+  afterAll();
 
-  afterEach(afterEach);
+  afterEach();
 
   it('should return recent conversations', async () => {
     const res = await request(app)

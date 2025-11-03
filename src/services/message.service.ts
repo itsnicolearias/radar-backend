@@ -2,7 +2,7 @@ import { Message, User, Connection } from '../models';
 import { notFound, badRequest } from '../utils/errors';
 import { encryptMessage, decryptMessage } from '../utils/crypto';
 import type { SendMessageInput, MarkAsReadInput } from '../schemas/message.schema';
-import { Op, Sequelize } from 'sequelize';
+import { Op } from 'sequelize';
 import sequelize from '../config/sequelize';
 import { ConnectionStatus } from '../interfaces/connection.interface';
 
@@ -86,7 +86,8 @@ export const getRecentConversations = async (
     });
 
     const mappedConversations = await Promise.all(
-      conversations.map(async (conv: any) => {
+      conversations.map(async (conv: any ) => {
+
         const otherUser =
           conv.sender.userId === userId ? conv.receiver : conv.sender;
         const lastMessage = await Message.findOne({
@@ -107,8 +108,8 @@ export const getRecentConversations = async (
           },
         });
 
-        let content = lastMessage.content;
-        if (lastMessage.content && lastMessage.iv && lastMessage.authTag) {
+        let content = lastMessage?.content;
+        if (lastMessage?.content && lastMessage?.iv && lastMessage?.authTag) {
           content = decryptMessage(
             lastMessage.content,
             lastMessage.iv,
@@ -126,9 +127,9 @@ export const getRecentConversations = async (
           },
           lastMessage: {
             content,
-            createdAt: lastMessage.createdAt,
-            isRead: lastMessage.isRead,
-            senderId: lastMessage.senderId,
+            createdAt: lastMessage?.createdAt,
+            isRead: lastMessage?.isRead,
+            senderId: lastMessage?.senderId,
           },
           unreadCount,
         };
