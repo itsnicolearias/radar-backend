@@ -1,9 +1,8 @@
-import { Message, User, Connection } from '../models';
+import { Message, User, Connection, Profile } from '../models';
 import { notFound, badRequest } from '../utils/errors';
-import { encryptMessage, decryptMessage } from '../utils/crypto';
+import { encryptMessage } from '../utils/crypto';
 import type { SendMessageInput, MarkAsReadInput } from '../schemas/message.schema';
-import { Op, Sequelize } from 'sequelize';
-import sequelize from '../config/sequelize';
+import { Op } from 'sequelize';
 import { ConnectionStatus } from '../interfaces/connection.interface';
 
 export const sendMessage = async (senderId: string, data: SendMessageInput) => {
@@ -48,98 +47,75 @@ export const sendMessage = async (senderId: string, data: SendMessageInput) => {
 
 export const getRecentConversations = async (
   userId: string,
-  page: number,
-  limit: number,
-  all: boolean,
+  page = 1,
+  limit = 10,
+  all = false
 ) => {
   try {
-    const { count, rows: conversations } = await Message.findAndCountAll({
-      attributes: [
-        [
-          sequelize.literal(
-            'CASE WHEN "sender_id" = :userId THEN "receiver_id" ELSE "sender_id" END',
-          ),
-          'conversationId',
-        ],
-      ],
+    // 1️⃣ Buscar todos los mensajes del usuario
+    const messages = await Message.findAll({
       where: {
         [Op.or]: [{ senderId: userId }, { receiverId: userId }],
       },
-      group: ['conversationId'],
-      order: [[sequelize.fn('MAX', sequelize.col('createdAt')), 'DESC']],
-      limit: all ? undefined : limit,
-      offset: all ? undefined : (page - 1) * limit,
-      replacements: { userId },
-      subQuery: false,
-      include: [
-        {
-          model: User,
-          as: 'sender',
-          attributes: ['userId', 'displayName', 'avatarUrl', 'isVerified'],
+      order: [['createdAt', 'DESC']],
+    })
+
+    // 2️⃣ Agrupar por el otro usuario
+    const seen = new Set<string>()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const conversations: any[] = []
+
+    for (const msg of messages) {
+      const otherUserId =
+        msg.senderId === userId ? msg.receiverId : msg.senderId
+
+      if (!otherUserId || seen.has(otherUserId)) continue
+      seen.add(otherUserId)
+
+      const otherUser = await User.findByPk(otherUserId, {
+        attributes: ['userId', 'displayName', 'isVerified'],
+        raw: true,
+        include: [
+          {
+            model: Profile,
+            attributes: ["photoUrl"],
+            as: "Profile"
+
+          },
+        ],
+      })
+
+      const unreadCount = await Message.count({
+        where: {
+          senderId: otherUserId,
+          receiverId: userId,
+          isRead: false,
         },
-        {
-          model: User,
-          as: 'receiver',
-          attributes: ['userId', 'displayName', 'avatarUrl', 'isVerified'],
+      })
+
+      conversations.push({
+        conversationId: `${userId}-${otherUserId}`,
+        user: otherUser,
+        lastMessage: {
+          content: msg.content,
+          createdAt: msg.createdAt,
+          isRead: msg.isRead,
+          senderId: msg.senderId,
         },
-      ],
-    });
+        unreadCount,
+      })
+    }
 
-    const mappedConversations = await Promise.all(
-      conversations.map(async (conv: any) => {
-        const otherUser =
-          conv.sender.userId === userId ? conv.receiver : conv.sender;
-        const lastMessage = await Message.findOne({
-          where: {
-            [Op.or]: [
-              { senderId: userId, receiverId: otherUser.userId },
-              { senderId: otherUser.userId, receiverId: userId },
-            ],
-          },
-          order: [['createdAt', 'DESC']],
-        });
+    // 3️⃣ Paginación simple
+    const paginated = all
+      ? conversations
+      : conversations.slice((page - 1) * limit, page * limit)
 
-        const unreadCount = await Message.count({
-          where: {
-            senderId: otherUser.userId,
-            receiverId: userId,
-            isRead: false,
-          },
-        });
-
-        let content = lastMessage.content;
-        if (lastMessage.content && lastMessage.iv && lastMessage.authTag) {
-          content = decryptMessage(
-            lastMessage.content,
-            lastMessage.iv,
-            lastMessage.authTag,
-          );
-        }
-
-        return {
-          conversationId: `${userId}-${otherUser.userId}`,
-          user: {
-            userId: otherUser.userId,
-            displayName: otherUser.displayName,
-            avatarUrl: otherUser.avatarUrl,
-            isVerified: otherUser.isVerified,
-          },
-          lastMessage: {
-            content,
-            createdAt: lastMessage.createdAt,
-            isRead: lastMessage.isRead,
-            senderId: lastMessage.senderId,
-          },
-          unreadCount,
-        };
-      }),
-    );
-
-    return { conversations: mappedConversations, total: count.length };
+    return { conversations: paginated, total: conversations.length }
   } catch (error) {
-    throw badRequest(error);
+    throw badRequest(error)
   }
-};
+}
 
 export const getMessagesBetweenUsers = async (userId1: string, userId2: string) => {
   try {
@@ -155,26 +131,33 @@ export const getMessagesBetweenUsers = async (userId1: string, userId2: string) 
           model: User,
           as: "sender",
           attributes: ["userId", "firstName", "lastName"],
+          include: [
+          {
+            model: Profile,
+            attributes: ["photoUrl"],
+            as: "Profile"
+
+          },
+        ],
         },
         {
           model: User,
           as: "receiver",
           attributes: ["userId", "firstName", "lastName"],
+          include: [
+          {
+            model: Profile,
+            attributes: ["photoUrl"],
+            as: "Profile"
+
+          },
+        ],
         },
       ],
       order: [["createdAt", "ASC"]],
     });
 
-    return messages.map((message) => {
-      if (message.content && message.iv && message.authTag) {
-        message.content = decryptMessage(
-          message.content,
-          message.iv,
-          message.authTag,
-        );
-      }
-      return message;
-    });
+    return messages;
   } catch (error) {
     throw badRequest(error);
   }

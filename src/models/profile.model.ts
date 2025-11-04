@@ -106,12 +106,12 @@ Profile.init(
 // Define associations
 User.hasOne(Profile, {
   foreignKey: "userId",
-  as: "profile",
+  as: "Profile",
 })
 
 Profile.belongsTo(User, {
   foreignKey: "userId",
-  as: "user",
+  as: "User",
 })
 
 export default Profile
