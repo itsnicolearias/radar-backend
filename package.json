@@ -36,6 +36,7 @@
     "crypto": "1.0.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "express-rate-limit": "^8.2.1",
     "http": "0.0.1-security",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "0.547.0",
@@ -81,7 +82,7 @@
     "sequelize-cli": "^6.6.2",
     "supertest": "^7.0.0",
     "tailwindcss": "^4.1.9",
-    "ts-jest": "^29.2.5",
+    "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.3"

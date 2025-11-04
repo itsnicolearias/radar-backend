@@ -6,8 +6,12 @@ import { validationError } from "../utils/errors"
 export const validate = (schema: ZodSchema) => {
   return (req: Request, _res: Response, next: NextFunction) => {
     try {
-      schema.parse(req.body)
-      next()
+      if (req.method === 'GET') {
+        schema.parse(req.query);
+      } else {
+        schema.parse(req.body);
+      }
+      next();
     } catch (error: any) {
       const errors = error.errors?.map((err: any) => ({
         field: err.path.join("."),

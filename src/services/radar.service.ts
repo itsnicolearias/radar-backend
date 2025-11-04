@@ -21,7 +21,7 @@ export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) 
       include: [
         {
           model: Profile,
-          as: "profile",
+          as: "Profile",
           attributes: ["photoUrl", "bio", "age", "interests"],
         },
       ],

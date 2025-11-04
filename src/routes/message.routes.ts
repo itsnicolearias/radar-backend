@@ -2,9 +2,47 @@ import { Router } from "express"
 import * as messageController from "../controllers/message.controller"
 import { authenticate } from "../middlewares/auth.middleware"
 import { validate } from "../middlewares/validation.middleware"
-import { sendMessageSchema, markAsReadSchema } from "../schemas/message.schema"
+import {
+  sendMessageSchema,
+  markAsReadSchema,
+  getRecentConversationsSchema,
+} from '../schemas/message.schema';
 
-const router = Router()
+const router = Router();
+
+/**
+ * @swagger
+ * /api/messages:
+ *   get:
+ *     summary: Get recent conversations
+ *     tags: [Messages]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: all
+ *         schema:
+ *           type: boolean
+ *     responses:
+ *       200:
+ *         description: Conversations retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ */
+router.get(
+  '/',
+  authenticate,
+  validate(getRecentConversationsSchema),
+  messageController.getRecentConversations,
+);
 
 /**
  * @swagger

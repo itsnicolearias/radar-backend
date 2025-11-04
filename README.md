@@ -115,6 +115,7 @@ The Swagger UI provides:
 ### Authentication
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - Login user
+- `POST /api/auth/resend-verification` - Resend verification email
 
 ### Users
 - `GET /api/users/:id` - Get user by ID
@@ -134,6 +135,7 @@ The Swagger UI provides:
 - `DELETE /api/connections/:connectionId` - Delete connection
 
 ### Messages
+- `GET /api/messages` - Get recent conversations
 - `POST /api/messages` - Send message
 - `GET /api/messages/:userId` - Get messages with user
 - `PATCH /api/messages/read` - Mark messages as read
@@ -216,6 +218,7 @@ See `.env.example` for all required environment variables:
 - `PORT` - Server port
 - `DATABASE_URL` - PostgreSQL connection string
 - `JWT_SECRET` - Secret key for JWT tokens
+- `ENCRYPTION_KEY` - Secret key for message encryption
 
 ### Database
 - `DB_USER` - Database username

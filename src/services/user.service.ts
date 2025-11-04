@@ -8,7 +8,7 @@ export const getUserById = async (userId: string) => {
       include: [
         {
           model: Profile,
-          as: "profile",
+          as: "Profile",
         },
       ],
       attributes: { exclude: ["passwordHash"] },
