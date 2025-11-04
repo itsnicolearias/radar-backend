@@ -26,6 +26,15 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
       foreignKey: "userId",
       as: "notificationTokens",
     });
+    User.hasMany(models.Event, {
+      foreignKey: "userId",
+      as: "organizedEvents",
+    });
+    User.belongsToMany(models.Event, {
+      through: "EventInterest",
+      as: "interestedEvents",
+      foreignKey: "userId",
+    });
   }
 }
 
@@ -126,7 +135,7 @@ User.init(
     tableName: "users",
     timestamps: true,
     underscored: true,
-  },
+  }
 )
 
 export default User

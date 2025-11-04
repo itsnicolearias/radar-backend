@@ -1,8 +1,10 @@
+/* eslint-disable no-console */
 import { Sequelize } from "sequelize"
 import { config } from "./config"
 
+const url = config.env === "test" ? config.dbTestUrl : config.dbUrl
 
-const sequelize = new Sequelize(config.dbUrl || "", {
+const sequelize = new Sequelize(url || "", {
   dialect: "postgres",
   logging: config.env === "development" ? console.log : false,
   pool: {

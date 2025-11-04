@@ -1,12 +1,12 @@
 import "dotenv/config"
-import { sequelize } from "../models"
-
+import { badRequest } from "@hapi/boom";
+import sequelize from "../config/sequelize";
 export const beforeAll = async () => {
   try {
     await sequelize.authenticate()
     await sequelize.sync({ force: true })
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -14,7 +14,7 @@ export const afterAll = async () => {
   try {
     await sequelize.close()
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -25,6 +25,6 @@ export const afterEach = async () => {
       await model.destroy({ where: {}, force: true })
     }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }

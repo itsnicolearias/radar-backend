@@ -1,7 +1,9 @@
-import { User, Profile } from "../models"
-import sequelize from "../config/sequelize"
 import * as notificationService from "./notification.service"
+import sequelize, { Op } from "sequelize"
 import type { GetNearbyUsersInput } from "../schemas/radar.schema"
+import { badRequest } from "@hapi/boom"
+import User from "../models/user.model"
+import Profile from "../models/profile.model"
 
 export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) => {
   try {
@@ -10,17 +12,17 @@ export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) 
     // Only include users who are verified, visible, and not in invisible mode
     const nearbyUsers = await User.findAll({
       where: {
-        userId: { [sequelize.Sequelize.Op.ne]: userId },
+        userId: { [Op.ne]: userId },
         isVerified: true,
         isVisible: true,
         invisibleMode: false,
-        lastLatitude: { [sequelize.Sequelize.Op.ne]: null },
-        lastLongitude: { [sequelize.Sequelize.Op.ne]: null },
+        lastLatitude: { [Op.ne]: null },
+        lastLongitude: { [Op.ne]: null },
       },
       include: [
         {
           model: Profile,
-          as: "profile",
+          as: "Profile",
           attributes: ["photoUrl", "bio", "age", "interests"],
         },
       ],
@@ -55,6 +57,6 @@ export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) 
 
     return nearbyUsers
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }

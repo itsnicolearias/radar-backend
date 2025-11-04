@@ -1,7 +1,10 @@
 import admin from "../config/firebase";
 import { NotificationType } from "../interfaces/notification.interface";
-import { Notification, NotificationToken, User } from "../models";
+import Notification from "../models/notification.model";
+import NotificationToken from "../models/notificationToken.model";
+import User from "../models/user.model";
 import type { MarkNotificationsAsReadInput } from "../schemas/notification.schema";
+import { badRequest } from "@hapi/boom"
 
 export const sendPushNotification = async (userId: string, payload: admin.messaging.MessagingPayload) => {
   try {
@@ -14,9 +17,7 @@ export const sendPushNotification = async (userId: string, payload: admin.messag
       }
     }
   } catch (error) {
-    console.error("Error sending push notification:", error);
-    // Depending on the desired behavior, you might want to re-throw the error
-    // or handle it gracefully.
+    throw badRequest(error);
   }
 };
 
@@ -28,7 +29,7 @@ export const saveNotificationToken = async (userId: string, token: string) => {
     });
     return notificationToken;
   } catch (error) {
-    throw error;
+    throw badRequest(error);
   }
 };
 
@@ -37,9 +38,10 @@ export const deleteNotificationToken = async (userId: string, token: string) => 
     await NotificationToken.destroy({ where: { userId, token } });
     return { message: "Token deleted successfully" };
   } catch (error) {
-    throw error;
+    throw badRequest(error);
   }
 };
+
 
 export const createNotification = async (userId: string, type: NotificationType, message: string) => {
   try {
@@ -51,7 +53,7 @@ export const createNotification = async (userId: string, type: NotificationType,
 
     return notification
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -104,7 +106,7 @@ export const getNotificationsByUserId = async (userId: string) => {
 
     return notifications
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -117,12 +119,12 @@ export const markNotificationsAsRead = async (userId: string, data: MarkNotifica
           notificationId: data.notificationIds,
           userId,
         },
-      },
+      }
     )
 
     return { message: "Notifications marked as read" }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -137,7 +139,7 @@ export const getUnreadNotificationCount = async (userId: string) => {
 
     return { count }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -152,6 +154,6 @@ export const deleteNotification = async (notificationId: string, userId: string)
 
     return { message: "Notification deleted successfully" }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }

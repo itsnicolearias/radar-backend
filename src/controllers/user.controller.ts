@@ -5,8 +5,8 @@ import type { UpdateLocationInput, UpdateUserInput, ToggleVisibilityInput } from
 
 export const getUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params
-    const user = await userService.getUserById(id)
+    const userId = req.user?.userId
+    const user = await userService.getUserById(String(userId))
 
     res.status(200).json({
       success: true,
@@ -19,17 +19,10 @@ export const getUser = async (req: AuthRequest, res: Response, next: NextFunctio
 
 export const updateLocation = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params
+    const userId = req.user?.userId
     const data: UpdateLocationInput = req.body
 
-    if (req.user?.userId !== id) {
-      return res.status(403).json({
-        success: false,
-        message: "Forbidden",
-      })
-    }
-
-    const result = await userService.updateUserLocation(id, data)
+    const result = await userService.updateUserLocation(String(userId), data)
 
     return res.status(200).json({
       success: true,
@@ -42,17 +35,10 @@ export const updateLocation = async (req: AuthRequest, res: Response, next: Next
 
 export const updateUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params
+    const userId = req.user?.userId
     const data: UpdateUserInput = req.body
 
-    if (req.user?.userId !== id) {
-      return res.status(403).json({
-        success: false,
-        message: "Forbidden",
-      })
-    }
-
-    const result = await userService.updateUser(id, data)
+    const result = await userService.updateUser(String(userId), data)
 
     return res.status(200).json({
       success: true,
@@ -65,17 +51,10 @@ export const updateUser = async (req: AuthRequest, res: Response, next: NextFunc
 
 export const toggleVisibility = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params
+    const userId = req.user?.userId
     const data: ToggleVisibilityInput = req.body
 
-    if (req.user?.userId !== id) {
-      return res.status(403).json({
-        success: false,
-        message: "Forbidden",
-      })
-    }
-
-    const result = await userService.toggleVisibility(id, data)
+    const result = await userService.toggleVisibility(String(userId), data)
 
     return res.status(200).json({
       success: true,

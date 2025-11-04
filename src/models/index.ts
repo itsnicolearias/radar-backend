@@ -8,14 +8,26 @@ import NotificationToken, { init as initNotificationToken } from "./notification
 
 initNotificationToken(sequelize)
 
+import Event from "./event.model";
+import EventInterest from "./eventInterest.model";
+
 const models = {
   User,
   Profile,
   Connection,
   Message,
   Notification,
+  Event,
+  EventInterest,
   NotificationToken,
-}
+};
+
+Object.values(models).forEach((model: any) => {
+  if (model.associate) {
+    model.associate(models);
+  }
+});
+
 
 Object.values(models).forEach((model: any) => {
   if (model.associate) {
@@ -23,6 +35,4 @@ Object.values(models).forEach((model: any) => {
   }
 })
 
-export { sequelize, User, Profile, Connection, Message, Notification, NotificationToken }
-
-export default models
+export default models;

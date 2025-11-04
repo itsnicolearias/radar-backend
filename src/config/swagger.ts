@@ -202,6 +202,97 @@ const options: swaggerJsdoc.Options = {
           properties: {
             token: {
               type: "string",
+              },
+          },
+        },
+        Event: {
+          type: "object",
+          properties: {
+            id: {
+              type: "string",
+              format: "uuid",
+            },
+            userId: {
+              type: "string",
+              format: "uuid",
+            },
+            title: {
+              type: "string",
+            },
+            description: {
+              type: "string",
+            },
+            location: {
+              type: "string",
+            },
+            latitude: {
+              type: "number",
+            },
+            longitude: {
+              type: "number",
+            },
+            startDate: {
+              type: "string",
+              format: "date-time",
+            },
+            endDate: {
+              type: "string",
+              format: "date-time",
+            },
+            isPublic: {
+              type: "boolean",
+            },
+            maxAttendees: {
+              type: "integer",
+            },
+            price: {
+              type: "number",
+            },
+            createdAt: {
+              type: "string",
+              format: "date-time",
+            },
+            updatedAt: {
+              type: "string",
+              format: "date-time",
+            },
+          },
+        },
+        CreateEvent: {
+          type: "object",
+          required: ["title", "startDate"],
+          properties: {
+            title: {
+              type: "string",
+            },
+            description: {
+              type: "string",
+            },
+            location: {
+              type: "string",
+            },
+            latitude: {
+              type: "number",
+            },
+            longitude: {
+              type: "number",
+            },
+            startDate: {
+              type: "string",
+              format: "date-time",
+            },
+            endDate: {
+              type: "string",
+              format: "date-time",
+            },
+            isPublic: {
+              type: "boolean",
+            },
+            maxAttendees: {
+              type: "integer",
+            },
+            price: {
+              type: "number",
             },
           },
         },
@@ -213,7 +304,7 @@ const options: swaggerJsdoc.Options = {
       },
     ],
   },
-  apis: ["./src/routes/*.ts"],
+  apis: ["./src/routes/*.ts", "./src/modules/events/routes/*.ts"],
 }
 
 export const swaggerSpec = swaggerJsdoc(options)

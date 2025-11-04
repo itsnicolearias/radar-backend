@@ -38,7 +38,7 @@ export const createConnection = async (sender: { userId: string; firstName: stri
 
     return connection
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -66,7 +66,7 @@ export const updateConnection = async (connectionId: string, user: { userId: str
 
     return connection
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -75,6 +75,8 @@ export const getConnectionsByUserId = async (userId: string) => {
     const connections = await Connection.findAll({
       where: {
         [Op.or]: [{ senderId: userId }, { receiverId: userId }],
+        [Op.and]: [{status: "accepted"}],
+        
       },
       include: [
         {
@@ -93,7 +95,35 @@ export const getConnectionsByUserId = async (userId: string) => {
 
     return connections
   } catch (error) {
-    throw error
+    throw badRequest(error);
+  }
+}
+
+export const getPendingConnections = async (userId: string) => {
+  try {
+    const connections = await Connection.findAll({
+      where: {
+        receiverId: userId, 
+        status: "pending"
+      },
+      include: [
+        {
+          model: User,
+          as: "sender",
+          attributes: ["userId", "firstName", "lastName", "email"],
+        },
+        {
+          model: User,
+          as: "receiver",
+          attributes: ["userId", "firstName", "lastName", "email"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    })
+
+    return connections
+  } catch (error) {
+    throw badRequest(error);
   }
 }
 
@@ -113,6 +143,6 @@ export const deleteConnection = async (connectionId: string, userId: string) => 
 
     return { message: "Connection deleted successfully" }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
