@@ -5,16 +5,18 @@ import profileRoutes from "./profile.routes"
 import connectionRoutes from "./connection.routes"
 import messageRoutes from "./message.routes"
 import notificationRoutes from "./notification.routes"
-import radarRoutes from "./radar.routes"
+import radarRoutes from "./radar.routes";
+import eventRoutes from "../modules/events/routes/event.routes";
 
-const router = Router()
+const router = Router();
 
-router.use("/auth", authRoutes)
-router.use("/users", userRoutes)
-router.use("/profiles", profileRoutes)
-router.use("/connections", connectionRoutes)
-router.use("/messages", messageRoutes)
-router.use("/notifications", notificationRoutes)
-router.use("/radar", radarRoutes)
+router.use("/auth", authRoutes);
+router.use("/users", userRoutes);
+router.use("/profiles", profileRoutes);
+router.use("/connections", connectionRoutes);
+router.use("/messages", messageRoutes);
+router.use("/notifications", notificationRoutes);
+router.use("/radar", radarRoutes);
+router.use("/events", eventRoutes);
 
-export default router
+export default router;

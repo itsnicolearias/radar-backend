@@ -1,7 +1,6 @@
 import { User, Profile } from "../models"
-import sequelize from "../config/sequelize"
+import sequelize, { Op } from "sequelize"
 import type { GetNearbyUsersInput } from "../schemas/radar.schema"
-import { Op } from "sequelize"
 import { badRequest } from "@hapi/boom"
 
 export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) => {
