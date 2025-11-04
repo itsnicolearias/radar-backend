@@ -8,9 +8,16 @@ export const registerUserSchema = z.object({
 })
 
 export const loginUserSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(1, "Password is required"),
-})
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'),
+});
 
-export type RegisterUserInput = z.infer<typeof registerUserSchema>
-export type LoginUserInput = z.infer<typeof loginUserSchema>
+export const resendVerificationEmailSchema = z.object({
+  email: z.string().email('Invalid email address'),
+});
+
+export type RegisterUserInput = z.infer<typeof registerUserSchema>;
+export type LoginUserInput = z.infer<typeof loginUserSchema>;
+export type ResendVerificationEmailInput = z.infer<
+  typeof resendVerificationEmailSchema
+>;

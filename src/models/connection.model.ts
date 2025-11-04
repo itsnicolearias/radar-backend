@@ -68,7 +68,7 @@ Connection.init(
     tableName: "connections",
     timestamps: true,
     underscored: true,
-  },
+  }
 )
 
 // Define associations
@@ -92,4 +92,4 @@ Connection.belongsTo(User, {
   as: "receiver",
 })
 
-export default Connection;
+export default Connection

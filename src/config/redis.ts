@@ -1,5 +1,6 @@
 import { createClient, type RedisClientType } from "redis"
 import { config } from "./config"
+import { badRequest } from "@hapi/boom"
 
 let redisClient: RedisClientType | null = null
 
@@ -20,7 +21,7 @@ export const connectRedis = async (): Promise<RedisClientType> => {
     await redisClient.connect()
     return redisClient
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 

@@ -1,6 +1,8 @@
 import { User, Profile } from "../models"
 import sequelize, { Op } from "sequelize"
 import type { GetNearbyUsersInput } from "../schemas/radar.schema"
+import { Op } from "sequelize"
+import { badRequest } from "@hapi/boom"
 
 export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) => {
   try {
@@ -19,7 +21,7 @@ export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) 
       include: [
         {
           model: Profile,
-          as: "profile",
+          as: "Profile",
           attributes: ["photoUrl", "bio", "age", "interests"],
         },
       ],
@@ -50,6 +52,6 @@ export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) 
 
     return nearbyUsers
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
