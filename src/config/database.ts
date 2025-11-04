@@ -1,20 +1,20 @@
-import 'dotenv/config';
-import { config } from './config';
+import "dotenv/config"
+import { config } from "./config"
 
 export = {
   development: {
-    url: config.dbUrl
+    url: config.dbUrl,
   },
   test: {
-    url: "config.dbUrlT",
+    url: config.dbTestUrl,
   },
   production: {
     url: config.dbUrl,
-    dialect: 'postgres',
+    dialect: "postgres",
     dialectOptions: {
       ssl: {
         rejectUnauthorized: false,
       },
     },
   },
-};
+}

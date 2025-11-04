@@ -1,3 +1,4 @@
+import { badRequest } from "@hapi/boom"
 import { NotificationType } from "../interfaces/notification.interface"
 import { Notification } from "../models"
 import type { MarkNotificationsAsReadInput } from "../schemas/notification.schema"
@@ -12,7 +13,7 @@ export const createNotification = async (userId: string, type: NotificationType,
 
     return notification
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -25,7 +26,7 @@ export const getNotificationsByUserId = async (userId: string) => {
 
     return notifications
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -38,12 +39,12 @@ export const markNotificationsAsRead = async (userId: string, data: MarkNotifica
           notificationId: data.notificationIds,
           userId,
         },
-      },
+      }
     )
 
     return { message: "Notifications marked as read" }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -58,7 +59,7 @@ export const getUnreadNotificationCount = async (userId: string) => {
 
     return { count }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -73,6 +74,6 @@ export const deleteNotification = async (notificationId: string, userId: string)
 
     return { message: "Notification deleted successfully" }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }

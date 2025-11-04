@@ -50,7 +50,7 @@ export const updateConnection = async (req: AuthRequest, res: Response, next: Ne
   }
 }
 
-export const getConnections = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const getAcceptedConnections = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId
 
@@ -62,6 +62,28 @@ export const getConnections = async (req: AuthRequest, res: Response, next: Next
     }
 
     const connections = await connectionService.getConnectionsByUserId(userId)
+
+    res.status(200).json({
+      success: true,
+      data: connections,
+    })
+  } catch (error) {
+    return next(error)
+  }
+}
+
+export const getPendingConnections = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      })
+    }
+
+    const connections = await connectionService.getPendingConnections(userId)
 
     res.status(200).json({
       success: true,

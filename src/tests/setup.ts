@@ -1,3 +1,4 @@
+import { badRequest } from "@hapi/boom";
 import { sequelize } from "../models"
 
 export const beforeAll = async () => {
@@ -5,7 +6,7 @@ export const beforeAll = async () => {
     await sequelize.authenticate()
     await sequelize.sync({ force: true })
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -13,7 +14,7 @@ export const afterAll = async () => {
   try {
     await sequelize.close()
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -24,6 +25,6 @@ export const afterEach = async () => {
       await model.destroy({ where: {}, force: true })
     }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }

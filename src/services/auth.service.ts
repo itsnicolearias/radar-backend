@@ -6,6 +6,7 @@ import { unauthorized, conflict, notFound } from "../utils/errors"
 import { sendEmail } from "../config/email"
 import { config } from "../config/config"
 import type { RegisterUserInput, LoginUserInput } from "../schemas/auth.schema"
+import { badRequest } from "@hapi/boom"
 
 export interface AuthResponse {
   token: string
@@ -28,15 +29,18 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
       throw conflict("Email already registered")
     }
 
+
     const passwordHash = await bcrypt.hash(data.password, 10)
+    
     const emailVerificationToken = crypto.randomBytes(32).toString("hex")
+    const hashedToken = crypto.createHash("sha256").update(emailVerificationToken).digest("hex");
 
     const user = await User.create({
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
       passwordHash,
-      emailVerificationToken,
+      emailVerificationToken: hashedToken,
     })
 
     await Profile.create({
@@ -48,7 +52,6 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
       email: user.email,
     })
 
-    try {
       const verificationUrl = `${config.clientUrl || "http://localhost:3000"}/verify-email/${emailVerificationToken}`
       await sendEmail({
         to: user.email,
@@ -61,9 +64,6 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
           <p>Or copy and paste this link: ${verificationUrl}</p>
         `,
       })
-    } catch (emailError) {
-      console.error("Failed to send verification email:", emailError)
-    }
 
     return {
       token,
@@ -78,9 +78,52 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
       },
     }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
+
+export const resendVerificationEmail = async (email: string) => {
+  try {
+    const user = await User.findOne({ where: { email } });
+
+    if (!user) {
+      throw notFound('User not found');
+    }
+
+    if (user.isVerified) {
+      throw badRequest('Email already verified');
+    }
+
+    const emailVerificationToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(emailVerificationToken)
+      .digest('hex');
+
+    await user.update({
+      emailVerificationToken: hashedToken,
+    });
+
+    const verificationUrl = `${
+      config.clientUrl || 'http://localhost:3000'
+    }/verify-email/${emailVerificationToken}`;
+    await sendEmail({
+      to: user.email,
+      subject: 'Welcome to Radar - Verify Your Email',
+      html: `
+        <h1>Welcome ${user.firstName}!</h1>
+        <p>Thank you for registering with Radar.</p>
+        <p>Please verify your email by clicking the link below:</p>
+        <a href="${verificationUrl}">Verify Email</a>
+        <p>Or copy and paste this link: ${verificationUrl}</p>
+      `,
+    });
+
+    return { message: 'Verification email sent' };
+  } catch (error) {
+    throw badRequest(error);
+  }
+};
 
 export const loginUser = async (data: LoginUserInput): Promise<AuthResponse> => {
   try {
@@ -116,13 +159,15 @@ export const loginUser = async (data: LoginUserInput): Promise<AuthResponse> => 
       },
     }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
 export const verifyEmail = async (token: string): Promise<{ message: string; user: AuthResponse["user"] }> => {
   try {
-    const user = await User.findOne({ where: { emailVerificationToken: token } })
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({ where: { emailVerificationToken: hashedToken } })
 
     if (!user) {
       throw notFound("Invalid or expired verification token")
@@ -164,6 +209,6 @@ export const verifyEmail = async (token: string): Promise<{ message: string; use
       },
     }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }

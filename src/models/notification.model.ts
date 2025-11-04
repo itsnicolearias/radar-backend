@@ -60,7 +60,7 @@ Notification.init(
     sequelize,
     tableName: "notifications",
     timestamps: false,
-  },
+  }
 )
 
 // Define associations

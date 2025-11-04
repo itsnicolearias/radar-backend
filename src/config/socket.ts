@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Server as SocketIOServer } from "socket.io"
 import type { Server as HTTPServer } from "http"
 import { verifyToken } from "../utils/jwt"
@@ -12,10 +13,11 @@ export interface SocketUser {
 export interface AuthenticatedSocket {
   id: string
   user: SocketUser
-  join: (room: string) => void
-  leave: (room: string) => void
-  emit: (event: string, ...args: any[]) => void
-  on: (event: string, callback: (...args: any[]) => void) => void
+  join: (_room: string) => void
+  leave: (_room: string) => void
+  emit: (_event: string, ..._args: any[]) => void
+
+  on: (_event: string, _callback: (..._args: any[]) => void) => void
 }
 
 const userSockets = new Map<string, string>()

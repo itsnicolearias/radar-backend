@@ -7,7 +7,13 @@ export const sendMessageSchema = z.object({
 
 export const markAsReadSchema = z.object({
   messageIds: z.array(z.string().uuid()),
-})
+});
 
-export type SendMessageInput = z.infer<typeof sendMessageSchema>
-export type MarkAsReadInput = z.infer<typeof markAsReadSchema>
+export const getRecentConversationsSchema = z.object({
+  page: z.string().optional(),
+  limit: z.string().optional(),
+  all: z.string().optional(),
+});
+
+export type SendMessageInput = z.infer<typeof sendMessageSchema>;
+export type MarkAsReadInput = z.infer<typeof markAsReadSchema>;
