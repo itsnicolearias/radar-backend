@@ -71,7 +71,6 @@ import { z } from "zod";
  *           type: number
  */
 export const createEventSchema = z.object({
-  body: z.object({
     title: z.string().min(1).max(100),
     description: z.string().optional(),
     location: z.string().optional(),
@@ -82,11 +81,9 @@ export const createEventSchema = z.object({
     isPublic: z.boolean().optional(),
     maxAttendees: z.number().int().optional(),
     price: z.number().optional(),
-  }),
 });
 
 export const updateEventSchema = z.object({
-  body: z.object({
     title: z.string().min(1).max(100).optional(),
     description: z.string().optional(),
     location: z.string().optional(),
@@ -97,10 +94,6 @@ export const updateEventSchema = z.object({
     isPublic: z.boolean().optional(),
     maxAttendees: z.number().int().optional(),
     price: z.number().optional(),
-  }),
-  params: z.object({
-    eventId: z.string().uuid(),
-  }),
 });
 
 export const eventIdSchema = z.object({

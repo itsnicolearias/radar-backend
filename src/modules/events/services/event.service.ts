@@ -1,6 +1,6 @@
+import { notFound } from "@hapi/boom";
 import { Event, EventInterest, User } from "../../../models";
 import { TEvent } from "../interfaces/event.interface";
-import boom from "boom";
 
 class EventService {
   async create(eventData: TEvent, userId: string) {
@@ -8,7 +8,7 @@ class EventService {
       const event = await Event.create({ ...eventData, userId, isPublic: eventData.isPublic || true });
       return event;
     } catch (error) {
-      throw boom.internal("Error creating event");
+     throw error;
     }
   }
 
@@ -27,7 +27,7 @@ class EventService {
       });
       return events;
     } catch (error) {
-      throw boom.internal("Error finding events");
+      throw error;
     }
   }
 
@@ -35,11 +35,11 @@ class EventService {
     try {
       const event = await Event.findByPk(eventId, { include: "organizer" });
       if (!event) {
-        throw boom.notFound("Event not found");
+        throw notFound("Event not found");
       }
       return event;
     } catch (error) {
-      throw boom.internal("Error finding event");
+      throw error;
     }
   }
 
@@ -49,7 +49,7 @@ class EventService {
       await event.update(eventData);
       return event;
     } catch (error) {
-      throw boom.internal("Error updating event");
+      throw error;
     }
   }
 
@@ -58,7 +58,7 @@ class EventService {
       const event = await this.findById(eventId);
       await event.destroy();
     } catch (error) {
-      throw boom.internal("Error deleting event");
+      throw error;
     }
   }
 
@@ -67,11 +67,11 @@ class EventService {
       await this.findById(eventId);
       const user = await User.findByPk(userId);
       if (!user) {
-        throw boom.notFound("User not found");
+        throw notFound("User not found");
       }
       await EventInterest.create({ eventId, userId });
     } catch (error) {
-      throw boom.internal("Error adding interest");
+      throw error;
     }
   }
 
@@ -81,11 +81,11 @@ class EventService {
         where: { eventId, userId },
       });
       if (!interest) {
-        throw boom.notFound("Interest not found");
+        throw notFound("Interest not found");
       }
       await interest.destroy();
     } catch (error) {
-      throw boom.internal("Error removing interest");
+      throw error;
     }
   }
 
@@ -93,11 +93,11 @@ class EventService {
     try {
       const event = await Event.findByPk(eventId, { include: "interestedUsers" });
       if (!event) {
-        throw boom.notFound("Event not found");
+        throw notFound("Event not found");
       }
-      return event.interestedUsers;
+      return event;
     } catch (error) {
-      throw boom.internal("Error finding interested users");
+      throw error;
     }
   }
 }

@@ -4,7 +4,6 @@ import { validate } from "../../../middlewares/validation.middleware";
 import {
   createEventSchema,
   updateEventSchema,
-  eventIdSchema,
 } from "../schemas/event.schema";
 import { authenticate } from "../../../middlewares/auth.middleware";
 
@@ -12,7 +11,7 @@ const router = Router();
 
 /**
  * @swagger
- * /events:
+ * /api/events:
  *   post:
  *     summary: Create a new event
  *     tags: [Events]
@@ -34,7 +33,7 @@ const router = Router();
  *       400:
  *         description: Bad request
  *   get:
- *      summary: Get all events
+ *      summary: Get all api/events
  *      tags: [Events]
  *      parameters:
  *          - in: query
@@ -54,7 +53,7 @@ const router = Router();
  *            description: Whether to return all items
  *      responses:
  *          200:
- *              description: A list of events
+ *              description: A list of api/events
  *              content:
  *                  application/json:
  *                      schema:
@@ -80,7 +79,7 @@ router.get("/", eventController.findAll);
 
 /**
  * @swagger
- * /events/{eventId}:
+ * /api/events/{eventId}:
  *   get:
  *     summary: Get an event by id
  *     tags: [Events]
@@ -102,18 +101,18 @@ router.get("/", eventController.findAll);
  *       404:
  *         description: The event was not found
  */
-router.get("/:eventId", validate(eventIdSchema), eventController.findById);
+router.get("/:eventId", authenticate, eventController.findById);
 router.put(
   "/:eventId",
   authenticate,
   validate(updateEventSchema),
   eventController.update
 );
-router.delete("/:eventId", authenticate, validate(eventIdSchema), eventController.delete);
+router.delete("/:eventId", authenticate, eventController.delete);
 
 /**
  * @swagger
- * /events/{eventId}/interest:
+ * /api/events/{eventId}/interest:
  *   post:
  *     summary: Add interest to an event
  *     tags: [Events]
@@ -176,18 +175,16 @@ router.delete("/:eventId", authenticate, validate(eventIdSchema), eventControlle
 router.post(
   "/:eventId/interest",
   authenticate,
-  validate(eventIdSchema),
   eventController.addInterest
 );
 router.delete(
   "/:eventId/interest",
   authenticate,
-  validate(eventIdSchema),
   eventController.removeInterest
 );
 router.get(
   "/:eventId/interest",
-  validate(eventIdSchema),
+  authenticate,
   eventController.findInterestedUsers
 );
 

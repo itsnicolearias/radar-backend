@@ -14,8 +14,8 @@ describe("Event API", () => {
       email: faker.internet.email(),
       password: "password123",
     };
-    const registerRes = await request(app).post("/api/auth/register").send(userData);
-    user = registerRes.body.user;
+    await request(app).post("/api/auth/register").send(userData);
+    //const user = registerRes.body.user;
     const loginRes = await request(app).post("/api/auth/login").send({
       email: userData.email,
       password: userData.password,
