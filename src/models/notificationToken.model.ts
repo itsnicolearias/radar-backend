@@ -1,4 +1,5 @@
-import { Model, DataTypes, Sequelize } from "sequelize";
+import { Model, DataTypes, Sequelize, BelongsToGetAssociationMixin } from "sequelize";
+import type User from "./user.model"
 
 class NotificationToken extends Model {
   public notificationTokenId!: string;
@@ -7,11 +8,14 @@ class NotificationToken extends Model {
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  // association mixin
+  public getUser!: BelongsToGetAssociationMixin<User>
+  public User?: User
 
-  public static associate(models: any) {
+  public static associate(models: Record<string, import('sequelize').ModelStatic<import('sequelize').Model<Record<string, unknown>, Record<string, unknown>>>>) {
     NotificationToken.belongsTo(models.User, {
       foreignKey: "userId",
-      as: "user",
+      as: "User",
     });
   }
 }

@@ -1,7 +1,9 @@
 'use strict';
 
+import { DataTypes, QueryInterface } from 'sequelize';
+
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface: QueryInterface, Sequelize: typeof DataTypes) => {
     await queryInterface.addColumn('users', 'notifications_enabled', {
       type: Sequelize.BOOLEAN,
       allowNull: false,
@@ -9,7 +11,7 @@ module.exports = {
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface: QueryInterface) => {
     await queryInterface.removeColumn('users', 'notifications_enabled');
   }
 };

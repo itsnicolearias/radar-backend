@@ -1,4 +1,4 @@
-import admin from "../config/firebase";
+import { sendToDevices } from "../config/firebase";
 import { NotificationType } from "../interfaces/notification.interface";
 import Notification from "../models/notification.model";
 import NotificationToken from "../models/notificationToken.model";
@@ -6,14 +6,14 @@ import User from "../models/user.model";
 import type { MarkNotificationsAsReadInput } from "../schemas/notification.schema";
 import { badRequest } from "@hapi/boom"
 
-export const sendPushNotification = async (userId: string, payload: admin.messaging.MessagingPayload) => {
+export const sendPushNotification = async (userId: string, payload: import("firebase-admin").messaging.MessagingPayload) => {
   try {
-    const user = await User.findByPk(userId, { include: ["notificationTokens"] });
+    const user = await User.findByPk(userId, { include: [{ model: NotificationToken, as: "NotificationTokens" }] });
 
-    if (user && user.notificationsEnabled && user.notificationTokens) {
-      const tokens = user.notificationTokens.map((token) => token.token);
+    if (user && user.notificationsEnabled && user.NotificationTokens) {
+      const tokens = user.NotificationTokens.map((token) => token.token);
       if (tokens.length > 0) {
-        await admin.messaging().sendToDevice(tokens, payload);
+        await sendToDevices(tokens, payload)
       }
     }
   } catch (error) {

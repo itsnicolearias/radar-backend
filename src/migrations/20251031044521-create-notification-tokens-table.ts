@@ -1,7 +1,9 @@
 'use strict';
 
+import { DataTypes, QueryInterface } from 'sequelize';
+
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface: QueryInterface, Sequelize: typeof DataTypes) => {
     await queryInterface.createTable('notification_tokens', {
       notification_token_id: {
         allowNull: false,
@@ -37,7 +39,7 @@ module.exports = {
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface: QueryInterface) => {
     await queryInterface.dropTable('notification_tokens');
   }
 };

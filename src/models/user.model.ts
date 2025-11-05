@@ -1,6 +1,13 @@
-import { DataTypes, Model } from "sequelize"
+import { DataTypes, Model, HasOneGetAssociationMixin, HasOneSetAssociationMixin, HasManyGetAssociationsMixin, BelongsToManyGetAssociationsMixin } from "sequelize"
+import type { ModelStatic } from "sequelize"
 import sequelize from "../config/sequelize"
 import type { UserAttributes, UserCreationAttributes } from "../interfaces/user.interface"
+import type Profile from "./profile.model"
+import type NotificationToken from "./notificationToken.model"
+import type Event from "./event.model"
+import type Message from "./message.model"
+
+type ModelsMap = Record<string, ModelStatic<Model<Record<string, unknown>, Record<string, unknown>>>>;
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public userId!: string
@@ -21,20 +28,48 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
 
-  public static associate(models: any) {
+  // Association mixins for profile (hasOne)
+  public getProfile!: HasOneGetAssociationMixin<Profile>
+  public setProfile!: HasOneSetAssociationMixin<Profile, string>
+  public Profile?: Profile
+
+  // Notifications tokens (hasMany)
+  public getNotificationTokens!: HasManyGetAssociationsMixin<NotificationToken>
+  public NotificationTokens?: NotificationToken[]
+
+  // Organized events (hasMany)
+  public getOrganizedEvents!: HasManyGetAssociationsMixin<Event>
+  public OrganizedEvents?: Event[]
+
+  // Interested events (belongsToMany)
+  public getInterestedEvents!: BelongsToManyGetAssociationsMixin<Event>
+  public InterestedEvents?: Event[]
+
+  // Messages (hasMany)
+  public getSentMessages!: HasManyGetAssociationsMixin<Message>
+  public getReceivedMessages!: HasManyGetAssociationsMixin<Message>
+  public SentMessages?: Message[]
+  public ReceivedMessages?: Message[]
+
+  public static associate(models: ModelsMap) {
     User.hasMany(models.NotificationToken, {
       foreignKey: "userId",
-      as: "notificationTokens",
+      as: "NotificationTokens",
     });
     User.hasMany(models.Event, {
       foreignKey: "userId",
-      as: "organizedEvents",
+      as: "OrganizedEvents",
     });
     User.belongsToMany(models.Event, {
       through: "EventInterest",
-      as: "interestedEvents",
+      as: "InterestedEvents",
       foreignKey: "userId",
     });
+    // One-to-one relation with Profile
+    User.hasOne(models.Profile, {
+      foreignKey: "userId",
+      as: "Profile",
+    })
   }
 }
 

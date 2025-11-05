@@ -1,6 +1,8 @@
-import { notFound } from "@hapi/boom";
-import { Event, EventInterest, User } from "../../../models";
+import { badRequest, notFound } from "@hapi/boom";
 import { TEvent } from "../interfaces/event.interface";
+import Event from "../../../models/event.model";
+import EventInterest from "../../../models/eventInterest.model";
+import User from "../../../models/user.model";
 
 class EventService {
   async create(eventData: TEvent, userId: string) {
@@ -8,7 +10,7 @@ class EventService {
       const event = await Event.create({ ...eventData, userId, isPublic: eventData.isPublic || true });
       return event;
     } catch (error) {
-     throw error;
+     throw badRequest(error);
     }
   }
 
@@ -27,7 +29,7 @@ class EventService {
       });
       return events;
     } catch (error) {
-      throw error;
+      throw badRequest(error);
     }
   }
 
@@ -39,7 +41,7 @@ class EventService {
       }
       return event;
     } catch (error) {
-      throw error;
+      throw badRequest(error);
     }
   }
 
@@ -49,7 +51,7 @@ class EventService {
       await event.update(eventData);
       return event;
     } catch (error) {
-      throw error;
+      throw badRequest(error);
     }
   }
 
@@ -58,7 +60,7 @@ class EventService {
       const event = await this.findById(eventId);
       await event.destroy();
     } catch (error) {
-      throw error;
+      throw badRequest(error);
     }
   }
 
@@ -71,7 +73,7 @@ class EventService {
       }
       await EventInterest.create({ eventId, userId });
     } catch (error) {
-      throw error;
+      throw badRequest(error);
     }
   }
 
@@ -85,7 +87,7 @@ class EventService {
       }
       await interest.destroy();
     } catch (error) {
-      throw error;
+      throw badRequest(error);
     }
   }
 
@@ -97,7 +99,7 @@ class EventService {
       }
       return event;
     } catch (error) {
-      throw error;
+      throw badRequest(error);
     }
   }
 }

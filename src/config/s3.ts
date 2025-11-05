@@ -53,11 +53,17 @@ export const getFile = async (key: string): Promise<Buffer> => {
     })
 
     const response = await s3Client.send(command)
-    const stream = response.Body as any
+    const stream = response.Body as unknown as NodeJS.ReadableStream
     const chunks: Buffer[] = []
 
     return new Promise((resolve, reject) => {
-      stream.on("data", (chunk: Buffer) => chunks.push(chunk))
+      stream.on("data", (chunk: unknown) => {
+        if (Buffer.isBuffer(chunk)) {
+          chunks.push(chunk)
+        } else {
+          chunks.push(Buffer.from(String(chunk)))
+        }
+      })
       stream.on("error", reject)
       stream.on("end", () => resolve(Buffer.concat(chunks)))
     })

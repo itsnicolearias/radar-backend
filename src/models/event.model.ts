@@ -1,5 +1,7 @@
-import { DataTypes, Model, Optional } from "sequelize"
+import { DataTypes, Model, Optional, BelongsToGetAssociationMixin, BelongsToManyGetAssociationsMixin } from "sequelize"
 import sequelize from "../config/sequelize"
+type ModelsMap = Record<string, import('sequelize').ModelStatic<import('sequelize').Model<Record<string, unknown>, Record<string, unknown>>>>;
+import type User from "./user.model"
 
 interface EventAttributes {
   eventId: string
@@ -34,15 +36,20 @@ class Event extends Model<EventAttributes, EventCreationAttributes> implements E
 
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
+  // association mixins
+  public getOrganizer!: BelongsToGetAssociationMixin<User>
+  public Organizer?: User
+  public getInterestedUsers!: BelongsToManyGetAssociationsMixin<User>
+  public InterestedUsers?: User[]
 
-  public static associate(models: any) {
+  public static associate(models: ModelsMap) {
     Event.belongsTo(models.User, {
       foreignKey: "userId",
-      as: "organizer",
+      as: "Organizer",
     })
     Event.belongsToMany(models.User, {
       through: "EventInterest",
-      as: "interestedUsers",
+      as: "InterestedUsers",
       foreignKey: "eventId",
     })
   }
