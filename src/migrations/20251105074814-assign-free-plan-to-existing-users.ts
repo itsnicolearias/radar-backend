@@ -1,4 +1,4 @@
-import { QueryInterface, DataTypes, Op } from "sequelize";
+import { QueryInterface } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
 
 module.exports = {
@@ -10,11 +10,11 @@ module.exports = {
         { type: "SELECT", transaction }
       );
 
-      if (!freePlan || freePlan.length === 0) {
+      if (!freePlan || freePlan.length < 1) {
         throw new Error("Free plan not found. Seed the plans first.");
       }
 
-      const freePlanId = (freePlan[0] as { id: string }).id;
+      const freePlanId = (freePlan[0] as any).id;
 
       const users = await queryInterface.sequelize.query(
         "SELECT user_id FROM users",
@@ -62,7 +62,7 @@ module.exports = {
       );
 
       if (freePlan && freePlan.length > 0) {
-        const freePlanId = (freePlan[0] as { id: string }).id;
+        const freePlanId = (freePlan[0] as any).id;
         await queryInterface.bulkDelete("subscriptions", { plan_id: freePlanId }, { transaction });
       }
 

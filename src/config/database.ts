@@ -1,20 +1,28 @@
-import "dotenv/config"
-import { config } from "./config"
+import 'dotenv/config';
 
-export = {
+module.exports = {
   development: {
-    url: config.dbUrl,
+    url: process.env.DATABASE_URL,
+    dialect: 'postgres',
+    protocol: 'postgres',
+    dialectOptions: {
+      ssl: process.env.DATABASE_SSL === 'true' ? { require: true, rejectUnauthorized: false } : false
+    }
   },
   test: {
-    url: config.dbTestUrl,
+    url: process.env.DATABASE_TEST_URL,
+    dialect: 'postgres',
+    protocol: 'postgres',
+    dialectOptions: {
+      ssl: process.env.DATABASE_SSL === 'true' ? { require: true, rejectUnauthorized: false } : false
+    }
   },
   production: {
-    url: config.dbUrl,
-    dialect: "postgres",
+    url: process.env.DATABASE_URL,
+    dialect: 'postgres',
+    protocol: 'postgres',
     dialectOptions: {
-      ssl: {
-        rejectUnauthorized: false,
-      },
-    },
-  },
-}
+      ssl: process.env.DATABASE_SSL === 'true' ? { require: true, rejectUnauthorized: false } : false
+    }
+  }
+};
