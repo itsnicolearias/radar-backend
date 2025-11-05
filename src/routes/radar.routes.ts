@@ -8,7 +8,7 @@ const router = Router()
  * @swagger
  * /api/radar/nearby:
  *   get:
- *     summary: Get nearby users
+ *     summary: Get nearby users, events, and signals
  *     tags: [Radar]
  *     security:
  *       - bearerAuth: []
@@ -33,7 +33,7 @@ const router = Router()
  *         description: Search radius in meters
  *     responses:
  *       200:
- *         description: List of nearby users
+ *         description: An object containing lists of nearby users, events, and signals
  *         content:
  *           application/json:
  *             schema:
@@ -42,12 +42,23 @@ const router = Router()
  *                 success:
  *                   type: boolean
  *                 data:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/User'
+ *                   type: object
+ *                   properties:
+ *                     users:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/User'
+ *                     events:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Event'
+ *                     signals:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Signal'
  *       401:
  *         description: Unauthorized
  */
-router.get("/nearby", authenticate, radarController.getNearbyUsers)
+router.get("/nearby", authenticate, radarController.getNearby)
 
 export default router

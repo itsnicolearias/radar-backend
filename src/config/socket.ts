@@ -4,6 +4,7 @@ import type { Server as HTTPServer } from "http"
 import { verifyToken } from "../utils/jwt"
 import { User } from "../models"
 import logger from "../utils/logger"
+import { getNearbyAll } from "../services/radar.service"
 
 export interface SocketUser {
   userId: string
@@ -159,6 +160,15 @@ export const initializeSocket = (httpServer: HTTPServer): SocketIOServer => {
       logger.info(`User disconnected: ${userId}`)
       userSockets.delete(userId)
     })
+
+    socket.on("nearby:fetch", async ({ lat, lng, radius }: { lat: number; lng: number; radius: number }) => {
+      try {
+        const data = await getNearbyAll(userId, { latitude: lat, longitude: lng, radius });
+        socket.emit("nearby:update", data);
+      } catch (error) {
+        logger.error("Error fetching nearby data:", error);
+      }
+    });
   })
 
   return io

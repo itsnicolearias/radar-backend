@@ -8,9 +8,13 @@ import Event from "./event.model";
 import EventInterest from "./eventInterest.model";
 import Subscription from "./subscription.model";
 import SubscriptionPlan from "./subscriptionPlan.model";
+import { Signal, initSignalModel } from "./signal.model";
+
+initSignalModel(sequelize);
 
 const models = {
   User,
+  Signal,
   Profile,
   Connection,
   Message,

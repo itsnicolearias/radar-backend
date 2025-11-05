@@ -1,12 +1,13 @@
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from './auth.middleware';
-import { Subscription } from '../models/subscription.model';
-import { SubscriptionPlan } from '../models/subscriptionPlan.model';
+import Subscription from '../models/subscription.model';
+import SubscriptionPlan from '../models/subscriptionPlan.model';
 import { Signal } from '../models/signal.model';
 import boom from '@hapi/boom';
 import { Op } from 'sequelize';
 
 export const checkPlanLimits = (feature: string) => {
+  // @ts-ignore
   return async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const userId = req.user!.userId;

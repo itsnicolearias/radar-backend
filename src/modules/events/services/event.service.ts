@@ -1,8 +1,49 @@
 import { notFound } from "@hapi/boom";
+import sequelize from "sequelize";
 import { Event, EventInterest, User } from "../../../models";
 import { TEvent } from "../interfaces/event.interface";
+import { GetNearbyUsersInput } from "../../../schemas/radar.schema";
 
 class EventService {
+  async getNearbyEvents(data: GetNearbyUsersInput) {
+    try {
+      const { latitude, longitude, radius } = data
+
+      const nearbyEvents = await Event.findAll({
+        where: {
+          latitude: { [sequelize.Op.ne]: null as any },
+          longitude: { [sequelize.Op.ne]: null as any },
+        },
+        attributes: {
+          include: [
+            [
+              sequelize.literal(`
+                ST_Distance(
+                  ST_MakePoint(${longitude}, ${latitude})::geography,
+                  ST_MakePoint(longitude, latitude)::geography
+                )
+              `),
+              "distance",
+            ],
+          ],
+        },
+        having: sequelize.literal(`
+          ST_DWithin(
+            ST_MakePoint(${longitude}, ${latitude})::geography,
+            ST_MakePoint(longitude, latitude)::geography,
+            ${radius}
+          )
+        `),
+        order: [[sequelize.literal("distance"), "ASC"]],
+        limit: 50,
+      });
+
+      return nearbyEvents
+    } catch (error) {
+      throw error
+    }
+  }
+
   async create(eventData: TEvent, userId: string) {
     try {
       const event = await Event.create({ ...eventData, userId, isPublic: eventData.isPublic || true });

@@ -6,7 +6,7 @@ class ProfileViewController {
   async viewProfile(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { viewedId } = req.body;
-      const viewerId = parseInt(req.user!.userId, 10);
+      const viewerId = req.user!.userId;
 
       const profileView = await ProfileViewService.createProfileView(viewerId, viewedId);
 
@@ -18,7 +18,7 @@ class ProfileViewController {
 
   async getProfileViews(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      const userId = parseInt(req.user!.userId, 10);
+      const userId = req.user!.userId;
 
       const profileViews = await ProfileViewService.getProfileViews(userId);
 

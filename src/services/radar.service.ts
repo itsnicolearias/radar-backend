@@ -2,12 +2,13 @@ import { User, Profile } from "../models"
 import sequelize, { Op } from "sequelize"
 import type { GetNearbyUsersInput } from "../schemas/radar.schema"
 import { badRequest } from "@hapi/boom"
+import EventService from "../modules/events/services/event.service"
+import SignalService from "./signal.service"
 
 export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) => {
   try {
     const { latitude, longitude, radius } = data
 
-    // Only include users who are verified, visible, and not in invisible mode
     const nearbyUsers = await User.findAll({
       where: {
         userId: { [Op.ne]: userId },
@@ -54,3 +55,21 @@ export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) 
     throw badRequest(error);
   }
 }
+
+export const getNearbyAll = async (userId: string, data: GetNearbyUsersInput) => {
+  try {
+    const [users, events, signals] = await Promise.all([
+      getNearbyUsers(userId, data),
+      EventService.getNearbyEvents(data),
+      SignalService.getNearbySignals(data),
+    ]);
+
+    return {
+      users,
+      events,
+      signals,
+    };
+  } catch (error) {
+    throw badRequest(error as Error);
+  }
+};
