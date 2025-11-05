@@ -5,7 +5,7 @@ import type {
   MessageAttributes as ImportedMessageAttributes,
   MessageCreationAttributes as ImportedMessageCreationAttributes,
 } from "../interfaces/message.interface"
-import { decryptMessage, decryptText } from "../utils/crypto";
+import { decryptText, encryptText } from "../utils/crypto";
 
 class Message
   extends Model<ImportedMessageAttributes, ImportedMessageCreationAttributes>
@@ -57,33 +57,13 @@ Message.init(
       content: {
         type: DataTypes.TEXT,
         allowNull: false,
-        // El contenido se guarda como el ciphertext (hex) cuando se usa
-        // encryptMessage en el servicio. Al leer devolvemos el texto
-        // desencriptado en función de los campos iv / authTag cuando estén
-        // presentes. Si no hay iv/authTag, intentamos el fallback decryptText
+        set(value: string) {
+          this.setDataValue("content", encryptText(value))
+        },
         get() {
           const rawValue = this.getDataValue("content")
           if (!rawValue) return null
-
-          const iv = this.getDataValue("iv")
-          const authTag = this.getDataValue("authTag")
-
-          try {
-            if (iv && authTag) {
-              return decryptMessage(rawValue, iv, authTag)
-            }
-
-            // Fallback para mensajes antiguos que usaban encryptText (iv:encrypted)
-            try {
-              return decryptText(rawValue)
-            } catch {
-              // Si no se puede desencriptar con decryptText, devolvemos el valor crudo
-              return rawValue
-            }
-          } catch {
-            // Si falla la desencriptación GCM, devolvemos crudo para evitar romper
-            return rawValue
-          }
+          return decryptText(rawValue)
         },
       },
     iv: {

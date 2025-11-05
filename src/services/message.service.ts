@@ -3,7 +3,6 @@ import type { SendMessageInput, MarkAsReadInput } from "../schemas/message.schem
 import { Op } from "sequelize"
 import { ConnectionStatus } from "../interfaces/connection.interface"
 import { notFound, badRequest } from '../utils/errors';
-import { encryptMessage } from '../utils/crypto';
 import Message from "../models/message.model"
 import User from "../models/user.model";
 import Connection from "../models/connection.model";
@@ -35,14 +34,14 @@ export const sendMessage = async (sender: { userId: string; firstName: string },
       throw badRequest("You can only send messages to accepted connections")
     }
 
-    const { ciphertext, iv, authTag } = encryptMessage(data.content);
+    //const { ciphertext, iv, authTag } = encryptMessage(data.content);
 
     const message = await Message.create({
       senderId: sender.userId,
       receiverId: data.receiverId,
-      content: ciphertext,
-      iv,
-      authTag,
+      content: data.content,
+      //iv,
+      //authTag,
     });
 
     await notificationService.sendNewMessageNotification(data.receiverId, sender.firstName)
