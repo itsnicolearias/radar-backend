@@ -1,7 +1,7 @@
 export type SubscriptionStatus = "active" | "cancelled" | "pending";
 
 export interface SubscriptionAttributes {
-  id: string;
+  subscriptionId: string;
   userId: string;
   planId: string;
   status: SubscriptionStatus;
@@ -12,4 +12,4 @@ export interface SubscriptionAttributes {
   updatedAt?: Date;
 }
 
-export interface SubscriptionCreationAttributes extends Omit<SubscriptionAttributes, "id"> {}
+export interface SubscriptionCreationAttributes extends Omit<SubscriptionAttributes, "subscriptionId"> {}

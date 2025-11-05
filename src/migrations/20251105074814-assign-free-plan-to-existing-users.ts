@@ -6,7 +6,7 @@ module.exports = {
     const transaction = await queryInterface.sequelize.transaction();
     try {
       const freePlan = await queryInterface.sequelize.query(
-        "SELECT id FROM subscription_plans WHERE name = 'Free' LIMIT 1",
+        "SELECT subscription_plan_id FROM subscription_plans WHERE name = 'Free' LIMIT 1",
         { type: "SELECT", transaction }
       );
 
@@ -14,7 +14,7 @@ module.exports = {
         throw new Error("Free plan not found. Seed the plans first.");
       }
 
-      const freePlanId = (freePlan[0] as { id: string }).id;
+      const freePlanId = (freePlan[0] as { subscription_plan_id: string }).subscription_plan_id;
 
       const users = await queryInterface.sequelize.query(
         "SELECT user_id FROM users",
@@ -33,7 +33,7 @@ module.exports = {
 
       if (usersWithoutSubscriptions.length > 0) {
         const subscriptionsToCreate = usersWithoutSubscriptions.map((user) => ({
-          id: uuidv4(),
+          subscription_id: uuidv4(),
           user_id: user.user_id,
           plan_id: freePlanId,
           status: "active",
@@ -57,12 +57,12 @@ module.exports = {
     const transaction = await queryInterface.sequelize.transaction();
     try {
       const freePlan = await queryInterface.sequelize.query(
-        "SELECT id FROM subscription_plans WHERE name = 'Free' LIMIT 1",
+        "SELECT subscription_plan_id FROM subscription_plans WHERE name = 'Free' LIMIT 1",
         { type: "SELECT", transaction }
       );
 
       if (freePlan && freePlan.length > 0) {
-        const freePlanId = (freePlan[0] as { id: string }).id;
+        const freePlanId = (freePlan[0] as { subscription_plan_id: string }).subscription_plan_id;
         await queryInterface.bulkDelete("subscriptions", { plan_id: freePlanId }, { transaction });
       }
 

@@ -1,5 +1,5 @@
 export interface SubscriptionPlanAttributes {
-  id: string;
+  subscriptionPlanId: string;
   name: string;
   price: number;
   features: Record<string, any>;
@@ -8,4 +8,4 @@ export interface SubscriptionPlanAttributes {
   updatedAt?: Date;
 }
 
-export interface SubscriptionPlanCreationAttributes extends Omit<SubscriptionPlanAttributes, "id"> {}
+export interface SubscriptionPlanCreationAttributes extends Omit<SubscriptionPlanAttributes, "subscriptionPlanId"> {}
