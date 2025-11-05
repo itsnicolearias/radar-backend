@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt"
 import crypto from "crypto"
-import { User, Profile } from "../models"
+import { User, Profile, Subscription, SubscriptionPlan } from "../models"
 import { generateToken } from "../utils/jwt"
 import { unauthorized, conflict, notFound } from "../utils/errors"
 import { sendEmail } from "../config/email"
@@ -46,6 +46,19 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
     await Profile.create({
       userId: user.userId,
     })
+
+    const freePlan = await SubscriptionPlan.findOne({ where: { name: "Free" } });
+    if (!freePlan) {
+      throw new Error("Free subscription plan not found. Please seed the database.");
+    }
+
+    await Subscription.create({
+      userId: user.userId,
+      planId: freePlan.id,
+      status: "active",
+      startDate: new Date(),
+      endDate: new Date("9999-12-31"),
+    });
 
     const token = generateToken({
       userId: user.userId,
