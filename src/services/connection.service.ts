@@ -1,12 +1,14 @@
-import { Connection, User } from "../models"
 import { notFound, badRequest, conflict } from "../utils/errors"
+import * as notificationService from "./notification.service"
 import type { CreateConnectionInput, UpdateConnectionInput } from "../schemas/connection.schema"
 import { Op } from "sequelize"
 import { ConnectionStatus } from "../interfaces/connection.interface"
+import User from "../models/user.model"
+import Connection from "../models/connection.model"
 
-export const createConnection = async (senderId: string, data: CreateConnectionInput) => {
+export const createConnection = async (sender: { userId: string; firstName: string }, data: CreateConnectionInput) => {
   try {
-    if (senderId === data.receiverId) {
+    if (sender.userId === data.receiverId) {
       throw badRequest("Cannot send connection request to yourself")
     }
 
@@ -18,8 +20,8 @@ export const createConnection = async (senderId: string, data: CreateConnectionI
     const existingConnection = await Connection.findOne({
       where: {
         [Op.or]: [
-          { senderId, receiverId: data.receiverId },
-          { senderId: data.receiverId, receiverId: senderId },
+          { senderId: sender.userId, receiverId: data.receiverId },
+          { senderId: data.receiverId, receiverId: sender.userId },
         ],
       },
     })
@@ -29,9 +31,11 @@ export const createConnection = async (senderId: string, data: CreateConnectionI
     }
 
     const connection = await Connection.create({
-      senderId,
+      senderId: sender.userId,
       receiverId: data.receiverId,
     })
+
+    await notificationService.sendConnectionRequestNotification(data.receiverId, sender.firstName)
 
     return connection
   } catch (error) {
@@ -39,7 +43,7 @@ export const createConnection = async (senderId: string, data: CreateConnectionI
   }
 }
 
-export const updateConnection = async (connectionId: string, userId: string, data: UpdateConnectionInput) => {
+export const updateConnection = async (connectionId: string, user: { userId: string; firstName: string }, data: UpdateConnectionInput) => {
   try {
     const connection = await Connection.findByPk(connectionId)
 
@@ -47,7 +51,7 @@ export const updateConnection = async (connectionId: string, userId: string, dat
       throw notFound("Connection not found")
     }
 
-    if (connection.receiverId !== userId) {
+    if (connection.receiverId !== user.userId) {
       throw badRequest("Only the receiver can update the connection status")
     }
 
@@ -56,6 +60,10 @@ export const updateConnection = async (connectionId: string, userId: string, dat
     }
 
     await connection.update({ status: data.status })
+
+    if (data.status === 'accepted') {
+      await notificationService.sendConnectionAcceptedNotification(connection.senderId, user.firstName)
+    }
 
     return connection
   } catch (error) {
@@ -74,12 +82,12 @@ export const getConnectionsByUserId = async (userId: string) => {
       include: [
         {
           model: User,
-          as: "sender",
+          as: "Sender",
           attributes: ["userId", "firstName", "lastName", "email"],
         },
         {
           model: User,
-          as: "receiver",
+          as: "Receiver",
           attributes: ["userId", "firstName", "lastName", "email"],
         },
       ],
@@ -102,12 +110,12 @@ export const getPendingConnections = async (userId: string) => {
       include: [
         {
           model: User,
-          as: "sender",
+          as: "Sender",
           attributes: ["userId", "firstName", "lastName", "email"],
         },
         {
           model: User,
-          as: "receiver",
+          as: "Receiver",
           attributes: ["userId", "firstName", "lastName", "email"],
         },
       ],

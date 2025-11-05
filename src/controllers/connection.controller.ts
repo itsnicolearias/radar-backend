@@ -6,16 +6,16 @@ import type { CreateConnectionInput, UpdateConnectionInput } from "../schemas/co
 export const createConnection = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const data: CreateConnectionInput = req.body
-    const senderId = req.user?.userId
+    const sender = req.user
 
-    if (!senderId) {
+    if (!sender?.userId) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized",
       })
     }
 
-    const connection = await connectionService.createConnection(senderId, data)
+    const connection = await connectionService.createConnection(sender, data)
 
     res.status(201).json({
       success: true,
@@ -30,16 +30,16 @@ export const updateConnection = async (req: AuthRequest, res: Response, next: Ne
   try {
     const { connectionId } = req.params
     const data: UpdateConnectionInput = req.body
-    const userId = req.user?.userId
+    const user = req.user
 
-    if (!userId) {
+    if (!user?.userId) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized",
       })
     }
 
-    const connection = await connectionService.updateConnection(connectionId, userId, data)
+    const connection = await connectionService.updateConnection(connectionId, user, data)
 
     res.status(200).json({
       success: true,

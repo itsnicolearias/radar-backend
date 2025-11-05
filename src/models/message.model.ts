@@ -1,11 +1,11 @@
-import { DataTypes, Model } from "sequelize"
+import { DataTypes, Model, BelongsToGetAssociationMixin } from "sequelize"
 import sequelize from "../config/sequelize"
 import User from "./user.model"
 import type {
   MessageAttributes as ImportedMessageAttributes,
   MessageCreationAttributes as ImportedMessageCreationAttributes,
 } from "../interfaces/message.interface"
-import { decryptMessage, decryptText } from "../utils/crypto";
+import { decryptText, encryptText } from "../utils/crypto";
 
 class Message
   extends Model<ImportedMessageAttributes, ImportedMessageCreationAttributes>
@@ -19,6 +19,11 @@ class Message
   public authTag!: string | null;
   public isRead!: boolean;
   public readonly createdAt!: Date;
+  // Association mixins for sender/receiver
+  public getSender!: BelongsToGetAssociationMixin<User>
+  public getReceiver!: BelongsToGetAssociationMixin<User>
+  public Sender?: User
+  public Receiver?: User
 }
 
 Message.init(
@@ -52,33 +57,13 @@ Message.init(
       content: {
         type: DataTypes.TEXT,
         allowNull: false,
-        // El contenido se guarda como el ciphertext (hex) cuando se usa
-        // encryptMessage en el servicio. Al leer devolvemos el texto
-        // desencriptado en función de los campos iv / authTag cuando estén
-        // presentes. Si no hay iv/authTag, intentamos el fallback decryptText
+        set(value: string) {
+          this.setDataValue("content", encryptText(value))
+        },
         get() {
           const rawValue = this.getDataValue("content")
           if (!rawValue) return null
-
-          const iv = this.getDataValue("iv")
-          const authTag = this.getDataValue("authTag")
-
-          try {
-            if (iv && authTag) {
-              return decryptMessage(rawValue, iv, authTag)
-            }
-
-            // Fallback para mensajes antiguos que usaban encryptText (iv:encrypted)
-            try {
-              return decryptText(rawValue)
-            } catch {
-              // Si no se puede desencriptar con decryptText, devolvemos el valor crudo
-              return rawValue
-            }
-          } catch {
-            // Si falla la desencriptación GCM, devolvemos crudo para evitar romper
-            return rawValue
-          }
+          return decryptText(rawValue)
         },
       },
     iv: {
@@ -111,22 +96,22 @@ Message.init(
 // Define associations
 User.hasMany(Message, {
   foreignKey: "senderId",
-  as: "sentMessages",
+  as: "SentMessages",
 })
 
 User.hasMany(Message, {
   foreignKey: "receiverId",
-  as: "receivedMessages",
+  as: "ReceivedMessages",
 })
 
 Message.belongsTo(User, {
   foreignKey: "senderId",
-  as: "sender",
+  as: "Sender",
 })
 
 Message.belongsTo(User, {
   foreignKey: "receiverId",
-  as: "receiver",
+  as: "Receiver",
 })
 
 export default Message

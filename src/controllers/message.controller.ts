@@ -10,16 +10,16 @@ import { getPagination } from '../utils/pagination';
 export const sendMessage = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const data: SendMessageInput = req.body
-    const senderId = req.user?.userId
+    const sender = req.user
 
-    if (!senderId) {
+    if (!sender?.userId) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized",
       })
     }
 
-    const message = await messageService.sendMessage(senderId, data)
+    const message = await messageService.sendMessage(sender, data)
 
     res.status(201).json({
       success: true,

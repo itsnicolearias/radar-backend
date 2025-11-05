@@ -1,12 +1,13 @@
 import bcrypt from "bcrypt"
 import crypto from "crypto"
-import { User, Profile } from "../models"
 import { generateToken } from "../utils/jwt"
 import { unauthorized, conflict, notFound } from "../utils/errors"
 import { sendEmail } from "../config/email"
 import { config } from "../config/config"
 import type { RegisterUserInput, LoginUserInput } from "../schemas/auth.schema"
 import { badRequest } from "@hapi/boom"
+import User from "../models/user.model"
+import Profile from "../models/profile.model"
 
 export interface AuthResponse {
   token: string
@@ -50,6 +51,7 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
     const token = generateToken({
       userId: user.userId,
       email: user.email,
+      firstName: user.firstName,
     })
 
       const verificationUrl = `${config.clientUrl || "http://localhost:3000"}/verify-email/${emailVerificationToken}`
@@ -144,6 +146,7 @@ export const loginUser = async (data: LoginUserInput): Promise<AuthResponse> => 
     const token = generateToken({
       userId: user.userId,
       email: user.email,
+      firstName: user.firstName,
     })
 
     return {

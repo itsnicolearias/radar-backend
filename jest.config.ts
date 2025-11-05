@@ -1,4 +1,5 @@
 import type { Config } from "jest"
+import "dotenv/config"
 
 const config: Config = {
   preset: "ts-jest",

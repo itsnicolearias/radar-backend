@@ -1,7 +1,9 @@
-import { User, Profile } from "../models"
+import * as notificationService from "./notification.service"
 import sequelize, { Op } from "sequelize"
 import type { GetNearbyUsersInput } from "../schemas/radar.schema"
 import { badRequest } from "@hapi/boom"
+import User from "../models/user.model"
+import Profile from "../models/profile.model"
 
 export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) => {
   try {
@@ -48,6 +50,10 @@ export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) 
       order: [[sequelize.literal("distance"), "ASC"]],
       limit: 50,
     })
+
+    if (nearbyUsers.length > 0) {
+      await notificationService.sendRadarDetectionNotification(userId, nearbyUsers.length)
+    }
 
     return nearbyUsers
   } catch (error) {

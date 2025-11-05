@@ -1,6 +1,6 @@
+import "dotenv/config"
 import { badRequest } from "@hapi/boom";
-import { sequelize } from "../models"
-
+import sequelize from "../config/sequelize";
 export const beforeAll = async () => {
   try {
     await sequelize.authenticate()

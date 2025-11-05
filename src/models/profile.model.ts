@@ -1,10 +1,12 @@
-import { DataTypes, Model } from "sequelize"
+import { DataTypes, Model, BelongsToGetAssociationMixin } from "sequelize"
 import sequelize from "../config/sequelize"
-import User from "./user.model"
+import type User from "./user.model"
 import type {
   ProfileAttributes as ImportedProfileAttributes,
   ProfileCreationAttributes as ImportedProfileCreationAttributes,
 } from "../interfaces/profile.interface"
+
+type ModelsMap = Record<string, import('sequelize').ModelStatic<import('sequelize').Model<Record<string, unknown>, Record<string, unknown>>>>;
 
 class Profile
   extends Model<ImportedProfileAttributes, ImportedProfileCreationAttributes>
@@ -23,6 +25,15 @@ class Profile
   public distanceRadius!: number
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
+  // Association mixins for BelongsTo User
+  public getUser!: BelongsToGetAssociationMixin<User>
+  public User?: User
+  public static associate(models: ModelsMap) {
+    Profile.belongsTo(models.User, {
+      foreignKey: "userId",
+      as: "User",
+    })
+  }
 }
 
 Profile.init(
@@ -103,15 +114,6 @@ Profile.init(
   }
 )
 
-// Define associations
-User.hasOne(Profile, {
-  foreignKey: "userId",
-  as: "Profile",
-})
-
-Profile.belongsTo(User, {
-  foreignKey: "userId",
-  as: "User",
-})
+// Associations are attached via the static `associate` method above
 
 export default Profile

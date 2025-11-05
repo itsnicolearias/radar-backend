@@ -9,6 +9,8 @@ interface EventInterestAttributes {
 
 type EventInterestCreationAttributes = Optional<EventInterestAttributes, "eventInterestId">
 
+type ModelsMap = Record<string, import('sequelize').ModelStatic<import('sequelize').Model<Record<string, unknown>, Record<string, unknown>>>>;
+
 class EventInterest
   extends Model<EventInterestAttributes, EventInterestCreationAttributes>
   implements EventInterestAttributes
@@ -19,7 +21,7 @@ class EventInterest
 
   public readonly createdAt!: Date
 
-  public static associate(models: any) {
+  public static associate(models: ModelsMap) {
     EventInterest.belongsTo(models.Event, {
       foreignKey: "eventId",
     })

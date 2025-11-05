@@ -197,6 +197,14 @@ const options: swaggerJsdoc.Options = {
             },
           },
         },
+        NotificationToken: {
+          type: "object",
+          properties: {
+            token: {
+              type: "string",
+              },
+          },
+        },
         Event: {
           type: "object",
           properties: {

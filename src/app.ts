@@ -50,8 +50,9 @@ app.use((_req: Request, res: Response) => {
   })
 })
 
-app.use((error: any, req: Request, res: Response, _next: NextFunction) => {
-  const boomError = handleError(error)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.use((error: unknown, req: Request, res: Response, _next: NextFunction) => {
+  const boomError = handleError(error as Error)
 
   logger.error("Error occurred", {
     path: req.path,
@@ -62,7 +63,7 @@ app.use((error: any, req: Request, res: Response, _next: NextFunction) => {
   res.status(boomError.output.statusCode).json({
     success: false,
     message: boomError.message,
-    ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
+    ...(process.env.NODE_ENV === "development" && { stack: error instanceof Error ? error.stack : null }),
   })
 })
 

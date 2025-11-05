@@ -42,7 +42,7 @@ export const initializeSocket = (httpServer: HTTPServer): SocketIOServer => {
       const decoded = verifyToken(token)
       socket.user = decoded
       next()
-    } catch (error) {
+    } catch {
       next(new Error("Authentication error: Invalid token"))
     }
   })
