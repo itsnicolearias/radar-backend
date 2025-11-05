@@ -37,7 +37,7 @@ const router = Router();
 router.post(
   '/send',
   authenticate,
-  checkPlanLimits,
+  checkPlanLimits('signal'),
   validate(sendSignalSchema),
   SignalController.sendSignal
 );

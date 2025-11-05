@@ -2,8 +2,8 @@ import { Model, DataTypes, Sequelize } from 'sequelize';
 import User from './user.model';
 
 class Signal extends Model {
-  public id!: number;
-  public senderId!: number;
+  public signal_id!: string;
+  public senderId!: string;
   public note?: string;
   public readonly createdAt!: Date;
 
@@ -18,17 +18,17 @@ class Signal extends Model {
 export const initSignalModel = (sequelize: Sequelize) => {
   Signal.init(
     {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+      signal_id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
       senderId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
           model: User,
-          key: 'id',
+          key: 'user_id',
         },
       },
       note: {

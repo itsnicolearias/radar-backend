@@ -2,34 +2,34 @@ import { Model, DataTypes, Sequelize } from 'sequelize';
 import User from './user.model';
 
 class ProfileView extends Model {
-  public id!: number;
-  public viewerId!: number;
-  public viewedId!: number;
+  public profile_view_id!: string;
+  public viewerId!: string;
+  public viewedId!: string;
   public readonly createdAt!: Date;
 }
 
 export const initProfileViewModel = (sequelize: Sequelize) => {
   ProfileView.init(
     {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+      profile_view_id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
       viewerId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
           model: User,
-          key: 'id',
+          key: 'user_id',
         },
       },
       viewedId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
         references: {
           model: User,
-          key: 'id',
+          key: 'user_id',
         },
       },
       createdAt: {
