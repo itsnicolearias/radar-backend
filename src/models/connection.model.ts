@@ -1,4 +1,4 @@
-import { DataTypes, Model } from "sequelize"
+import { DataTypes, Model, BelongsToGetAssociationMixin } from "sequelize"
 import sequelize from "../config/sequelize"
 import User from "./user.model"
 import {
@@ -17,6 +17,11 @@ export class Connection
   public status!: ConnectionStatus
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
+  // association mixins
+  public getSender!: BelongsToGetAssociationMixin<User>
+  public getReceiver!: BelongsToGetAssociationMixin<User>
+  public Sender?: User
+  public Receiver?: User
 }
 
 Connection.init(
@@ -74,22 +79,22 @@ Connection.init(
 // Define associations
 User.hasMany(Connection, {
   foreignKey: "senderId",
-  as: "sentConnections",
+  as: "SentConnections",
 })
 
 User.hasMany(Connection, {
   foreignKey: "receiverId",
-  as: "receivedConnections",
+  as: "ReceivedConnections",
 })
 
 Connection.belongsTo(User, {
   foreignKey: "senderId",
-  as: "sender",
+  as: "Sender",
 })
 
 Connection.belongsTo(User, {
   foreignKey: "receiverId",
-  as: "receiver",
+  as: "Receiver",
 })
 
 export default Connection

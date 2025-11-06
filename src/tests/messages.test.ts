@@ -1,7 +1,8 @@
 import request from 'supertest';
 import app from '../app';
-import { User, Message } from '../models';
 import { beforeAll, afterAll, afterEach } from './setup';
+import User from '../models/user.model';
+import Message from '../models/message.model';
 
 describe('GET /api/messages', () => {
   let user1: User;

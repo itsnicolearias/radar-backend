@@ -1,8 +1,10 @@
 import sequelize from "sequelize";
 import { badRequest, notFound } from "@hapi/boom";
-import { Event, EventInterest, User } from "../../../models";
 import { TEvent } from "../interfaces/event.interface";
 import { GetNearbyUsersInput } from "../../../schemas/radar.schema";
+import Event from "../../../models/event.model";
+import EventInterest from "../../../models/eventInterest.model";
+import User from "../../../models/user.model";
 
 class EventService {
   async getNearbyEvents(data: GetNearbyUsersInput) {
@@ -49,7 +51,7 @@ class EventService {
       const event = await Event.create({ ...eventData, userId, isPublic: eventData.isPublic || true });
       return event;
     } catch (error) {
-      throw badRequest(error);
+     throw badRequest(error);
     }
   }
 

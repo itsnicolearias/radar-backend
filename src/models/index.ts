@@ -25,11 +25,15 @@ const models = {
   ProfileView,
 };
 
-Object.values(models).forEach((model: any) => {
-  if (model.associate) {
-    model.associate(models);
+type ModelsMap = Record<string, import('sequelize').ModelStatic<import('sequelize').Model<Record<string, unknown>, Record<string, unknown>>>>;
+
+const modelValues = Object.values(models) as unknown as { associate?: (_models: ModelsMap) => void }[];
+modelValues.forEach((m) => {
+  if (m.associate) {
+    m.associate(models as unknown as ModelsMap);
   }
 });
+// Associations are attached via each model's static `associate` method above
 
 export {
   sequelize,
@@ -46,4 +50,5 @@ export {
   ProfileView
 };
 
+// Backwards-compatible default export
 export default models;

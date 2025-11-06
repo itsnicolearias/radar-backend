@@ -1,4 +1,4 @@
-import { DataTypes, Model } from "sequelize"
+import { DataTypes, Model, BelongsToGetAssociationMixin } from "sequelize"
 import sequelize from "../config/sequelize"
 import User from "./user.model"
 import type {
@@ -17,6 +17,9 @@ class Notification
   public message!: string
   public isRead!: boolean
   public readonly createdAt!: Date
+  // association mixin
+  public getUser!: BelongsToGetAssociationMixin<User>
+  public User?: User
 }
 
 Notification.init(
@@ -66,12 +69,12 @@ Notification.init(
 // Define associations
 User.hasMany(Notification, {
   foreignKey: "userId",
-  as: "notifications",
+  as: "Notifications",
 })
 
 Notification.belongsTo(User, {
   foreignKey: "userId",
-  as: "user",
+  as: "User",
 })
 
 export default Notification

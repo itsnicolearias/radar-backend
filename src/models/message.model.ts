@@ -1,4 +1,4 @@
-import { DataTypes, Model } from "sequelize"
+import { DataTypes, Model, BelongsToGetAssociationMixin } from "sequelize"
 import sequelize from "../config/sequelize"
 import User from "./user.model"
 import type {
@@ -19,6 +19,11 @@ class Message
   public authTag!: string | null;
   public isRead!: boolean;
   public readonly createdAt!: Date;
+  // Association mixins for sender/receiver
+  public getSender!: BelongsToGetAssociationMixin<User>
+  public getReceiver!: BelongsToGetAssociationMixin<User>
+  public Sender?: User
+  public Receiver?: User
 }
 
 Message.init(
@@ -91,22 +96,22 @@ Message.init(
 // Define associations
 User.hasMany(Message, {
   foreignKey: "senderId",
-  as: "sentMessages",
+  as: "SentMessages",
 })
 
 User.hasMany(Message, {
   foreignKey: "receiverId",
-  as: "receivedMessages",
+  as: "ReceivedMessages",
 })
 
 Message.belongsTo(User, {
   foreignKey: "senderId",
-  as: "sender",
+  as: "Sender",
 })
 
 Message.belongsTo(User, {
   foreignKey: "receiverId",
-  as: "receiver",
+  as: "Receiver",
 })
 
 export default Message

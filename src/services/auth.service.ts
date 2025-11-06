@@ -1,11 +1,13 @@
 import bcrypt from "bcrypt"
 import crypto from "crypto"
-import { User, Profile, Subscription, SubscriptionPlan } from "../models"
 import { generateToken } from "../utils/jwt"
-import { unauthorized, conflict, notFound, badRequest } from "../utils/errors"
+import { unauthorized, conflict, notFound } from "../utils/errors"
 import { sendEmail } from "../config/email"
 import { config } from "../config/config"
 import type { RegisterUserInput, LoginUserInput } from "../schemas/auth.schema"
+import { badRequest } from "@hapi/boom"
+import User from "../models/user.model"
+import { Profile, Subscription, SubscriptionPlan } from "../models"
 
 export interface AuthResponse {
   token: string
