@@ -1,23 +1,23 @@
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from './auth.middleware';
-import Subscription from '../models/subscription.model';
-import SubscriptionPlan from '../models/subscriptionPlan.model';
-import { Signal } from '../models/signal.model';
+import  Subscription from '../models/subscription.model';
+import  SubscriptionPlan  from '../models/subscriptionPlan.model';
+import Signal  from '../models/signal.model';
 import boom from '@hapi/boom';
 import { Op } from 'sequelize';
 
 export const checkPlanLimits = (feature: string) => {
-  // @ts-ignore
-  return async (req: AuthRequest, res: Response, next: NextFunction) => {
+  return async (req: AuthRequest, _res: Response, next: NextFunction) => {
     try {
       const userId = req.user!.userId;
 
-      const subscription = await Subscription.findOne({
+      const subscription: any = await Subscription.findOne({
         where: { userId },
         include: [
           {
             model: SubscriptionPlan,
-            as: 'plan',
+            as: 'Plan',
+            attributes: ["name"],
           },
         ],
       });
@@ -26,10 +26,11 @@ export const checkPlanLimits = (feature: string) => {
         throw boom.forbidden('No active subscription found');
       }
 
-      const planName = subscription.plan.name;
+      const planName = subscription.Plan.name;
 
       if (feature === 'signal') {
         if (planName === 'Free') {
+
           const oneDayAgo = new Date();
           oneDayAgo.setDate(oneDayAgo.getDate() - 1);
 

@@ -6,9 +6,8 @@ class SignalController {
   async sendSignal(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { note } = req.body;
-      const senderId = req.user!.userId;
 
-      const signal = await SignalService.createSignal(senderId, note);
+      const signal = await SignalService.createSignal(req.user!.userId, note);
 
       res.status(201).json(signal);
     } catch (error) {

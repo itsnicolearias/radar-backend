@@ -3,7 +3,7 @@ import sequelize from "../config/sequelize";
 import type { SubscriptionPlanAttributes, SubscriptionPlanCreationAttributes } from "../interfaces/subscriptionPlan.interface";
 
 class SubscriptionPlan extends Model<SubscriptionPlanAttributes, SubscriptionPlanCreationAttributes> implements SubscriptionPlanAttributes {
-  public id!: string;
+  public subscriptionPlanId!: string;
   public name!: string;
   public price!: number;
   public features!: Record<string, any>;
@@ -21,10 +21,11 @@ class SubscriptionPlan extends Model<SubscriptionPlanAttributes, SubscriptionPla
 
 SubscriptionPlan.init(
   {
-    id: {
+    subscriptionPlanId: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
+      field: "subscription_plan_id",
     },
     name: {
       type: DataTypes.STRING(100),

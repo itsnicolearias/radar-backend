@@ -6,9 +6,8 @@ class ProfileViewController {
   async viewProfile(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { viewedId } = req.body;
-      const viewerId = req.user!.userId;
 
-      const profileView = await ProfileViewService.createProfileView(viewerId, viewedId);
+      const profileView = await ProfileViewService.createProfileView(req.user!.userId, viewedId);
 
       res.status(201).json(profileView);
     } catch (error) {
@@ -18,9 +17,8 @@ class ProfileViewController {
 
   async getProfileViews(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      const userId = req.user!.userId;
 
-      const profileViews = await ProfileViewService.getProfileViews(userId);
+      const profileViews = await ProfileViewService.getProfileViews(req.user!.userId);
 
       res.status(200).json(profileViews);
     } catch (error) {

@@ -3,7 +3,7 @@ import sequelize from "../config/sequelize";
 import type { SubscriptionAttributes, SubscriptionCreationAttributes, SubscriptionStatus } from "../interfaces/subscription.interface";
 
 class Subscription extends Model<SubscriptionAttributes, SubscriptionCreationAttributes> implements SubscriptionAttributes {
-  public id!: string;
+  public subscriptionId!: string;
   public userId!: string;
   public planId!: string;
   public status!: SubscriptionStatus;
@@ -18,21 +18,22 @@ class Subscription extends Model<SubscriptionAttributes, SubscriptionCreationAtt
   public static associate(models: any) {
     Subscription.belongsTo(models.User, {
       foreignKey: "userId",
-      as: "user",
+      as: "User",
     });
     Subscription.belongsTo(models.SubscriptionPlan, {
       foreignKey: "planId",
-      as: "plan",
+      as: "Plan",
     });
   }
 }
 
 Subscription.init(
   {
-    id: {
+    subscriptionId: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
+      field: "subscription_id",
     },
     userId: {
       type: DataTypes.UUID,
@@ -49,7 +50,7 @@ Subscription.init(
       field: "plan_id",
       references: {
         model: "subscription_plans",
-        key: "id",
+        key: "subscription_plan_id",
       },
     },
     status: {

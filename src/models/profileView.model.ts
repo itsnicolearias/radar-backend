@@ -1,5 +1,6 @@
-import { Model, DataTypes, Sequelize } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import User from './user.model';
+import sequelize from "../config/sequelize"
 
 class ProfileView extends Model {
   public profile_view_id!: string;
@@ -8,17 +9,18 @@ class ProfileView extends Model {
   public readonly createdAt!: Date;
 }
 
-export const initProfileViewModel = (sequelize: Sequelize) => {
   ProfileView.init(
     {
-      profile_view_id: {
+      profileViewId: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
+        field: "profile_view_id"
       },
       viewerId: {
         type: DataTypes.UUID,
         allowNull: false,
+        field: "viewer_id",
         references: {
           model: User,
           key: 'user_id',
@@ -27,6 +29,7 @@ export const initProfileViewModel = (sequelize: Sequelize) => {
       viewedId: {
         type: DataTypes.UUID,
         allowNull: false,
+        field: "viewed_id",
         references: {
           model: User,
           key: 'user_id',
@@ -36,6 +39,7 @@ export const initProfileViewModel = (sequelize: Sequelize) => {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW,
+        field: "created_at"
       },
     },
     {
@@ -46,6 +50,26 @@ export const initProfileViewModel = (sequelize: Sequelize) => {
       updatedAt: false,
     }
   );
-};
 
-export { ProfileView };
+// Define associations
+User.hasMany(ProfileView, {
+  foreignKey: "viewerId",
+  as: "Viewer",
+})
+
+User.hasMany(ProfileView, {
+  foreignKey: "viewedId",
+  as: "Viewed",
+})
+
+ProfileView.belongsTo(User, {
+  foreignKey: "viewerId",
+  as: "Viewer",
+})
+
+ProfileView.belongsTo(User, {
+  foreignKey: "viewedId",
+  as: "Viewed",
+})
+
+export default ProfileView;

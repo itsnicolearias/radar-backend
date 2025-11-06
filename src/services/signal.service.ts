@@ -1,8 +1,8 @@
-import { Signal } from '../models/signal.model';
+import Signal from '../models/signal.model';
 import User from '../models/user.model';
-import boom from '@hapi/boom';
 import sequelize from 'sequelize';
 import { GetNearbyUsersInput } from '../schemas/radar.schema';
+import boom, { badRequest } from '@hapi/boom';
 
 class SignalService {
   async getNearbySignals(data: GetNearbyUsersInput) {
@@ -65,7 +65,7 @@ class SignalService {
 
       return signal;
     } catch (error) {
-      throw boom.internal('Error creating signal');
+      throw badRequest(error);
     }
   }
 }

@@ -1,7 +1,9 @@
 'use strict';
 
+import { DataTypes, QueryInterface } from "sequelize";
+
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface: QueryInterface, Sequelize: typeof DataTypes) => {
     await queryInterface.createTable('profile_views', {
       profile_view_id: {
         allowNull: false,
@@ -34,13 +36,13 @@ module.exports = {
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+        defaultValue: Sequelize.NOW,
         field: 'created_at'
       }
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface: QueryInterface) => {
     await queryInterface.dropTable('profile_views');
   }
 };

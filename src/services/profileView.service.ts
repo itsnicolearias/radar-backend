@@ -1,6 +1,6 @@
-import { ProfileView } from '../models/profileView.model';
+import ProfileView from '../models/profileView.model';
 import User from '../models/user.model';
-import boom from '@hapi/boom';
+import boom, { badRequest } from '@hapi/boom';
 
 class ProfileViewService {
   async createProfileView(viewerId: string, viewedId: string) {
@@ -22,7 +22,7 @@ class ProfileViewService {
 
       return profileView;
     } catch (error) {
-      throw boom.internal('Error creating profile view');
+      throw badRequest(error);
     }
   }
 
@@ -40,15 +40,15 @@ class ProfileViewService {
         include: [
           {
             model: User,
-            as: 'viewer',
-            attributes: ['id', 'firstName', 'lastName', 'displayName'],
+            as: 'Viewer',
+            attributes: ['userId', 'firstName', 'lastName', 'displayName'],
           },
         ],
       });
 
       return profileViews;
     } catch (error) {
-      throw boom.internal('Error getting profile views');
+      throw badRequest(error);
     }
   }
 }

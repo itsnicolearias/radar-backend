@@ -1,5 +1,6 @@
-import { Model, DataTypes, Sequelize } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import User from './user.model';
+import sequelize from "../config/sequelize"
 
 class Signal extends Model {
   public signal_id!: string;
@@ -15,16 +16,18 @@ class Signal extends Model {
   }
 }
 
-export const initSignalModel = (sequelize: Sequelize) => {
+
   Signal.init(
     {
-      signal_id: {
+      signalId: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
+        field: "signal_id"
       },
       senderId: {
         type: DataTypes.UUID,
+        field: "sender_id",
         allowNull: false,
         references: {
           model: User,
@@ -37,6 +40,7 @@ export const initSignalModel = (sequelize: Sequelize) => {
       },
       createdAt: {
         type: DataTypes.DATE,
+        field: "created_at",
         allowNull: false,
         defaultValue: DataTypes.NOW,
       },
@@ -49,6 +53,5 @@ export const initSignalModel = (sequelize: Sequelize) => {
       updatedAt: false,
     }
   );
-};
 
-export { Signal };
+export default Signal;

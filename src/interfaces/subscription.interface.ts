@@ -1,7 +1,7 @@
 export type SubscriptionStatus = "active" | "cancelled" | "pending";
 
 export interface SubscriptionAttributes {
-  id: string;
+  subscriptionId: string;
   userId: string;
   planId: string;
   status: SubscriptionStatus;
@@ -13,4 +13,4 @@ export interface SubscriptionAttributes {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface SubscriptionCreationAttributes extends Omit<SubscriptionAttributes, "id"> {}
+export interface SubscriptionCreationAttributes extends Omit<SubscriptionAttributes, "subscriptionId"> {}

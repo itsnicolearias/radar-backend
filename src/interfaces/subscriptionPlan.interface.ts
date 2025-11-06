@@ -1,5 +1,5 @@
 export interface SubscriptionPlanAttributes {
-  id: string;
+  subscriptionPlanId: string;
   name: string;
   price: number;
   features: Record<string, any>;
@@ -9,4 +9,4 @@ export interface SubscriptionPlanAttributes {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface SubscriptionPlanCreationAttributes extends Omit<SubscriptionPlanAttributes, "id"> {}
+export interface SubscriptionPlanCreationAttributes extends Omit<SubscriptionPlanAttributes, "subscriptionPlanId"> {}
