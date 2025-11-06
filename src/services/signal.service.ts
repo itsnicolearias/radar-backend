@@ -1,6 +1,6 @@
 import Signal from '../models/signal.model';
 import User from '../models/user.model';
-import sequelize from 'sequelize';
+import sequelize, { Op } from 'sequelize';
 import { GetNearbyUsersInput } from '../schemas/radar.schema';
 import boom, { badRequest } from '@hapi/boom';
 
@@ -10,13 +10,23 @@ class SignalService {
       const { latitude, longitude, radius } = data;
 
       const nearbySignals = await Signal.findAll({
+        // Filter by sender location using a spatial WHERE literal (avoid HAVING/GROUP BY issues)
+        where: {
+          [Op.and]: sequelize.literal(`
+            ST_DWithin(
+              ST_MakePoint(${longitude}, ${latitude})::geography,
+              ST_MakePoint("sender"."last_longitude", "sender"."last_latitude")::geography,
+              ${radius}
+            )
+          `),
+        },
         include: [
           {
             model: User,
             as: 'sender',
             where: {
-              lastLatitude: { [sequelize.Op.ne]: null },
-              lastLongitude: { [sequelize.Op.ne]: null },
+              lastLatitude: { [Op.ne]: null },
+              lastLongitude: { [Op.ne]: null },
             },
             attributes: [],
           },
@@ -34,20 +44,14 @@ class SignalService {
             ],
           ],
         },
-        having: sequelize.literal(`
-          ST_DWithin(
-            ST_MakePoint(${longitude}, ${latitude})::geography,
-            ST_MakePoint("sender"."last_longitude", "sender"."last_latitude")::geography,
-            ${radius}
-          )
-        `),
+        // spatial filter moved to WHERE
         order: [[sequelize.literal('distance'), 'ASC']],
         limit: 50,
       });
 
       return nearbySignals;
     } catch (error) {
-      throw error;
+      throw badRequest(error);
     }
   }
 

@@ -26,8 +26,8 @@ class Event extends Model<EventAttributes, EventCreationAttributes> implements E
   public title!: string
   public description?: string
   public location?: string
-  public latitude?: number
-  public longitude?: number
+  public latitude!: number
+  public longitude!: number
   public startDate!: Date
   public endDate?: Date
   public isPublic!: boolean

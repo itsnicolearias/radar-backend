@@ -1,4 +1,4 @@
-import sequelize from "sequelize";
+import sequelize, { Op } from "sequelize";
 import { badRequest, notFound } from "@hapi/boom";
 import { TEvent } from "../interfaces/event.interface";
 import { GetNearbyUsersInput } from "../../../schemas/radar.schema";
@@ -13,8 +13,14 @@ class EventService {
 
       const nearbyEvents = await Event.findAll({
         where: {
-          latitude: { [sequelize.Op.ne]: null as any },
-          longitude: { [sequelize.Op.ne]: null as any },
+          // Move the spatial filter into WHERE (use ST_DWithin) to avoid GROUP BY/HAVING
+          [Op.and]: sequelize.literal(`
+                ST_DWithin(
+                  ST_MakePoint(${longitude}, ${latitude})::geography,
+                  ST_MakePoint(longitude, latitude)::geography,
+                  ${radius}
+                )
+              `),
         },
         attributes: {
           include: [
@@ -29,20 +35,14 @@ class EventService {
             ],
           ],
         },
-        having: sequelize.literal(`
-          ST_DWithin(
-            ST_MakePoint(${longitude}, ${latitude})::geography,
-            ST_MakePoint(longitude, latitude)::geography,
-            ${radius}
-          )
-        `),
+        // spatial filter moved into WHERE
         order: [[sequelize.literal("distance"), "ASC"]],
         limit: 50,
       });
 
       return nearbyEvents
     } catch (error) {
-      throw error
+      throw badRequest(error);
     }
   }
 
@@ -51,7 +51,7 @@ class EventService {
       const event = await Event.create({ ...eventData, userId, isPublic: eventData.isPublic || true });
       return event;
     } catch (error) {
-     throw badRequest(error);
+      throw badRequest(error);
     }
   }
 

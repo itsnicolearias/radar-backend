@@ -71,6 +71,6 @@ export const getNearbyAll = async (userId: string, data: GetNearbyUsersInput) =>
       signals,
     };
   } catch (error) {
-    throw badRequest(error as Error);
+    throw badRequest(error);
   }
 };
