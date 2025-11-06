@@ -1,4 +1,4 @@
-import { QueryInterface, DataTypes, Op } from "sequelize";
+import { QueryInterface } from "sequelize";
 import { v4 as uuidv4 } from "uuid";
 
 module.exports = {
@@ -8,25 +8,25 @@ module.exports = {
       const freePlan = await queryInterface.sequelize.query(
         "SELECT subscription_plan_id FROM subscription_plans WHERE name = 'Free' LIMIT 1",
         { type: "SELECT", transaction }
-      );
+      ) as { subscription_plan_id: string }[];
 
       if (!freePlan || freePlan.length === 0) {
         throw new Error("Free plan not found. Seed the plans first.");
       }
 
-      const freePlanId = (freePlan[0] as { subscription_plan_id: string }).subscription_plan_id;
+      const freePlanId = freePlan[0].subscription_plan_id;
 
       const users = await queryInterface.sequelize.query(
         "SELECT user_id FROM users",
         { type: "SELECT", transaction }
-      );
+      ) as { user_id: string }[];
 
       const usersWithSubscriptions = await queryInterface.sequelize.query(
         "SELECT user_id FROM subscriptions",
         { type: "SELECT", transaction }
-      );
+      ) as { user_id: string }[];
 
-      const usersWithSubscriptionsIds = (usersWithSubscriptions as { user_id: string }[]).map(u => u.user_id);
+      const usersWithSubscriptionsIds = usersWithSubscriptions.map(u => u.user_id);
       const usersWithoutSubscriptions = (users as { user_id: string }[]).filter(
         (user) => !usersWithSubscriptionsIds.includes(user.user_id)
       );
@@ -59,10 +59,10 @@ module.exports = {
       const freePlan = await queryInterface.sequelize.query(
         "SELECT subscription_plan_id FROM subscription_plans WHERE name = 'Free' LIMIT 1",
         { type: "SELECT", transaction }
-      );
+      ) as { subscription_plan_id: string }[];
 
       if (freePlan && freePlan.length > 0) {
-        const freePlanId = (freePlan[0] as { subscription_plan_id: string }).subscription_plan_id;
+        const freePlanId = freePlan[0].subscription_plan_id;
         await queryInterface.bulkDelete("subscriptions", { plan_id: freePlanId }, { transaction });
       }
 

@@ -1,5 +1,9 @@
 import "dotenv/config"
 
+if (process.env.NODE_ENV === "test") {
+  require("dotenv").config({ path: ".env.test" });
+}
+
 export const config = {
   env: process.env.NODE_ENV || "development",
   isProd: process.env.NODE_ENV === "production",

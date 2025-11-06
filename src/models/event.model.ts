@@ -14,6 +14,8 @@ interface EventAttributes {
   isPublic: boolean
   maxAttendees?: number
   price?: number
+  isBoosted: boolean
+  boostedAt?: Date
 }
 
 type EventCreationAttributes = Optional<EventAttributes, "eventId">
@@ -31,6 +33,8 @@ class Event extends Model<EventAttributes, EventCreationAttributes> implements E
   public isPublic!: boolean
   public maxAttendees?: number
   public price?: number
+  public isBoosted!: boolean
+  public boostedAt?: Date
 
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
@@ -98,6 +102,16 @@ Event.init(
     },
     price: {
       type: DataTypes.DECIMAL(10, 2),
+    },
+    isBoosted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      field: "is_boosted",
+    },
+    boostedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: "boosted_at",
     },
   },
   {

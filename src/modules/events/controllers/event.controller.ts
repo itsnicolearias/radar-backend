@@ -98,6 +98,19 @@ class EventController {
       next(error);
     }
   }
+
+  async boost(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) {
+        res.status(401).json({ message: "Unauthorized" });
+        return;
+      }
+      const event = await eventService.boost(req.params.eventId, req.user.userId);
+      res.json(event);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new EventController();

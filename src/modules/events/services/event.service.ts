@@ -5,7 +5,7 @@ import { TEvent } from "../interfaces/event.interface";
 class EventService {
   async create(eventData: TEvent, userId: string) {
     try {
-      const event = await Event.create({ ...eventData, userId, isPublic: eventData.isPublic || true });
+      const event = await Event.create({ ...eventData, userId, isPublic: eventData.isPublic || true, isBoosted: false });
       return event;
     } catch (error) {
      throw error;
@@ -15,7 +15,14 @@ class EventService {
   async findAll(page: number, limit: number, all: boolean) {
     try {
       if (all) {
-        const events = await Event.findAll({ include: "organizer" });
+        const events = await Event.findAll({
+          include: "organizer",
+          order: [
+            ["isBoosted", "DESC"],
+            ["boostedAt", "DESC"],
+            ["createdAt", "DESC"],
+          ],
+        });
         return events;
       }
 
@@ -24,6 +31,11 @@ class EventService {
         offset,
         limit,
         include: "organizer",
+        order: [
+          ["isBoosted", "DESC"],
+          ["boostedAt", "DESC"],
+          ["createdAt", "DESC"],
+        ],
       });
       return events;
     } catch (error) {
@@ -95,6 +107,19 @@ class EventService {
       if (!event) {
         throw notFound("Event not found");
       }
+      return event;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async boost(eventId: string, userId: string) {
+    try {
+      const event = await this.findById(eventId);
+      if (event.userId !== userId) {
+        throw notFound("You can only boost your own events");
+      }
+      await event.update({ isBoosted: true, boostedAt: new Date() });
       return event;
     } catch (error) {
       throw error;
