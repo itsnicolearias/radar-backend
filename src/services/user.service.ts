@@ -1,6 +1,7 @@
-import { User, Profile } from "../models"
 import { badRequest, notFound } from "../utils/errors"
 import type { UpdateLocationInput, UpdateUserInput, ToggleVisibilityInput } from "../schemas/user.schema"
+import Profile from "../models/profile.model"
+import User from "../models/user.model"
 
 export const getUserById = async (userId: string) => {
   try {

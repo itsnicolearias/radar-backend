@@ -16,6 +16,14 @@ export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) 
         invisibleMode: false,
         lastLatitude: { [Op.ne]: null },
         lastLongitude: { [Op.ne]: null },
+        // Move the spatial filter into the WHERE clause to avoid needing GROUP BY
+        [Op.and]: sequelize.literal(`
+          ST_DWithin(
+            ST_MakePoint(${longitude}, ${latitude})::geography,
+            ST_MakePoint(last_longitude, last_latitude)::geography,
+            ${radius}
+          )
+        `),
       },
       include: [
         {
@@ -38,13 +46,6 @@ export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) 
           ],
         ],
       },
-      having: sequelize.literal(`
-        ST_DWithin(
-          ST_MakePoint(${longitude}, ${latitude})::geography,
-          ST_MakePoint(last_longitude, last_latitude)::geography,
-          ${radius}
-        )
-      `),
       order: [[sequelize.literal("distance"), "ASC"]],
       limit: 50,
     })

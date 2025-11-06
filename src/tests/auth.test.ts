@@ -1,7 +1,7 @@
 import request from 'supertest';
 import app from '../app';
 import { beforeAll, afterAll, afterEach } from './setup';
-import { User } from '../models';
+import User from '../models/user.model';
 
 describe('Auth Endpoints', () => {
   beforeAll();

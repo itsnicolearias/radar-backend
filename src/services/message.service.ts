@@ -131,29 +131,27 @@ export const getMessagesBetweenUsers = async (userId1: string, userId2: string) 
       include: [
         {
           model: User,
-          as: "sender",
+          as: "Sender",
           attributes: ["userId", "firstName", "lastName"],
           include: [
-          {
-            model: Profile,
-            attributes: ["photoUrl"],
-            as: "Profile"
-
-          },
-        ],
+            {
+              model: Profile,
+              attributes: ["photoUrl"],
+              as: "Profile",
+            },
+          ],
         },
         {
           model: User,
-          as: "receiver",
+          as: "Receiver",
           attributes: ["userId", "firstName", "lastName"],
           include: [
-          {
-            model: Profile,
-            attributes: ["photoUrl"],
-            as: "Profile"
-
-          },
-        ],
+            {
+              model: Profile,
+              attributes: ["photoUrl"],
+              as: "Profile",
+            },
+          ],
         },
       ],
       order: [["createdAt", "ASC"]],

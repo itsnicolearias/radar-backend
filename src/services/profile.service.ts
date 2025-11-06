@@ -1,7 +1,8 @@
-import { Profile, User } from "../models"
 import { notFound } from "../utils/errors"
 import type { CreateProfileInput, UpdateProfileInput } from "../schemas/profile.schema"
 import { badRequest } from "@hapi/boom"
+import Profile from "../models/profile.model"
+import User from "../models/user.model"
 
 export const getProfileByUserId = async (userId: string) => {
   try {
@@ -10,7 +11,7 @@ export const getProfileByUserId = async (userId: string) => {
       include: [
         {
           model: User,
-          as: "user",
+          as: "User",
           attributes: ["userId", "firstName", "lastName", "email"],
         },
       ],

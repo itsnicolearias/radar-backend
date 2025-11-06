@@ -1,8 +1,9 @@
-import { Connection, User } from "../models"
 import { notFound, badRequest, conflict } from "../utils/errors"
 import type { CreateConnectionInput, UpdateConnectionInput } from "../schemas/connection.schema"
 import { Op } from "sequelize"
 import { ConnectionStatus } from "../interfaces/connection.interface"
+import User from "../models/user.model"
+import Connection from "../models/connection.model"
 
 export const createConnection = async (senderId: string, data: CreateConnectionInput) => {
   try {
@@ -74,12 +75,12 @@ export const getConnectionsByUserId = async (userId: string) => {
       include: [
         {
           model: User,
-          as: "sender",
+          as: "Sender",
           attributes: ["userId", "firstName", "lastName", "email"],
         },
         {
           model: User,
-          as: "receiver",
+          as: "Receiver",
           attributes: ["userId", "firstName", "lastName", "email"],
         },
       ],
@@ -102,12 +103,12 @@ export const getPendingConnections = async (userId: string) => {
       include: [
         {
           model: User,
-          as: "sender",
+          as: "Sender",
           attributes: ["userId", "firstName", "lastName", "email"],
         },
         {
           model: User,
-          as: "receiver",
+          as: "Receiver",
           attributes: ["userId", "firstName", "lastName", "email"],
         },
       ],

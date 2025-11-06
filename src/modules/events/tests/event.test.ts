@@ -1,7 +1,7 @@
 import request from "supertest";
 import app from "../../../app";
-import { sequelize } from "../../../models";
 import { faker } from "@faker-js/faker";
+import sequelize from "../../../config/sequelize";
 
 describe("Event API", () => {
   let token: string;
