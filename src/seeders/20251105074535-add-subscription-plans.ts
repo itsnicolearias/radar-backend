@@ -5,7 +5,7 @@ module.exports = {
   up: async (queryInterface: QueryInterface) => {
     await queryInterface.bulkInsert("subscription_plans", [
       {
-        id: uuidv4(),
+        subscription_plan_id: uuidv4(),
         name: "Free",
         price: 0,
         features: JSON.stringify({
@@ -18,7 +18,7 @@ module.exports = {
         updated_at: new Date(),
       },
       {
-        id: uuidv4(),
+        subscription_plan_id: uuidv4(),
         name: "Radar Plus",
         price: 10,
         features: JSON.stringify({
