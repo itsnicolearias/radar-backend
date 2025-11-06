@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const viewProfileSchema = z.object({
-  body: z.object({
-    viewedId: z.number(),
-  }),
+
+    viewedId: z.string().uuid("Invalid viewer ID")
+
 });

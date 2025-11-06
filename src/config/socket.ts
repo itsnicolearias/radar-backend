@@ -4,6 +4,7 @@ import type { Server as HTTPServer } from "http"
 import { verifyToken } from "../utils/jwt"
 import { User } from "../models"
 import logger from "../utils/logger"
+import { config } from "./config"
 
 export interface SocketUser {
   userId: string
@@ -25,7 +26,7 @@ const userSockets = new Map<string, string>()
 export const initializeSocket = (httpServer: HTTPServer): SocketIOServer => {
   const io = new SocketIOServer(httpServer, {
     cors: {
-      origin: process.env.CLIENT_URL || "*",
+      origin: config.clientUrl || "*",
       methods: ["GET", "POST"],
       credentials: true,
     },
@@ -42,7 +43,7 @@ export const initializeSocket = (httpServer: HTTPServer): SocketIOServer => {
       const decoded = verifyToken(token)
       socket.user = decoded
       next()
-    } catch (error) {
+    } catch {
       next(new Error("Authentication error: Invalid token"))
     }
   })

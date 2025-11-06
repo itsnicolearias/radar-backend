@@ -1,4 +1,4 @@
-import { ProfileView } from '../models/profileView.model';
+import ProfileView from '../models/profileView.model';
 import User from '../models/user.model';
 import boom, { badRequest } from '@hapi/boom';
 
@@ -40,8 +40,8 @@ class ProfileViewService {
         include: [
           {
             model: User,
-            as: 'viewer',
-            attributes: ['id', 'firstName', 'lastName', 'displayName'],
+            as: 'Viewer',
+            attributes: ['userId', 'firstName', 'lastName', 'displayName'],
           },
         ],
       });
