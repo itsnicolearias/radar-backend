@@ -1,12 +1,11 @@
 import bcrypt from "bcrypt"
 import crypto from "crypto"
-import { User, Profile } from "../models"
+import { User, Profile, Subscription, SubscriptionPlan } from "../models"
 import { generateToken } from "../utils/jwt"
-import { unauthorized, conflict, notFound } from "../utils/errors"
+import { unauthorized, conflict, notFound, badRequest } from "../utils/errors"
 import { sendEmail } from "../config/email"
 import { config } from "../config/config"
 import type { RegisterUserInput, LoginUserInput } from "../schemas/auth.schema"
-import { badRequest } from "@hapi/boom"
 
 export interface AuthResponse {
   token: string
@@ -46,6 +45,19 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
     await Profile.create({
       userId: user.userId,
     })
+
+    const freePlan = await SubscriptionPlan.findOne({ where: { name: "Free" } });
+    if (!freePlan) {
+      throw badRequest("Free subscription plan not found. Please seed the database.");
+    }
+
+    await Subscription.create({
+      userId: user.userId,
+      planId: freePlan.subscriptionPlanId,
+      status: "active",
+      startDate: new Date(),
+      endDate: new Date("9999-12-31"),
+    });
 
     const token = generateToken({
       userId: user.userId,
