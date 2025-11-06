@@ -13,6 +13,8 @@ class Subscription extends Model<SubscriptionAttributes, SubscriptionCreationAtt
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
+  public plan!: { name: string; };
+
   public static associate(models: any) {
     Subscription.belongsTo(models.User, {
       foreignKey: "userId",

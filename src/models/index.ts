@@ -13,6 +13,7 @@ import ProfileView from "./profileView.model";
 
 const models = {
   User,
+  Signal,
   Profile,
   Connection,
   Message,
@@ -21,7 +22,6 @@ const models = {
   EventInterest,
   Subscription,
   SubscriptionPlan,
-  Signal,
   ProfileView,
 };
 

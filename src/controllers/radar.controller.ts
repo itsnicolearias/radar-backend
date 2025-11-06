@@ -3,7 +3,7 @@ import type { AuthRequest } from "../middlewares/auth.middleware"
 import * as radarService from "../services/radar.service"
 import type { GetNearbyUsersInput } from "../schemas/radar.schema"
 
-export const getNearbyUsers = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const getNearby = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const userId = req.user?.userId
 
@@ -20,11 +20,11 @@ export const getNearbyUsers = async (req: AuthRequest, res: Response, next: Next
       radius: req.query.radius ? Number(req.query.radius) : 1000,
     }
 
-    const nearbyUsers = await radarService.getNearbyUsers(userId, data)
+    const nearbyData = await radarService.getNearbyAll(userId, data)
 
     return res.status(200).json({
       success: true,
-      data: nearbyUsers,
+      data: nearbyData,
     })
   } catch (error) {
     return next(error)

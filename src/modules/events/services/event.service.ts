@@ -1,16 +1,57 @@
+import sequelize, { Op } from "sequelize";
 import { badRequest, notFound } from "@hapi/boom";
 import { TEvent } from "../interfaces/event.interface";
+import { GetNearbyUsersInput } from "../../../schemas/radar.schema";
 import Event from "../../../models/event.model";
 import EventInterest from "../../../models/eventInterest.model";
 import User from "../../../models/user.model";
 
 class EventService {
+  async getNearbyEvents(data: GetNearbyUsersInput) {
+    try {
+      const { latitude, longitude, radius } = data
+
+      const nearbyEvents = await Event.findAll({
+        where: {
+          // Move the spatial filter into WHERE (use ST_DWithin) to avoid GROUP BY/HAVING
+          [Op.and]: sequelize.literal(`
+                ST_DWithin(
+                  ST_MakePoint(${longitude}, ${latitude})::geography,
+                  ST_MakePoint(longitude, latitude)::geography,
+                  ${radius}
+                )
+              `),
+        },
+        attributes: {
+          include: [
+            [
+              sequelize.literal(`
+                ST_Distance(
+                  ST_MakePoint(${longitude}, ${latitude})::geography,
+                  ST_MakePoint(longitude, latitude)::geography
+                )
+              `),
+              "distance",
+            ],
+          ],
+        },
+        // spatial filter moved into WHERE
+        order: [[sequelize.literal("distance"), "ASC"]],
+        limit: 50,
+      });
+
+      return nearbyEvents
+    } catch (error) {
+      throw badRequest(error);
+    }
+  }
+
   async create(eventData: TEvent, userId: string) {
     try {
       const event = await Event.create({ ...eventData, userId, isPublic: eventData.isPublic || true });
       return event;
     } catch (error) {
-     throw badRequest(error);
+      throw badRequest(error);
     }
   }
 
