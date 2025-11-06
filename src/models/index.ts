@@ -8,6 +8,8 @@ import Event from "./event.model";
 import EventInterest from "./eventInterest.model";
 import Subscription from "./subscription.model";
 import SubscriptionPlan from "./subscriptionPlan.model";
+import Signal from "./signal.model";
+import ProfileView from "./profileView.model";
 
 const models = {
   User,
@@ -19,6 +21,8 @@ const models = {
   EventInterest,
   Subscription,
   SubscriptionPlan,
+  Signal,
+  ProfileView,
 };
 
 Object.values(models).forEach((model: any) => {
@@ -38,6 +42,8 @@ export {
   EventInterest,
   Subscription,
   SubscriptionPlan,
+  Signal,
+  ProfileView
 };
 
 export default models;

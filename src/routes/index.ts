@@ -7,6 +7,7 @@ import messageRoutes from "./message.routes"
 import notificationRoutes from "./notification.routes"
 import radarRoutes from "./radar.routes";
 import eventRoutes from "../modules/events/routes/event.routes";
+import signalRoutes from "./signal.routes";
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use("/messages", messageRoutes);
 router.use("/notifications", notificationRoutes);
 router.use("/radar", radarRoutes);
 router.use("/events", eventRoutes);
+router.use("/signals", signalRoutes);
 
 export default router;

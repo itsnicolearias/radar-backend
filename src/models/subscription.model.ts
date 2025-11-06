@@ -16,11 +16,11 @@ class Subscription extends Model<SubscriptionAttributes, SubscriptionCreationAtt
   public static associate(models: any) {
     Subscription.belongsTo(models.User, {
       foreignKey: "userId",
-      as: "user",
+      as: "User",
     });
     Subscription.belongsTo(models.SubscriptionPlan, {
       foreignKey: "planId",
-      as: "plan",
+      as: "Plan",
     });
   }
 }

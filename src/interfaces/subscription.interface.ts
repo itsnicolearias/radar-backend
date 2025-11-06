@@ -12,4 +12,5 @@ export interface SubscriptionAttributes {
   updatedAt?: Date;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface SubscriptionCreationAttributes extends Omit<SubscriptionAttributes, "subscriptionId"> {}

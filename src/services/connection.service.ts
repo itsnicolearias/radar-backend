@@ -114,7 +114,7 @@ export const getPendingConnections = async (userId: string) => {
       order: [["createdAt", "DESC"]],
     })
 
-    return connections
+    return connections;
   } catch (error) {
     throw badRequest(error);
   }
