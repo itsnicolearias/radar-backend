@@ -1,9 +1,11 @@
-import { Message, User, Connection, Profile } from '../models';
 import { notFound, badRequest } from '../utils/errors';
-import { encryptMessage } from '../utils/crypto';
 import type { SendMessageInput, MarkAsReadInput } from '../schemas/message.schema';
 import { Op } from 'sequelize';
 import { ConnectionStatus } from '../interfaces/connection.interface';
+import Message from "../models/message.model"
+import User from "../models/user.model";
+import Connection from "../models/connection.model";
+import Profile from "../models/profile.model";
 
 export const sendMessage = async (senderId: string, data: SendMessageInput) => {
   try {
@@ -29,14 +31,14 @@ export const sendMessage = async (senderId: string, data: SendMessageInput) => {
       throw badRequest("You can only send messages to accepted connections")
     }
 
-    const { ciphertext, iv, authTag } = encryptMessage(data.content);
+    //const { ciphertext, iv, authTag } = encryptMessage(data.content);
 
     const message = await Message.create({
       senderId,
       receiverId: data.receiverId,
-      content: ciphertext,
-      iv,
-      authTag,
+      content: data.content,
+      //iv,
+      //authTag,
     });
 
     return message
