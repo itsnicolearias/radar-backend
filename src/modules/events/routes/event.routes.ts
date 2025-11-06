@@ -68,10 +68,12 @@ const router = Router();
  *                                  example: 1
  *
  *
+import { checkPremiumPlan } from "../../../middlewares/plan.middleware";
  */
 router.post(
   "/",
   authenticate,
+  checkPremiumPlan,
   validate(createEventSchema),
   eventController.create
 );
@@ -186,6 +188,13 @@ router.get(
   "/:eventId/interest",
   authenticate,
   eventController.findInterestedUsers
+);
+
+router.post(
+  "/:eventId/boost",
+  authenticate,
+  checkPremiumPlan,
+  eventController.boost
 );
 
 export default router;
