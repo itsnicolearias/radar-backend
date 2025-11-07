@@ -3,9 +3,10 @@ import User from '../models/user.model';
 import sequelize, { Op } from 'sequelize';
 import { GetNearbyUsersInput } from '../schemas/radar.schema';
 import boom, { badRequest } from '@hapi/boom';
+import type { ISignalResponse } from '../interfaces/signal.interface';
 
 class SignalService {
-  async getNearbySignals(data: GetNearbyUsersInput) {
+  async getNearbySignals(data: GetNearbyUsersInput): Promise<ISignalResponse[]> {
     try {
       const { latitude, longitude, radius } = data;
 

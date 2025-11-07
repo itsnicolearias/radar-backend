@@ -1,19 +1,45 @@
-export interface MessageAttributes {
+export interface IMessageResponse {
   messageId: string;
   senderId: string;
   receiverId: string;
   content: string;
-  iv: string | null;
-  authTag: string | null;
   isRead: boolean;
   createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface MessageCreationAttributes {
-  senderId: string;
-  receiverId: string;
+export interface ILastMessage {
   content: string;
-  iv?: string;
-  authTag?: string;
-  isRead?: boolean;
+  createdAt: Date;
+  isRead: boolean;
+  senderId: string;
+}
+
+export interface IConversationUser {
+  userId: string;
+  displayName: string | null;
+  isVerified: boolean;
+  Profile: {
+    photoUrl: string | null;
+  }
+}
+
+export interface IConversation {
+  conversationId: string;
+  user: IConversationUser;
+  lastMessage: ILastMessage;
+  unreadCount: number;
+}
+
+export interface IConversationsResponse {
+  conversations: IConversation[];
+  total: number;
+}
+
+export interface IMarkAsReadResponse {
+  message: string;
+}
+
+export interface IUnreadMessagesResponse {
+  count: number;
 }

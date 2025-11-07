@@ -4,8 +4,9 @@ import type { GetNearbyUsersInput } from "../schemas/radar.schema"
 import { badRequest } from "@hapi/boom"
 import EventService from "../modules/events/services/event.service"
 import SignalService from "./signal.service"
+import type { IRadarNearbyResponse, IRadarUserResponse } from "../interfaces/radar.interface"
 
-export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput) => {
+export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput): Promise<IRadarUserResponse[]> => {
   try {
     const { latitude, longitude, radius } = data
 

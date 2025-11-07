@@ -2,8 +2,14 @@ import { badRequest } from "@hapi/boom"
 import { NotificationType } from "../interfaces/notification.interface"
 import { Notification } from "../models"
 import type { MarkNotificationsAsReadInput } from "../schemas/notification.schema"
+import type {
+  INotificationResponse,
+  IMarkNotificationsAsReadResponse,
+  IUnreadNotificationCountResponse,
+  IDeleteNotificationResponse,
+} from "../interfaces/notification.interface"
 
-export const createNotification = async (userId: string, type: NotificationType, message: string) => {
+export const createNotification = async (userId: string, type: NotificationType, message: string): Promise<INotificationResponse> => {
   try {
     const notification = await Notification.create({
       userId,

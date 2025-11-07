@@ -6,8 +6,14 @@ import Message from "../models/message.model"
 import User from "../models/user.model";
 import Connection from "../models/connection.model";
 import Profile from "../models/profile.model";
+import type {
+  IMessageResponse,
+  IConversationsResponse,
+  IMarkAsReadResponse,
+  IUnreadMessagesResponse,
+} from "../interfaces/message.interface"
 
-export const sendMessage = async (senderId: string, data: SendMessageInput) => {
+export const sendMessage = async (senderId: string, data: SendMessageInput): Promise<IMessageResponse> => {
   try {
     if (senderId === data.receiverId) {
       throw badRequest("Cannot send message to yourself")

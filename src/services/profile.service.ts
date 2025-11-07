@@ -3,8 +3,9 @@ import type { CreateProfileInput, UpdateProfileInput } from "../schemas/profile.
 import { badRequest } from "@hapi/boom"
 import Profile from "../models/profile.model"
 import User from "../models/user.model"
+import type { IProfileResponse, IDeleteProfileResponse } from "../interfaces/profile.interface"
 
-export const getProfileByUserId = async (userId: string) => {
+export const getProfileByUserId = async (userId: string): Promise<IProfileResponse> => {
   try {
     const profile = await Profile.findOne({
       where: { userId },

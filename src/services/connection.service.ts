@@ -4,8 +4,9 @@ import { Op } from "sequelize"
 import { ConnectionStatus } from "../interfaces/connection.interface"
 import User from "../models/user.model"
 import Connection from "../models/connection.model"
+import type { IConnectionResponse, IDeleteConnectionResponse } from "../interfaces/connection.interface"
 
-export const createConnection = async (senderId: string, data: CreateConnectionInput) => {
+export const createConnection = async (senderId: string, data: CreateConnectionInput): Promise<IConnectionResponse> => {
   try {
     if (senderId === data.receiverId) {
       throw badRequest("Cannot send connection request to yourself")

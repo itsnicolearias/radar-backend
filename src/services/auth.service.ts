@@ -8,21 +8,9 @@ import type { RegisterUserInput, LoginUserInput } from "../schemas/auth.schema"
 import { badRequest } from "@hapi/boom"
 import User from "../models/user.model"
 import { Profile, Subscription, SubscriptionPlan } from "../models"
+import type { IAuthResponse, IResendVerificationEmailResponse, IVerifyEmailResponse } from "../interfaces/auth.interface"
 
-export interface AuthResponse {
-  token: string
-  user: {
-    userId: string
-    firstName: string
-    lastName: string
-    email: string
-    isVerified: boolean
-    displayName: string | null
-    birthDate: Date | null
-  }
-}
-
-export const registerUser = async (data: RegisterUserInput): Promise<AuthResponse> => {
+export const registerUser = async (data: RegisterUserInput): Promise<IAuthResponse> => {
   try {
     const existingUser = await User.findOne({ where: { email: data.email } })
 
@@ -96,7 +84,7 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
   }
 }
 
-export const resendVerificationEmail = async (email: string) => {
+export const resendVerificationEmail = async (email: string): Promise<IResendVerificationEmailResponse> => {
   try {
     const user = await User.findOne({ where: { email } });
 
@@ -139,7 +127,7 @@ export const resendVerificationEmail = async (email: string) => {
   }
 };
 
-export const loginUser = async (data: LoginUserInput): Promise<AuthResponse> => {
+export const loginUser = async (data: LoginUserInput): Promise<IAuthResponse> => {
   try {
     const user = await User.findOne({ where: { email: data.email } })
 
@@ -177,7 +165,7 @@ export const loginUser = async (data: LoginUserInput): Promise<AuthResponse> => 
   }
 }
 
-export const verifyEmail = async (token: string): Promise<{ message: string; user: AuthResponse["user"] }> => {
+export const verifyEmail = async (token: string): Promise<IVerifyEmailResponse> => {
   try {
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 

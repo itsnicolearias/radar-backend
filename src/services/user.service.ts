@@ -2,8 +2,14 @@ import { badRequest, notFound } from "../utils/errors"
 import type { UpdateLocationInput, UpdateUserInput, ToggleVisibilityInput } from "../schemas/user.schema"
 import Profile from "../models/profile.model"
 import User from "../models/user.model"
+import type {
+  IUserResponse,
+  IUpdateLocationResponse,
+  IUpdateUserResponse,
+  IToggleVisibilityResponse,
+} from "../interfaces/user.interface"
 
-export const getUserById = async (userId: string) => {
+export const getUserById = async (userId: string): Promise<IUserResponse> => {
   try {
     const user = await User.findByPk(userId, {
       include: [

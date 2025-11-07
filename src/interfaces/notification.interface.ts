@@ -1,21 +1,23 @@
-export enum NotificationType {
-  MESSAGE = "message",
-  CONNECTION_REQUEST = "connection_request",
-  CONNECTION_ACCEPT = "connection_accept",
-}
+import { NotificationType } from "./notification.interface"
 
-export interface NotificationAttributes {
+export interface INotificationResponse {
   notificationId: string
   userId: string
   type: NotificationType
   message: string
   isRead: boolean
   createdAt: Date
+  updatedAt: Date
 }
 
-export interface NotificationCreationAttributes {
-  userId: string
-  type: NotificationType
+export interface IMarkNotificationsAsReadResponse {
   message: string
-  isRead?: boolean
+}
+
+export interface IUnreadNotificationCountResponse {
+  count: number
+}
+
+export interface IDeleteNotificationResponse {
+  message: string
 }
