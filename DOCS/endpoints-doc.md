@@ -4,70 +4,648 @@ This document provides a comprehensive reference for all the API endpoints, incl
 
 ## Authentication (`/api/auth`)
 
-| Method | Path | Description | Controller | Service | Request Body | Request Params | Response Type |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| POST | /register | Register a new user | `register` | `registerUser` | `RegisterUserInput` | - | `IAuthResponse` |
-| POST | /login | Login user | `login` | `loginUser` | `LoginUserInput` | - | `IAuthResponse` |
-| POST | /resend-verification | Resend verification email | `resendVerificationEmail` | `resendVerificationEmail` | `ResendVerificationEmailInput` | - | `IResendVerificationEmailResponse` |
-| GET | /verify-email/:token | Verify user email | `verifyEmail` | `verifyEmail` | - | `token: string` | `IVerifyEmailResponse` |
+### POST /register
+
+- **Description:** Register a new user
+- **Request Body:** `RegisterUserInput`
+- **Response Type:** `IAuthResponse`
+  ```json
+  {
+    "token": "string",
+    "user": {
+      "userId": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "email": "string",
+      "isVerified": "boolean",
+      "displayName": "string | null",
+      "birthDate": "Date | null"
+    }
+  }
+  ```
+
+### POST /login
+
+- **Description:** Login user
+- **Request Body:** `LoginUserInput`
+- **Response Type:** `IAuthResponse`
+  ```json
+  {
+    "token": "string",
+    "user": {
+      "userId": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "email": "string",
+      "isVerified": "boolean",
+      "displayName": "string | null",
+      "birthDate": "Date | null"
+    }
+  }
+  ```
+
+### POST /resend-verification
+
+- **Description:** Resend verification email
+- **Request Body:** `ResendVerificationEmailInput`
+- **Response Type:** `IResendVerificationEmailResponse`
+  ```json
+  {
+    "message": "string"
+  }
+  ```
+
+### GET /verify-email/:token
+
+- **Description:** Verify user email
+- **Request Params:** `token: string`
+- **Response Type:** `IVerifyEmailResponse`
+  ```json
+  {
+    "message": "string",
+    "user": {
+      "userId": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "email": "string",
+      "isVerified": "boolean",
+      "displayName": "string | null",
+      "birthDate": "Date | null"
+    }
+  }
+  ```
 
 ## Connections (`/api/connections`)
 
-| Method | Path | Description | Controller | Service | Request Body | Request Params | Response Type |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| POST | / | Create a new connection | `createConnection` | `createConnection` | `CreateConnectionInput` | - | `IConnectionResponse` |
-| GET | /accepted | Get accepted connections | `getAcceptedConnections` | `getConnectionsByUserId` | - | - | `IConnectionResponse[]` |
-| GET | /pendings | Get pending connections | `getPendingConnections` | `getPendingConnections` | - | - | `IConnectionResponse[]` |
-| PATCH | /:connectionId | Update a connection | `updateConnection` | `updateConnection` | `UpdateConnectionInput` | `connectionId: string` | `IConnectionResponse` |
-| DELETE | /:connectionId | Delete a connection | `deleteConnection` | `deleteConnection` | - | `connectionId: string` | `IDeleteConnectionResponse` |
+### POST /
+
+- **Description:** Create a new connection
+- **Request Body:** `CreateConnectionInput`
+- **Response Type:** `IConnectionResponse`
+  ```json
+  {
+    "connectionId": "string",
+    "senderId": "string",
+    "receiverId": "string",
+    "status": "ConnectionStatus",
+    "createdAt": "Date",
+    "updatedAt": "Date",
+    "Sender": {
+      "userId": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "email": "string"
+    },
+    "Receiver": {
+      "userId": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "email": "string"
+    }
+  }
+  ```
+
+### GET /accepted
+
+- **Description:** Get accepted connections
+- **Response Type:** `IConnectionResponse[]`
+  ```json
+  [
+    {
+      "connectionId": "string",
+      "senderId": "string",
+      "receiverId": "string",
+      "status": "ConnectionStatus",
+      "createdAt": "Date",
+      "updatedAt": "Date",
+      "Sender": {
+        "userId": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "email": "string"
+      },
+      "Receiver": {
+        "userId": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "email": "string"
+      }
+    }
+  ]
+  ```
+
+### GET /pendings
+
+- **Description:** Get pending connections
+- **Response Type:** `IConnectionResponse[]`
+  ```json
+  [
+    {
+      "connectionId": "string",
+      "senderId": "string",
+      "receiverId": "string",
+      "status": "ConnectionStatus",
+      "createdAt": "Date",
+      "updatedAt": "Date",
+      "Sender": {
+        "userId": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "email": "string"
+      },
+      "Receiver": {
+        "userId": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "email": "string"
+      }
+    }
+  ]
+  ```
+
+### PATCH /:connectionId
+
+- **Description:** Update a connection
+- **Request Params:** `connectionId: string`
+- **Request Body:** `UpdateConnectionInput`
+- **Response Type:** `IConnectionResponse`
+  ```json
+  {
+    "connectionId": "string",
+    "senderId": "string",
+    "receiverId": "string",
+    "status": "ConnectionStatus",
+    "createdAt": "Date",
+    "updatedAt": "Date",
+    "Sender": {
+      "userId": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "email": "string"
+    },
+    "Receiver": {
+      "userId": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "email": "string"
+    }
+  }
+  ```
+
+### DELETE /:connectionId
+
+- **Description:** Delete a connection
+- **Request Params:** `connectionId: string`
+- **Response Type:** `IDeleteConnectionResponse`
+  ```json
+  {
+    "message": "string"
+  }
+  ```
 
 ## Messages (`/api/messages`)
 
-| Method | Path | Description | Controller | Service | Request Body | Request Params | Request Query | Response Type |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |:--- |
-| GET | / | Get recent conversations | `getRecentConversations` | `getRecentConversations` | - | - | `page`, `limit`, `all` | `IConversationsResponse` |
-| POST | / | Create a new message | `sendMessage` | `sendMessage` | `SendMessageInput` | - | - | `IMessageResponse` |
-| GET | /:userId | Obtain messages with a user | `getMessages` | `getMessagesBetweenUsers` | - | `userId: string` | - | `IMessageResponse[]` |
-| PATCH | /read | Mark a message as read | `markAsRead` | `markMessagesAsRead` | `MarkAsReadInput` | - | - | `IMarkAsReadResponse` |
-| GET | /unread/count | Obtain unread messages count | `getUnreadCount` | `getUnreadMessageCount` | - | - | - | `IUnreadMessagesResponse` |
+### GET /
+
+- **Description:** Get recent conversations
+- **Request Query:** `page: number`, `limit: number`, `all: boolean`
+- **Response Type:** `IConversationsResponse`
+  ```json
+  {
+    "conversations": [
+      {
+        "conversationId": "string",
+        "user": {
+          "userId": "string",
+          "displayName": "string | null",
+          "isVerified": "boolean",
+          "Profile": {
+            "photoUrl": "string | null"
+          }
+        },
+        "lastMessage": {
+          "content": "string",
+          "createdAt": "Date",
+          "isRead": "boolean",
+          "senderId": "string"
+        },
+        "unreadCount": "number"
+      }
+    ],
+    "total": "number"
+  }
+  ```
+
+### POST /
+
+- **Description:** Create a new message
+- **Request Body:** `SendMessageInput`
+- **Response Type:** `IMessageResponse`
+  ```json
+  {
+    "messageId": "string",
+    "senderId": "string",
+    "receiverId": "string",
+    "content": "string",
+    "isRead": "boolean",
+    "createdAt": "Date",
+    "updatedAt": "Date"
+  }
+  ```
+
+### GET /:userId
+
+- **Description:** Obtain messages with a user
+- **Request Params:** `userId: string`
+- **Response Type:** `IMessageResponse[]`
+  ```json
+  [
+    {
+      "messageId": "string",
+      "senderId": "string",
+      "receiverId": "string",
+      "content": "string",
+      "isRead": "boolean",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    }
+  ]
+  ```
+
+### PATCH /read
+
+- **Description:** Mark a message as read
+- **Request Body:** `MarkAsReadInput`
+- **Response Type:** `IMarkAsReadResponse`
+  ```json
+  {
+    "message": "string"
+  }
+  ```
+
+### GET /unread/count
+
+- **Description:** Obtain unread messages count
+- **Response Type:** `IUnreadMessagesResponse`
+  ```json
+  {
+    "count": "number"
+  }
+  ```
 
 ## Notifications (`/api/notifications`)
 
-| Method | Path | Description | Controller | Service | Request Body | Request Params | Response Type |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| GET | / | Get all user's notifications | `getNotifications` | `getNotificationsByUserId` | - | - | `INotificationResponse[]` |
-| PATCH | /read | Mark a notification as read | `markAsRead` | `markNotificationsAsRead` | `MarkNotificationsAsReadInput` | - | `IMarkNotificationsAsReadResponse` |
-| GET | /unread/count | Get unread notifications count | `getUnreadCount` | `getUnreadNotificationCount` | - | - | `IUnreadNotificationCountResponse` |
-| DELETE | /:notificationId | Delete a notification | `deleteNotification` | `deleteNotification` | - | `notificationId: string` | `IDeleteNotificationResponse` |
+### GET /
+
+- **Description:** Get all user's notifications
+- **Response Type:** `INotificationResponse[]`
+  ```json
+  [
+    {
+      "notificationId": "string",
+      "userId": "string",
+      "type": "NotificationType",
+      "message": "string",
+      "isRead": "boolean",
+      "createdAt": "Date",
+      "updatedAt": "Date"
+    }
+  ]
+  ```
+
+### PATCH /read
+
+- **Description:** Mark a notification as read
+- **Request Body:** `MarkNotificationsAsReadInput`
+- **Response Type:** `IMarkNotificationsAsReadResponse`
+  ```json
+  {
+    "message": "string"
+  }
+  ```
+
+### GET /unread/count
+
+- **Description:** Get unread notifications count
+- **Response Type:** `IUnreadNotificationCountResponse`
+  ```json
+  {
+    "count": "number"
+  }
+  ```
+
+### DELETE /:notificationId
+
+- **Description:** Delete a notification
+- **Request Params:** `notificationId: string`
+- **Response Type:** `IDeleteNotificationResponse`
+  ```json
+  {
+    "message": "string"
+  }
+  ```
 
 ## Profiles (`/api/profiles`)
 
-| Method | Path | Description | Controller | Service | Request Body | Response Type |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| GET | / | Get my profile | `getProfile` | `getProfileByUserId` | - | `IProfileResponse` |
-| POST | / | Create my profile | `createProfile` | `createProfile` | `CreateProfileInput` | `IProfileResponse` |
-| PATCH | / | Update my profile | `updateProfile` | `updateProfile` | `UpdateProfileInput` | `IProfileResponse` |
-| DELETE | / | Delete my profile | `deleteProfile` | `deleteProfile` | - | `IDeleteProfileResponse` |
-| POST | /view | Record a profile view | `viewProfile` | `createProfileView` | `viewedId: string` | `IProfileViewResponse` |
-| GET | /views | Get users who viewed my profile | `getProfileViews` | `getProfileViews` | - | `IProfileViewResponse[]` |
+### GET /
+
+- **Description:** Get my profile
+- **Response Type:** `IProfileResponse`
+  ```json
+  {
+    "profileId": "string",
+    "userId": "string",
+    "photoUrl": "string | null",
+    "bio": "string | null",
+    "location": "string | null",
+    "website": "string | null",
+    "birthDate": "Date | null",
+    "gender": "string | null",
+    "pronouns": "string | null",
+    "height": "number | null",
+    "zodiac": "string | null",
+    "education": "string | null",
+    "work": "string | null",
+    "interests": "string[] | null",
+    "createdAt": "Date",
+    "updatedAt": "Date",
+    "User": {
+      "userId": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "email": "string"
+    }
+  }
+  ```
+
+### POST /
+
+- **Description:** Create my profile
+- **Request Body:** `CreateProfileInput`
+- **Response Type:** `IProfileResponse`
+  ```json
+  {
+    "profileId": "string",
+    "userId": "string",
+    "photoUrl": "string | null",
+    "bio": "string | null",
+    "location": "string | null",
+    "website": "string | null",
+    "birthDate": "Date | null",
+    "gender": "string | null",
+    "pronouns": "string | null",
+    "height": "number | null",
+    "zodiac": "string | null",
+    "education": "string | null",
+    "work": "string | null",
+    "interests": "string[] | null",
+    "createdAt": "Date",
+    "updatedAt": "Date",
+    "User": {
+      "userId": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "email": "string"
+    }
+  }
+  ```
+
+### PATCH /
+
+- **Description:** Update my profile
+- **Request Body:** `UpdateProfileInput`
+- **Response Type:** `IProfileResponse`
+  ```json
+  {
+    "profileId": "string",
+    "userId": "string",
+    "photoUrl": "string | null",
+    "bio": "string | null",
+    "location": "string | null",
+    "website": "string | null",
+    "birthDate": "Date | null",
+    "gender": "string | null",
+    "pronouns": "string | null",
+    "height": "number | null",
+    "zodiac": "string | null",
+    "education": "string | null",
+    "work": "string | null",
+    "interests": "string[] | null",
+    "createdAt": "Date",
+    "updatedAt": "Date",
+    "User": {
+      "userId": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "email": "string"
+    }
+  }
+  ```
+
+### DELETE /
+
+- **Description:** Delete my profile
+- **Response Type:** `IDeleteProfileResponse`
+  ```json
+  {
+    "message": "string"
+  }
+  ```
+
+### POST /view
+
+- **Description:** Record a profile view
+- **Request Body:** `viewedId: string`
+- **Response Type:** `IProfileViewResponse`
+  ```json
+  {
+    "profileViewId": "string",
+    "viewerId": "string",
+    "viewedId": "string",
+    "createdAt": "Date",
+    "updatedAt": "Date",
+    "Viewer": {
+      "userId": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "displayName": "string | null"
+    }
+  }
+  ```
+
+### GET /views
+
+- **Description:** Get users who viewed my profile
+- **Response Type:** `IProfileViewResponse[]`
+  ```json
+  [
+    {
+      "profileViewId": "string",
+      "viewerId": "string",
+      "viewedId": "string",
+      "createdAt": "Date",
+      "updatedAt": "Date",
+      "Viewer": {
+        "userId": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "displayName": "string | null"
+      }
+    }
+  ]
+  ```
 
 ## Radar (`/api/radar`)
 
-| Method | Path | Description | Controller | Service | Request Query | Response Type |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| GET | /nearby | Get nearby users, events, and signals | `getNearby` | `getNearbyAll` | `latitude: number`, `longitude: number`, `radius: number` | `IRadarNearbyResponse` |
+### GET /nearby
+
+- **Description:** Get nearby users, events, and signals
+- **Request Query:** `latitude: number`, `longitude: number`, `radius: number`
+- **Response Type:** `IRadarNearbyResponse`
+  ```json
+  {
+    "users": [
+      {
+        "userId": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "email": "string",
+        "displayName": "string | null",
+        "birthDate": "Date | null",
+        "isVerified": "boolean",
+        "lastLatitude": "number | null",
+        "lastLongitude": "number | null",
+        "lastSeenAt": "Date | null",
+        "distance": "number",
+        "Profile": {
+          "photoUrl": "string | null",
+          "bio": "string | null",
+          "age": "number | null",
+          "interests": "string[] | null"
+        }
+      }
+    ],
+    "events": [],
+    "signals": [
+      {
+        "signalId": "string",
+        "senderId": "string",
+        "note": "string | null",
+        "createdAt": "Date",
+        "updatedAt": "Date",
+        "distance": "number"
+      }
+    ]
+  }
+  ```
 
 ## Signals (`/api/signals`)
 
-| Method | Path | Description | Controller | Service | Request Body | Response Type |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| POST | /send | Send a signal | `sendSignal` | `createSignal` | `note?: string` | `ISignalResponse` |
+### POST /send
+
+- **Description:** Send a signal
+- **Request Body:** `note?: string`
+- **Response Type:** `ISignalResponse`
+  ```json
+  {
+    "signalId": "string",
+    "senderId": "string",
+    "note": "string | null",
+    "createdAt": "Date",
+    "updatedAt": "Date",
+    "distance": "number"
+  }
+  ```
 
 ## Users (`/api/users`)
 
-| Method | Path | Description | Controller | Service | Request Body | Response Type |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| GET | / | Get logged user | `getUser` | `getUserById` | - | `IUserResponse` |
-| PATCH | / | Update logged user | `updateUser` | `updateUser` | `UpdateUserInput` | `IUpdateUserResponse` |
-| PATCH | /location | Update user location | `updateLocation` | `updateUserLocation` | `UpdateLocationInput` | `IUpdateLocationResponse` |
-| PATCH | /visibility | Toggle user visibility | `toggleVisibility` | `toggleVisibility` | `ToggleVisibilityInput` | `IToggleVisibilityResponse` |
+### GET /
+
+- **Description:** Get logged user
+- **Response Type:** `IUserResponse`
+  ```json
+  {
+    "userId": "string",
+    "firstName": "string",
+    "lastName": "string",
+    "email": "string",
+    "displayName": "string | null",
+    "birthDate": "Date | null",
+    "isVerified": "boolean",
+    "invisibleMode": "boolean",
+    "isVisible": "boolean",
+    "lastLatitude": "number | null",
+    "lastLongitude": "number | null",
+    "lastSeenAt": "Date | null",
+    "createdAt": "Date",
+    "updatedAt": "Date",
+    "Profile": {
+      "profileId": "string",
+      "userId": "string",
+      "photoUrl": "string | null",
+      "bio": "string | null",
+      "location": "string | null",
+      "website": "string | null",
+      "birthDate": "Date | null",
+      "gender": "string | null",
+      "pronouns": "string | null",
+      "height": "number | null",
+      "zodiac": "string | null",
+      "education": "string | null",
+      "work": "string | null",
+      "interests": "string[] | null",
+      "createdAt": "Date",
+      "updatedAt": "Date",
+      "User": {
+        "userId": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "email": "string"
+      }
+    }
+  }
+  ```
+
+### PATCH /
+
+- **Description:** Update logged user
+- **Request Body:** `UpdateUserInput`
+- **Response Type:** `IUpdateUserResponse`
+  ```json
+  {
+    "userId": "string",
+    "firstName": "string",
+    "lastName": "string",
+    "email": "string",
+    "displayName": "string | null",
+    "birthDate": "Date | null",
+    "invisibleMode": "boolean",
+    "isVisible": "boolean"
+  }
+  ```
+
+### PATCH /location
+
+- **Description:** Update user location
+- **Request Body:** `UpdateLocationInput`
+- **Response Type:** `IUpdateLocationResponse`
+  ```json
+  {
+    "userId": "string",
+    "latitude": "number | null",
+    "longitude": "number | null",
+    "lastSeenAt": "Date"
+  }
+  ```
+
+### PATCH /visibility
+
+- **Description:** Toggle user visibility
+- **Request Body:** `ToggleVisibilityInput`
+- **Response Type:** `IToggleVisibilityResponse`
+  ```json
+  {
+    "userId": "string",
+    "isVisible": "boolean"
+  }
+  ```
