@@ -9,6 +9,7 @@ import { badRequest } from "@hapi/boom"
 import User from "../models/user.model"
 import { Profile, Subscription, SubscriptionPlan } from "../models"
 import { UserAttributes } from "../interfaces/user.interface"
+import type { IResendVerificationEmailResponse, IVerifyEmailResponse } from "../interfaces/auth.interface"
 
 export interface AuthResponse {
   token: string
@@ -35,6 +36,9 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
       email: data.email,
       passwordHash,
       emailVerificationToken: hashedToken,
+      isVerified: false,
+      invisibleMode: false,
+      isVisible: false,
     })
 
     await Profile.create({
@@ -89,7 +93,7 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
   }
 }
 
-export const resendVerificationEmail = async (email: string) => {
+export const resendVerificationEmail = async (email: string): Promise<IResendVerificationEmailResponse> => {
   try {
     const user = await User.findOne({ where: { email } });
 
@@ -172,7 +176,7 @@ export const loginUser = async (data: LoginUserInput): Promise<AuthResponse> => 
   }
 }
 
-export const verifyEmail = async (token: string): Promise<{ message: string; user: AuthResponse["user"] }> => {
+export const verifyEmail = async (token: string): Promise<IVerifyEmailResponse> => {
   try {
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 

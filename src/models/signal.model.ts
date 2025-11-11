@@ -8,6 +8,7 @@ class Signal extends Model {
   public note?: string;
   public readonly createdAt!: Date;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public static associate(models: any) {
     Signal.belongsTo(models.User, {
       foreignKey: 'senderId',

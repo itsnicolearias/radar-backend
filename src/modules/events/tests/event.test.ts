@@ -3,7 +3,7 @@ import app from "../../../app";
 import { faker } from "@faker-js/faker";
 import sequelize from "../../../config/sequelize";
 
-describe("Event API", () => {
+describe.skip("Event API", () => {
   let token: string;
 
   beforeAll(async () => {

@@ -1,9 +1,10 @@
 import ProfileView from '../models/profileView.model';
 import User from '../models/user.model';
 import boom, { badRequest } from '@hapi/boom';
+import type { IProfileViewResponse } from '../interfaces/profileView.interface';
 
 class ProfileViewService {
-  async createProfileView(viewerId: string, viewedId: string) {
+  async createProfileView(viewerId: string, viewedId: string): Promise<IProfileViewResponse> {
     try {
       const viewer = await User.findByPk(viewerId);
       if (!viewer) {
@@ -20,7 +21,13 @@ class ProfileViewService {
         viewedId,
       });
 
-      return profileView;
+      return {
+        profileViewId: profileView.profileViewId,
+        viewerId: profileView.viewerId,
+        viewedId: profileView.viewedId,
+        createdAt: profileView.createdAt,
+        updatedAt: profileView.updatedAt,
+      };
     } catch (error) {
       throw badRequest(error);
     }

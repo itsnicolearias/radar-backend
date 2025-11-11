@@ -2,11 +2,10 @@ import { DataTypes, Model, BelongsToGetAssociationMixin } from "sequelize"
 import sequelize from "../config/sequelize"
 import User from "./user.model"
 import {
-  ConnectionStatus,
+  _ConnectionStatus,
   type ConnectionAttributes,
   type ConnectionCreationAttributes,
 } from "../interfaces/connection.interface"
-
 export class Connection
   extends Model<ConnectionAttributes, ConnectionCreationAttributes>
   implements ConnectionAttributes
@@ -14,7 +13,7 @@ export class Connection
   public connectionId!: string
   public senderId!: string
   public receiverId!: string
-  public status!: ConnectionStatus
+  public status!: _ConnectionStatus
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
   // association mixins
@@ -54,7 +53,7 @@ Connection.init(
     },
     status: {
       type: DataTypes.STRING(20),
-      defaultValue: ConnectionStatus.PENDING,
+      defaultValue: _ConnectionStatus.PENDING,
       allowNull: false,
     },
     createdAt: {

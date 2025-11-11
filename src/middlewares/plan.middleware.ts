@@ -11,7 +11,7 @@ export const checkPlanLimits = (feature: string) => {
     try {
       const userId = req.user!.userId;
 
-      const subscription: any = await Subscription.findOne({
+      const subscription = await Subscription.findOne({
         where: { userId },
         include: [
           {

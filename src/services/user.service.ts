@@ -2,8 +2,11 @@ import { badRequest, notFound } from "../utils/errors"
 import type { UpdateLocationInput, UpdateUserInput, ToggleVisibilityInput } from "../schemas/user.schema"
 import Profile from "../models/profile.model"
 import User from "../models/user.model"
+import type {
+  IUserResponse,
+} from "../interfaces/user.interface"
 
-export const getUserById = async (userId: string) => {
+export const getUserById = async (userId: string): Promise<IUserResponse> => {
   try {
     const user = await User.findByPk(userId, {
       include: [
@@ -19,7 +22,7 @@ export const getUserById = async (userId: string) => {
       throw notFound("User not found")
     }
 
-    return user
+    return user as unknown as IUserResponse;
   } catch (error) {
     throw badRequest(error);
   }
@@ -58,10 +61,9 @@ export const updateUser = async (userId: string, data: UpdateUserInput) => {
       throw notFound("User not found")
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateData: any = { ...data }
     if (data.birthDate) {
-      updateData.birthDate = data.birthDate;
+      updateData.birthDate = new Date(data.birthDate);
     }
 
     await user.update(updateData)

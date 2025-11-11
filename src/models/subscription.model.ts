@@ -1,7 +1,7 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/sequelize";
 import type { SubscriptionAttributes, SubscriptionCreationAttributes, SubscriptionStatus } from "../interfaces/subscription.interface";
-
+import { SubscriptionPlan } from "./"
 class Subscription extends Model<SubscriptionAttributes, SubscriptionCreationAttributes> implements SubscriptionAttributes {
   public subscriptionId!: string;
   public userId!: string;
@@ -13,7 +13,7 @@ class Subscription extends Model<SubscriptionAttributes, SubscriptionCreationAtt
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
-  public plan!: { name: string; };
+  public Plan!: SubscriptionPlan;
 
   public static associate(models: any) {
     Subscription.belongsTo(models.User, {
