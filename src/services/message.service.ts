@@ -87,7 +87,7 @@ export const getRecentConversations = async (
       seen.add(otherUserId)
 
       const otherUser = await User.findByPk(otherUserId, {
-        attributes: ['userId', 'displayName', 'isVerified'],
+        attributes: ['userId', 'displayName', 'isVerified', "firstName", "lastName"],
         raw: true,
         include: [
           {

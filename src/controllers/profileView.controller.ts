@@ -9,7 +9,10 @@ class ProfileViewController {
 
       const profileView = await ProfileViewService.createProfileView(req.user!.userId, viewedId);
 
-      res.status(201).json(profileView);
+      res.status(201).json({
+      success: true,
+      data: profileView,
+    })
     } catch (error) {
       next(error);
     }
@@ -20,7 +23,10 @@ class ProfileViewController {
 
       const profileViews = await ProfileViewService.getProfileViews(req.user!.userId);
 
-      res.status(200).json(profileViews);
+      res.status(201).json({
+      success: true,
+      data: profileViews,
+    })
     } catch (error) {
       next(error);
     }

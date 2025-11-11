@@ -8,9 +8,15 @@ import type { RegisterUserInput, LoginUserInput } from "../schemas/auth.schema"
 import { badRequest } from "@hapi/boom"
 import User from "../models/user.model"
 import { Profile, Subscription, SubscriptionPlan } from "../models"
-import type { IAuthResponse, IResendVerificationEmailResponse, IVerifyEmailResponse } from "../interfaces/auth.interface"
+import { UserAttributes } from "../interfaces/user.interface"
+import type { IResendVerificationEmailResponse, IVerifyEmailResponse } from "../interfaces/auth.interface"
 
-export const registerUser = async (data: RegisterUserInput): Promise<IAuthResponse> => {
+export interface AuthResponse {
+  token: string
+  user: Partial<UserAttributes>
+}
+
+export const registerUser = async (data: RegisterUserInput): Promise<AuthResponse> => {
   try {
     const existingUser = await User.findOne({ where: { email: data.email } })
 
@@ -130,7 +136,7 @@ export const resendVerificationEmail = async (email: string): Promise<IResendVer
   }
 };
 
-export const loginUser = async (data: LoginUserInput): Promise<IAuthResponse> => {
+export const loginUser = async (data: LoginUserInput): Promise<AuthResponse> => {
   try {
     const user = await User.findOne({ where: { email: data.email } })
 
@@ -161,6 +167,8 @@ export const loginUser = async (data: LoginUserInput): Promise<IAuthResponse> =>
         isVerified: user.isVerified,
         displayName: user.displayName,
         birthDate: user.birthDate,
+        lastLatitude: user.lastLatitude,
+        lastLongitude: user.lastLongitude
       },
     }
   } catch (error) {
