@@ -13,7 +13,7 @@ const router = Router();
 
 router.use("/auth", authRoutes);
 router.use("/users", userRoutes);
-router.use("/profiles", profileRoutes);
+router.use("/profile", profileRoutes);
 router.use("/connections", connectionRoutes);
 router.use("/messages", messageRoutes);
 router.use("/notifications", notificationRoutes);

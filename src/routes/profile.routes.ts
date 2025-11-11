@@ -10,7 +10,7 @@ const router = Router()
 
 /**
  * @swagger
- * /api/profiles:
+ * /api/profile:
  *   get:
  *     summary: Get my profile
  *     tags: [Settings]
@@ -38,7 +38,7 @@ router.post("/", authenticate, validate(createProfileSchema), profileController.
 
 /**
  * @swagger
- * /api/profiles:
+ * /api/profile:
  *   patch:
  *     summary: update my profile
  *     tags: [Settings]
@@ -80,7 +80,7 @@ router.delete("/", authenticate, profileController.deleteProfile)
 
 /**
  * @swagger
- * /api/profiles/view:
+ * /api/profile/views:
  *   post:
  *     summary: Record a profile view
  *     tags: [Profiles]
@@ -103,11 +103,11 @@ router.delete("/", authenticate, profileController.deleteProfile)
  *       404:
  *         description: User not found
  */
-router.post("/view", authenticate, validate(viewProfileSchema), ProfileViewController.viewProfile)
+router.post("/views", authenticate, validate(viewProfileSchema), ProfileViewController.viewProfile)
 
 /**
  * @swagger
- * /api/profiles/views:
+ * /api/profile/views:
  *   get:
  *     summary: Get users who viewed my profile
  *     tags: [Profiles]
