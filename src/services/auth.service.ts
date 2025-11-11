@@ -8,18 +8,11 @@ import type { RegisterUserInput, LoginUserInput } from "../schemas/auth.schema"
 import { badRequest } from "@hapi/boom"
 import User from "../models/user.model"
 import { Profile, Subscription, SubscriptionPlan } from "../models"
+import { UserAttributes } from "../interfaces/user.interface"
 
 export interface AuthResponse {
   token: string
-  user: {
-    userId: string
-    firstName: string
-    lastName: string
-    email: string
-    isVerified: boolean
-    displayName: string | null
-    birthDate: Date | null
-  }
+  user: Partial<UserAttributes>
 }
 
 export const registerUser = async (data: RegisterUserInput): Promise<AuthResponse> => {
@@ -170,6 +163,8 @@ export const loginUser = async (data: LoginUserInput): Promise<AuthResponse> => 
         isVerified: user.isVerified,
         displayName: user.displayName,
         birthDate: user.birthDate,
+        lastLatitude: user.lastLatitude,
+        lastLongitude: user.lastLongitude
       },
     }
   } catch (error) {

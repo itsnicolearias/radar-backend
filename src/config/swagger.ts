@@ -64,6 +64,12 @@ const options: swaggerJsdoc.Options = {
             invisibleMode: {
               type: "boolean",
             },
+            lastLatitude: {
+              type: "integer",
+            },
+            lastLongitude: {
+              type: "integer",
+            },
             createdAt: {
               type: "string",
               format: "date-time",
