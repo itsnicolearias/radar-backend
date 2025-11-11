@@ -1,7 +1,6 @@
 import { notFound, badRequest } from '../utils/errors';
 import type { SendMessageInput, MarkAsReadInput } from '../schemas/message.schema';
 import { Op } from 'sequelize';
-import { ConnectionStatus } from '../interfaces/enums';
 import Message from "../models/message.model"
 import User from "../models/user.model";
 import Connection from "../models/connection.model";
@@ -9,6 +8,7 @@ import Profile from "../models/profile.model";
 import type {
   IMessageResponse,
 } from "../interfaces/message.interface"
+import { _ConnectionStatus } from '../interfaces/connection.interface';
 
 export const sendMessage = async (senderId: string, data: SendMessageInput): Promise<IMessageResponse> => {
   try {
@@ -24,8 +24,8 @@ export const sendMessage = async (senderId: string, data: SendMessageInput): Pro
     const connection = await Connection.findOne({
       where: {
         [Op.or]: [
-          { senderId, receiverId: data.receiverId, status: ConnectionStatus.ACCEPTED },
-          { senderId: data.receiverId, receiverId: senderId, status: ConnectionStatus.ACCEPTED },
+          { senderId, receiverId: data.receiverId, status: _ConnectionStatus.ACCEPTED },
+          { senderId: data.receiverId, receiverId: senderId, status: _ConnectionStatus.ACCEPTED },
         ],
       },
     })

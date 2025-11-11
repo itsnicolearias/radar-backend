@@ -6,12 +6,12 @@ class SubscriptionPlan extends Model<SubscriptionPlanAttributes, SubscriptionPla
   public subscriptionPlanId!: string;
   public name!: string;
   public price!: number;
-  public features!: Record<string, unknown>;
+  public features!: Record<string, any>;
   public isActive!: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
-  public static associate(models: Record<string, Model>) {
+  public static associate(models: any) {
     SubscriptionPlan.hasMany(models.Subscription, {
       foreignKey: "planId",
       as: "subscriptions",

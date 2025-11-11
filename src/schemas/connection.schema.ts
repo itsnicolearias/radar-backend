@@ -1,12 +1,12 @@
 import { z } from "zod"
-import { ConnectionStatus } from "../interfaces/enums"
+import { _ConnectionStatus } from "../interfaces/connection.interface"
 
 export const createConnectionSchema = z.object({
   receiverId: z.string().uuid("Invalid receiver ID"),
 })
 
 export const updateConnectionSchema = z.object({
-  status: z.nativeEnum(ConnectionStatus),
+  status: z.nativeEnum(_ConnectionStatus),
 })
 
 export type CreateConnectionInput = z.infer<typeof createConnectionSchema>

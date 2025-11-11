@@ -4,8 +4,8 @@ import User from "./user.model"
 import type {
   NotificationAttributes,
   NotificationCreationAttributes,
+  NotificationType,
 } from "../interfaces/notification.interface"
-import { NotificationType } from "../interfaces/enums"
 
 class Notification
   extends Model<NotificationAttributes, NotificationCreationAttributes>

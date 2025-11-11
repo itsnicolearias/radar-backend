@@ -1,4 +1,4 @@
-import { ConnectionStatus } from './enums';
+/* eslint-disable no-unused-vars */
 
 export interface IUserConnectionInfo {
   userId: string;
@@ -10,7 +10,7 @@ export interface IConnectionResponse {
   connectionId: string;
   senderId: string;
   receiverId: string;
-  status: ConnectionStatus;
+  status: _ConnectionStatus;
   createdAt: Date;
   updatedAt: Date;
   Sender?: IUserConnectionInfo;
@@ -25,9 +25,17 @@ export interface ConnectionAttributes {
   connectionId: string;
   senderId: string;
   receiverId: string;
-  status: ConnectionStatus;
+  status: _ConnectionStatus;
   createdAt?: Date;
   updatedAt?: Date;
 }
 
+
+
 export interface ConnectionCreationAttributes extends Omit<ConnectionAttributes, 'connectionId'>, Record<string, unknown> {}
+
+export enum _ConnectionStatus {
+  PENDING = "pending",
+  ACCEPTED = "accepted",
+  REJECTED = "rejected",
+}

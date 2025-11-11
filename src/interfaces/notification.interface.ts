@@ -1,5 +1,4 @@
-import { NotificationType } from "./enums"
-
+/* eslint-disable no-unused-vars */
 export interface INotificationResponse {
   notificationId: string
   userId: string
@@ -10,6 +9,11 @@ export interface INotificationResponse {
   updatedAt: Date
 }
 
+export enum NotificationType {
+  MESSAGE = "message",
+  CONNECTION_REQUEST = "connection_request",
+  CONNECTION_ACCEPT = "connection_accept",
+}
 export interface IMarkNotificationsAsReadResponse {
   message: string
 }

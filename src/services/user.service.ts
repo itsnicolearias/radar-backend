@@ -61,9 +61,9 @@ export const updateUser = async (userId: string, data: UpdateUserInput) => {
       throw notFound("User not found")
     }
 
-    const updateData: Partial<UpdateUserInput> = { ...data }
+    const updateData: any = { ...data }
     if (data.birthDate) {
-      updateData.birthDate = data.birthDate;
+      updateData.birthDate = new Date(data.birthDate);
     }
 
     await user.update(updateData)

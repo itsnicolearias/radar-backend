@@ -6,18 +6,12 @@ import Signal  from '../models/signal.model';
 import boom from '@hapi/boom';
 import { Op } from 'sequelize';
 
-interface ISubscriptionWithPlan extends Subscription {
-  Plan: {
-    name: string;
-  };
-}
-
 export const checkPlanLimits = (feature: string) => {
   return async (req: AuthRequest, _res: Response, next: NextFunction) => {
     try {
       const userId = req.user!.userId;
 
-      const subscription: ISubscriptionWithPlan | null = await Subscription.findOne({
+      const subscription = await Subscription.findOne({
         where: { userId },
         include: [
           {

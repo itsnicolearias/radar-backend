@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { NotificationType } from "../interfaces/enums"
+import { NotificationType } from "../interfaces/notification.interface"
 
 export const markNotificationsAsReadSchema = z.object({
   notificationIds: z.array(z.string().uuid()),

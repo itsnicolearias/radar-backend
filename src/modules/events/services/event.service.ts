@@ -48,7 +48,7 @@ class EventService {
 
   async create(eventData: TEvent, userId: string) {
     try {
-      const event = await Event.create({ ...eventData, userId, isPublic: eventData.isPublic || true, title: 'Dummy Title', startDate: new Date() });
+      const event = await Event.create({ ...eventData, userId, isPublic: eventData.isPublic || true });
       return event;
     } catch (error) {
       throw badRequest(error);

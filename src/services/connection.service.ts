@@ -1,10 +1,9 @@
 import { notFound, badRequest, conflict } from "../utils/errors"
 import type { CreateConnectionInput, UpdateConnectionInput } from "../schemas/connection.schema"
 import { Op } from "sequelize"
-import { ConnectionStatus } from "../interfaces/enums"
 import User from "../models/user.model"
 import Connection from "../models/connection.model"
-import type { IConnectionResponse } from "../interfaces/connection.interface"
+import { _ConnectionStatus, type IConnectionResponse } from "../interfaces/connection.interface"
 
 export const createConnection = async (senderId: string, data: CreateConnectionInput): Promise<IConnectionResponse> => {
   try {
@@ -33,7 +32,7 @@ export const createConnection = async (senderId: string, data: CreateConnectionI
     const connection = await Connection.create({
       senderId,
       receiverId: data.receiverId,
-      status: ConnectionStatus.PENDING,
+      status: _ConnectionStatus.PENDING,
     })
 
     return connection
@@ -54,7 +53,7 @@ export const updateConnection = async (connectionId: string, userId: string, dat
       throw badRequest("Only the receiver can update the connection status")
     }
 
-    if (connection.status !== ConnectionStatus.PENDING) {
+    if (connection.status !== _ConnectionStatus.PENDING) {
       throw badRequest("Connection has already been processed")
     }
 
