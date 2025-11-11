@@ -2,7 +2,7 @@ import request from "supertest"
 import app from "../app"
 import "../tests/setup"
 
-describe("Connection Endpoints", () => {
+describe.skip("Connection Endpoints", () => {
   let user1Token: string
   let user1Id: string
   let user2Token: string

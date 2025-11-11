@@ -30,6 +30,9 @@ export const registerUser = async (data: RegisterUserInput): Promise<IAuthRespon
       email: data.email,
       passwordHash,
       emailVerificationToken: hashedToken,
+      isVerified: false,
+      invisibleMode: false,
+      isVisible: false,
     })
 
     await Profile.create({

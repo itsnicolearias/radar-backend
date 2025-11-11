@@ -15,7 +15,7 @@ class Subscription extends Model<SubscriptionAttributes, SubscriptionCreationAtt
 
   public plan!: { name: string; };
 
-  public static associate(models: any) {
+  public static associate(models: Record<string, Model>) {
     Subscription.belongsTo(models.User, {
       foreignKey: "userId",
       as: "User",

@@ -40,3 +40,24 @@ export interface IToggleVisibilityResponse {
   userId: string
   isVisible: boolean
 }
+
+export interface UserAttributes {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  passwordHash: string;
+  displayName?: string | null;
+  birthDate?: Date | null;
+  isVerified: boolean;
+  emailVerificationToken?: string | null;
+  invisibleMode: boolean;
+  isVisible: boolean;
+  lastLatitude?: number | null;
+  lastLongitude?: number | null;
+  lastSeenAt?: Date | null;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface UserCreationAttributes extends Omit<UserAttributes, 'userId'>, Record<string, unknown> {}

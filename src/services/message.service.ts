@@ -1,16 +1,13 @@
 import { notFound, badRequest } from '../utils/errors';
 import type { SendMessageInput, MarkAsReadInput } from '../schemas/message.schema';
 import { Op } from 'sequelize';
-import { ConnectionStatus } from '../interfaces/connection.interface';
+import { ConnectionStatus } from '../interfaces/enums';
 import Message from "../models/message.model"
 import User from "../models/user.model";
 import Connection from "../models/connection.model";
 import Profile from "../models/profile.model";
 import type {
   IMessageResponse,
-  IConversationsResponse,
-  IMarkAsReadResponse,
-  IUnreadMessagesResponse,
 } from "../interfaces/message.interface"
 
 export const sendMessage = async (senderId: string, data: SendMessageInput): Promise<IMessageResponse> => {
@@ -43,11 +40,20 @@ export const sendMessage = async (senderId: string, data: SendMessageInput): Pro
       senderId,
       receiverId: data.receiverId,
       content: data.content,
+      isRead: false,
       //iv,
       //authTag,
     });
 
-    return message
+    return {
+      messageId: message.messageId,
+      senderId: message.senderId,
+      receiverId: message.receiverId,
+      content: message.content,
+      isRead: message.isRead,
+      createdAt: message.createdAt,
+      updatedAt: message.updatedAt,
+    };
   } catch (error) {
     throw badRequest(error);
   }

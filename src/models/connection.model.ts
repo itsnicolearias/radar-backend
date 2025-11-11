@@ -2,10 +2,10 @@ import { DataTypes, Model, BelongsToGetAssociationMixin } from "sequelize"
 import sequelize from "../config/sequelize"
 import User from "./user.model"
 import {
-  ConnectionStatus,
   type ConnectionAttributes,
   type ConnectionCreationAttributes,
 } from "../interfaces/connection.interface"
+import { ConnectionStatus } from "../interfaces/enums"
 
 export class Connection
   extends Model<ConnectionAttributes, ConnectionCreationAttributes>

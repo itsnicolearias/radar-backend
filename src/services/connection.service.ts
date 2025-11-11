@@ -1,10 +1,10 @@
 import { notFound, badRequest, conflict } from "../utils/errors"
 import type { CreateConnectionInput, UpdateConnectionInput } from "../schemas/connection.schema"
 import { Op } from "sequelize"
-import { ConnectionStatus } from "../interfaces/connection.interface"
+import { ConnectionStatus } from "../interfaces/enums"
 import User from "../models/user.model"
 import Connection from "../models/connection.model"
-import type { IConnectionResponse, IDeleteConnectionResponse } from "../interfaces/connection.interface"
+import type { IConnectionResponse } from "../interfaces/connection.interface"
 
 export const createConnection = async (senderId: string, data: CreateConnectionInput): Promise<IConnectionResponse> => {
   try {
@@ -33,6 +33,7 @@ export const createConnection = async (senderId: string, data: CreateConnectionI
     const connection = await Connection.create({
       senderId,
       receiverId: data.receiverId,
+      status: ConnectionStatus.PENDING,
     })
 
     return connection

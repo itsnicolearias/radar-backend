@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { ConnectionStatus } from "../interfaces/connection.interface"
+import { ConnectionStatus } from "../interfaces/enums"
 
 export const createConnectionSchema = z.object({
   receiverId: z.string().uuid("Invalid receiver ID"),

@@ -1,4 +1,4 @@
-import { IEventResponse } from "../modules/events/interfaces/event.interface"
+import { TEvent as IEventResponse } from "../modules/events/interfaces/event.interface"
 import { ISignalResponse } from "./signal.interface"
 
 export interface IRadarUserProfile {

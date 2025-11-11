@@ -1,4 +1,4 @@
-import { ConnectionStatus } from './../interfaces/connection.interface';
+import { ConnectionStatus } from './enums';
 
 export interface IUserConnectionInfo {
   userId: string;
@@ -20,3 +20,14 @@ export interface IConnectionResponse {
 export interface IDeleteConnectionResponse {
   message: string;
 }
+
+export interface ConnectionAttributes {
+  connectionId: string;
+  senderId: string;
+  receiverId: string;
+  status: ConnectionStatus;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface ConnectionCreationAttributes extends Omit<ConnectionAttributes, 'connectionId'>, Record<string, unknown> {}

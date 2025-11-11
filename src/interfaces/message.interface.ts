@@ -43,3 +43,17 @@ export interface IMarkAsReadResponse {
 export interface IUnreadMessagesResponse {
   count: number;
 }
+
+export interface MessageAttributes {
+  messageId: string;
+  senderId: string;
+  receiverId: string;
+  content: string;
+  isRead: boolean;
+  iv?: string | null;
+  authTag?: string | null;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface MessageCreationAttributes extends Omit<MessageAttributes, 'messageId'>, Record<string, unknown> {}

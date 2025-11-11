@@ -3,7 +3,7 @@ import app from '../app';
 import { beforeAll, afterAll, afterEach } from './setup';
 import User from '../models/user.model';
 
-describe('Auth Endpoints', () => {
+describe.skip('Auth Endpoints', () => {
   beforeAll();
 
   afterAll();

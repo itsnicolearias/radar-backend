@@ -4,9 +4,6 @@ import Profile from "../models/profile.model"
 import User from "../models/user.model"
 import type {
   IUserResponse,
-  IUpdateLocationResponse,
-  IUpdateUserResponse,
-  IToggleVisibilityResponse,
 } from "../interfaces/user.interface"
 
 export const getUserById = async (userId: string): Promise<IUserResponse> => {
@@ -25,7 +22,7 @@ export const getUserById = async (userId: string): Promise<IUserResponse> => {
       throw notFound("User not found")
     }
 
-    return user
+    return user as unknown as IUserResponse;
   } catch (error) {
     throw badRequest(error);
   }
@@ -64,8 +61,7 @@ export const updateUser = async (userId: string, data: UpdateUserInput) => {
       throw notFound("User not found")
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const updateData: any = { ...data }
+    const updateData: Partial<UpdateUserInput> = { ...data }
     if (data.birthDate) {
       updateData.birthDate = data.birthDate;
     }

@@ -2,10 +2,10 @@ import { DataTypes, Model, BelongsToGetAssociationMixin } from "sequelize"
 import sequelize from "../config/sequelize"
 import User from "./user.model"
 import type {
-  NotificationType,
   NotificationAttributes,
   NotificationCreationAttributes,
 } from "../interfaces/notification.interface"
+import { NotificationType } from "../interfaces/enums"
 
 class Notification
   extends Model<NotificationAttributes, NotificationCreationAttributes>
@@ -17,6 +17,7 @@ class Notification
   public message!: string
   public isRead!: boolean
   public readonly createdAt!: Date
+  public readonly updatedAt!: Date
   // association mixin
   public getUser!: BelongsToGetAssociationMixin<User>
   public User?: User

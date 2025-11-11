@@ -8,7 +8,7 @@ class Signal extends Model {
   public note?: string;
   public readonly createdAt!: Date;
 
-  public static associate(models: any) {
+  public static associate(models: Record<string, Model>) {
     Signal.belongsTo(models.User, {
       foreignKey: 'senderId',
       as: 'sender',

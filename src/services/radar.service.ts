@@ -4,7 +4,7 @@ import type { GetNearbyUsersInput } from "../schemas/radar.schema"
 import { badRequest } from "@hapi/boom"
 import EventService from "../modules/events/services/event.service"
 import SignalService from "./signal.service"
-import type { IRadarNearbyResponse, IRadarUserResponse } from "../interfaces/radar.interface"
+import type { IRadarUserResponse } from "../interfaces/radar.interface"
 
 export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput): Promise<IRadarUserResponse[]> => {
   try {
@@ -16,8 +16,8 @@ export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput):
         isVerified: true,
         isVisible: true,
         invisibleMode: false,
-        lastLatitude: { [Op.ne]: null },
-        lastLongitude: { [Op.ne]: null },
+        lastLatitude: { [Op.ne]: null } as unknown as number,
+        lastLongitude: { [Op.ne]: null } as unknown as number,
         // Move the spatial filter into the WHERE clause to avoid needing GROUP BY
         [Op.and]: sequelize.literal(`
           ST_DWithin(
@@ -52,7 +52,7 @@ export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput):
       limit: 50,
     })
 
-    return nearbyUsers
+    return nearbyUsers as unknown as IRadarUserResponse[];
   } catch (error) {
     throw badRequest(error);
   }

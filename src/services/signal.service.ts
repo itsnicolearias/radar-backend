@@ -50,7 +50,7 @@ class SignalService {
         limit: 50,
       });
 
-      return nearbySignals;
+      return nearbySignals as unknown as ISignalResponse[];
     } catch (error) {
       throw badRequest(error);
     }

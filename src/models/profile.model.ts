@@ -2,15 +2,15 @@ import { DataTypes, Model, BelongsToGetAssociationMixin } from "sequelize"
 import sequelize from "../config/sequelize"
 import type User from "./user.model"
 import type {
-  ProfileAttributes as ImportedProfileAttributes,
-  ProfileCreationAttributes as ImportedProfileCreationAttributes,
+  ProfileAttributes,
+  ProfileCreationAttributes,
 } from "../interfaces/profile.interface"
 
 type ModelsMap = Record<string, import('sequelize').ModelStatic<import('sequelize').Model<Record<string, unknown>, Record<string, unknown>>>>;
 
 class Profile
-  extends Model<ImportedProfileAttributes, ImportedProfileCreationAttributes>
-  implements ImportedProfileAttributes
+  extends Model<ProfileAttributes, ProfileCreationAttributes>
+  implements ProfileAttributes
 {
   public profileId!: string
   public userId!: string

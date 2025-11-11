@@ -1,4 +1,4 @@
-import { NotificationType } from "./notification.interface"
+import { NotificationType } from "./enums"
 
 export interface INotificationResponse {
   notificationId: string
@@ -21,3 +21,15 @@ export interface IUnreadNotificationCountResponse {
 export interface IDeleteNotificationResponse {
   message: string
 }
+
+export interface NotificationAttributes {
+  notificationId: string;
+  userId: string;
+  type: NotificationType;
+  message: string;
+  isRead: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface NotificationCreationAttributes extends Omit<NotificationAttributes, 'notificationId'>, Record<string, unknown> {}

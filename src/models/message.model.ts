@@ -2,14 +2,14 @@ import { DataTypes, Model, BelongsToGetAssociationMixin } from "sequelize"
 import sequelize from "../config/sequelize"
 import User from "./user.model"
 import type {
-  MessageAttributes as ImportedMessageAttributes,
-  MessageCreationAttributes as ImportedMessageCreationAttributes,
+  MessageAttributes,
+  MessageCreationAttributes,
 } from "../interfaces/message.interface"
 import { decryptText, encryptText } from "../utils/crypto";
 
 class Message
-  extends Model<ImportedMessageAttributes, ImportedMessageCreationAttributes>
-  implements ImportedMessageAttributes
+  extends Model<MessageAttributes, MessageCreationAttributes>
+  implements MessageAttributes
 {
   public messageId!: string;
   public senderId!: string;
@@ -19,6 +19,7 @@ class Message
   public authTag!: string | null;
   public isRead!: boolean;
   public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
   // Association mixins for sender/receiver
   public getSender!: BelongsToGetAssociationMixin<User>
   public getReceiver!: BelongsToGetAssociationMixin<User>

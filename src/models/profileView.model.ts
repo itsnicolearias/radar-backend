@@ -3,10 +3,11 @@ import User from './user.model';
 import sequelize from "../config/sequelize"
 
 class ProfileView extends Model {
-  public profile_view_id!: string;
+  public profileViewId!: string;
   public viewerId!: string;
   public viewedId!: string;
   public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
 }
 
   ProfileView.init(
@@ -47,7 +48,6 @@ class ProfileView extends Model {
       modelName: 'ProfileView',
       tableName: 'profile_views',
       timestamps: true,
-      updatedAt: false,
     }
   );
 

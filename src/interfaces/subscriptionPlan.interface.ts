@@ -2,7 +2,7 @@ export interface SubscriptionPlanAttributes {
   subscriptionPlanId: string;
   name: string;
   price: number;
-  features: Record<string, any>;
+  features: Record<string, unknown>;
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
