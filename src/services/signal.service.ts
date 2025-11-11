@@ -4,6 +4,7 @@ import sequelize, { Op } from 'sequelize';
 import { GetNearbyUsersInput } from '../schemas/radar.schema';
 import boom, { badRequest } from '@hapi/boom';
 import type { ISignalResponse } from '../interfaces/signal.interface';
+import { Profile } from '../models';
 
 class SignalService {
   async getNearbySignals(data: GetNearbyUsersInput): Promise<ISignalResponse[]> {
@@ -16,7 +17,7 @@ class SignalService {
           [Op.and]: sequelize.literal(`
             ST_DWithin(
               ST_MakePoint(${longitude}, ${latitude})::geography,
-              ST_MakePoint("sender"."last_longitude", "sender"."last_latitude")::geography,
+              ST_MakePoint("Sender"."last_longitude", "Sender"."last_latitude")::geography,
               ${radius}
             )
           `),
@@ -24,12 +25,15 @@ class SignalService {
         include: [
           {
             model: User,
-            as: 'sender',
-            where: {
-              lastLatitude: { [Op.ne]: null },
-              lastLongitude: { [Op.ne]: null },
+            as: 'Sender',
+            attributes: ['userId', 'displayName', "firstName", "lastName"],
+            include: [
+            {
+              model: Profile,
+              as: "Profile",
+              attributes: ["photoUrl", "age",],
             },
-            attributes: [],
+          ],
           },
         ],
         attributes: {
@@ -38,7 +42,7 @@ class SignalService {
               sequelize.literal(`
                 ST_Distance(
                   ST_MakePoint(${longitude}, ${latitude})::geography,
-                  ST_MakePoint("sender"."last_longitude", "sender"."last_latitude")::geography
+                  ST_MakePoint("Sender"."last_longitude", "Sender"."last_latitude")::geography
                 )
               `),
               'distance',
