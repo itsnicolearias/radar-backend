@@ -1,34 +1,58 @@
 import type { Response, NextFunction } from 'express';
 import type { AuthRequest } from '../middlewares/auth.middleware';
 import * as messageService from '../services/message.service';
+import { createNotification } from '../services/notification.service';
+import { NotificationType } from '../interfaces/notification.interface';
+import { getSocketIo } from '../config/socket';
+import Signal from '../models/signal.model';
 import type {
   SendMessageInput,
   MarkAsReadInput,
 } from '../schemas/message.schema';
 import { getPagination } from '../utils/pagination';
 
-export const sendMessage = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const createMessage = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const data: SendMessageInput = req.body
-    const senderId = req.user?.userId
+    const data: SendMessageInput = req.body;
+    const sender = req.user;
 
-    if (!senderId) {
+    if (!sender) {
       return res.status(401).json({
         success: false,
-        message: "Unauthorized",
-      })
+        message: 'Unauthorized',
+      });
     }
 
-    const message = await messageService.sendMessage(senderId, data)
+    const message = await messageService.createMessage(sender.userId, data);
+
+    if (data.signalId) {
+      const signal = await Signal.findByPk(data.signalId);
+      if (signal) {
+        const io = getSocketIo();
+        const notificationMessage = `${sender.firstName} has replied to your signal.`;
+
+        await createNotification(
+          signal.senderId,
+          NotificationType.SIGNAL_REPLY,
+          notificationMessage,
+        );
+
+        io.to(signal.senderId).emit('signal:reply', {
+          fromUser: sender.userId,
+          messagePreview: data.content,
+          signalId: data.signalId,
+        });
+      }
+    }
 
     res.status(201).json({
       success: true,
       data: message,
-    })
+    });
   } catch (error) {
-    return next(error)
+    return next(error);
   }
-}
+};
 
 export const getMessages = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {

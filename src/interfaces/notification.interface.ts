@@ -13,6 +13,7 @@ export enum NotificationType {
   MESSAGE = "message",
   CONNECTION_REQUEST = "connection_request",
   CONNECTION_ACCEPT = "connection_accept",
+  SIGNAL_REPLY = "signal_reply",
 }
 export interface IMarkNotificationsAsReadResponse {
   message: string

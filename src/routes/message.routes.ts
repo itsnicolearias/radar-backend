@@ -83,7 +83,7 @@ router.get(
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-router.post("/", authenticate, validate(sendMessageSchema), messageController.sendMessage)
+router.post("/", authenticate, validate(sendMessageSchema), messageController.createMessage)
 
 /**
  * @swagger

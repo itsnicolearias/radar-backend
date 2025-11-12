@@ -63,6 +63,10 @@ class SignalService {
         throw boom.notFound('User not found');
       }
 
+      if (!user.isVisible) {
+        throw boom.forbidden('You must be visible to send signals');
+      }
+
       const signal = await Signal.create({
         senderId,
         note,

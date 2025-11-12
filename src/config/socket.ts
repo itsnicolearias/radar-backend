@@ -175,8 +175,17 @@ export const initializeSocket = (httpServer: HTTPServer): SocketIOServer => {
   return io
 }
 
-export const getIO = (): SocketIOServer | null => {
-  return null
-}
+let io: SocketIOServer | null = null;
 
-export default { initializeSocket, getIO }
+export const getSocketIo = (): SocketIOServer => {
+  if (!io) {
+    throw new Error('Socket.IO has not been initialized.');
+  }
+  return io;
+};
+
+export const setSocketIo = (newIo: SocketIOServer): void => {
+  io = newIo;
+};
+
+export default { initializeSocket, getSocketIo, setSocketIo };

@@ -61,6 +61,7 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
     const token = generateToken({
       userId: user.userId,
       email: user.email,
+      firstName: user.firstName,
     })
 
       const verificationUrl = `${config.clientUrl || "http://localhost:3000"}/verify-email/${emailVerificationToken}`
@@ -155,6 +156,7 @@ export const loginUser = async (data: LoginUserInput): Promise<AuthResponse> => 
     const token = generateToken({
       userId: user.userId,
       email: user.email,
+      firstName: user.firstName,
     })
 
     return {
