@@ -1,14 +1,15 @@
 import http from "http"
 import app from "./app"
 import { sequelize } from "./models"
-import { initializeSocket } from "./config/socket"
+import { initializeSocket, setSocketIo } from "./config/socket"
 import { connectRedis } from "./config/redis"
 import logger from "./utils/logger"
 import { config } from "./config/config"
 
 const httpServer = http.createServer(app)
 
-initializeSocket(httpServer)
+const io = initializeSocket(httpServer);
+setSocketIo(io);
 
 const startServer = async () => {
   try {

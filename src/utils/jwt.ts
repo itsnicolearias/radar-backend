@@ -5,6 +5,7 @@ import { badRequest } from "@hapi/boom"
 export interface JwtPayload {
   userId: string
   email: string
+  firstName: string
 }
 
 export const generateToken = (payload: JwtPayload): string => {
