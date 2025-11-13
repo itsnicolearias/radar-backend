@@ -1,30 +1,34 @@
 import { DataTypes, Model, BelongsToGetAssociationMixin } from "sequelize"
 import sequelize from "../config/sequelize"
 import User from "./user.model"
+import Signal from "./signal.model"
 import type {
   MessageAttributes,
   MessageCreationAttributes,
 } from "../interfaces/message.interface"
-import { decryptText, encryptText } from "../utils/crypto";
+import { decryptText, encryptText } from "../utils/crypto"
 
 class Message
   extends Model<MessageAttributes, MessageCreationAttributes>
   implements MessageAttributes
 {
-  public messageId!: string;
-  public senderId!: string;
-  public receiverId!: string;
-  public content!: string;
-  public iv!: string | null;
-  public authTag!: string | null;
-  public isRead!: boolean;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  public messageId!: string
+  public senderId!: string
+  public receiverId!: string
+  public signalId?: string | null
+  public content!: string
+  public iv!: string | null
+  public authTag!: string | null
+  public isRead!: boolean
+  public readonly createdAt!: Date
+  public readonly updatedAt!: Date
   // Association mixins for sender/receiver
   public getSender!: BelongsToGetAssociationMixin<User>
   public getReceiver!: BelongsToGetAssociationMixin<User>
+  public getSignal!: BelongsToGetAssociationMixin<Signal>
   public Sender?: User
   public Receiver?: User
+  public Signal?: Signal
 }
 
 Message.init(
@@ -55,9 +59,19 @@ Message.init(
       onDelete: "CASCADE",
       field: "receiver_id",
     },
-      content: {
-        type: DataTypes.TEXT,
-        allowNull: false,
+    signalId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: "signals",
+        key: "signal_id",
+      },
+      onDelete: "SET NULL",
+      field: "signal_id",
+    },
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: false,
         set(value: string) {
           this.setDataValue("content", encryptText(value))
         },
@@ -113,6 +127,11 @@ Message.belongsTo(User, {
 Message.belongsTo(User, {
   foreignKey: "receiverId",
   as: "Receiver",
+})
+
+Message.belongsTo(Signal, {
+  foreignKey: "signalId",
+  as: "Signal",
 })
 
 export default Message

@@ -1,6 +1,10 @@
 import type { Response, NextFunction } from 'express';
 import type { AuthRequest } from '../middlewares/auth.middleware';
 import * as messageService from '../services/message.service';
+import { createNotification } from '../services/notification.service';
+import { NotificationType } from '../interfaces/notification.interface';
+import { getSocketIo } from '../config/socket';
+import Signal from '../models/signal.model';
 import type {
   SendMessageInput,
   MarkAsReadInput,
@@ -9,26 +13,36 @@ import { getPagination } from '../utils/pagination';
 
 export const sendMessage = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const data: SendMessageInput = req.body
-    const senderId = req.user?.userId
+    const data: SendMessageInput = req.body;
+    const sender = req.user!;
 
-    if (!senderId) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized",
-      })
+    const message = await messageService.sendMessage(sender.userId, data);
+
+    if (message.Signal) {
+      const io = getSocketIo();
+      const notificationMessage = `${sender.firstName} has replied to your signal.`;
+
+      await createNotification(
+        message.Signal.senderId,
+        NotificationType.SIGNAL_REPLY,
+        notificationMessage,
+      );
+
+      io.to(message.Signal.senderId).emit('signal:reply', {
+        fromUser: sender.userId,
+        messagePreview: message.content,
+        signalId: message.Signal.signalId,
+      });
     }
-
-    const message = await messageService.sendMessage(senderId, data)
 
     res.status(201).json({
       success: true,
       data: message,
-    })
+    });
   } catch (error) {
-    return next(error)
+    return next(error);
   }
-}
+};
 
 export const getMessages = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
