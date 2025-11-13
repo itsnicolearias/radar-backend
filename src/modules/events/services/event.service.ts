@@ -58,7 +58,7 @@ class EventService {
   async findAll(page: number, limit: number, all: boolean) {
     try {
       if (all) {
-        const events = await Event.findAll({ include: "Organizer" });
+        const events = await Event.findAll({ include: ["Organizer", "InterestedUsers"] });
         return events;
       }
 
@@ -66,7 +66,7 @@ class EventService {
       const events = await Event.findAndCountAll({
         offset,
         limit,
-        include: "Organizer",
+        include: ["Organizer", "InterestedUsers"],
       });
       return events;
     } catch (error) {
@@ -76,7 +76,7 @@ class EventService {
 
   async findById(eventId: string) {
     try {
-      const event = await Event.findByPk(eventId, { include: "Organizer" });
+      const event = await Event.findByPk(eventId, { include: ["Organizer", "InterestedUsers"] });
       if (!event) {
         throw notFound("Event not found");
       }
