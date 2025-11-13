@@ -13,10 +13,11 @@ import { _ConnectionStatus } from '../interfaces/connection.interface';
 import { getNearbyUsers } from './radar.service';
 import { IRadarUserResponse } from '../interfaces/radar.interface';
 
-export const createMessage = async (senderId: string, data: SendMessageInput): Promise<IMessageResponse> => {
-  if (senderId === data.receiverId) {
-    throw badRequest("Cannot send message to yourself");
-  }
+export const sendMessage = async (senderId: string, data: SendMessageInput): Promise<IMessageResponse> => {
+  try {
+    if (senderId === data.receiverId) {
+      throw badRequest("Cannot send message to yourself");
+    }
 
   const sender = await User.findByPk(senderId);
   if (!sender) {
@@ -73,30 +74,19 @@ export const createMessage = async (senderId: string, data: SendMessageInput): P
     isRead: false,
   });
 
-  const messageResponse: IMessageResponse = {
-    messageId: message.messageId,
-    senderId: message.senderId,
-    receiverId: message.receiverId,
-    content: message.content,
-    isRead: message.isRead,
-    createdAt: message.createdAt,
-    updatedAt: message.updatedAt,
-  };
+  const messageResponse: IMessageResponse = message.toJSON();
 
   if (message.signalId) {
-    const signal = await Signal.findByPk(message.signalId, {
-      attributes: ["signalId", "note"],
-    });
-
+    const signal = await Signal.findByPk(message.signalId);
     if (signal) {
-      messageResponse.Signal = {
-        signalId: signal.getDataValue("signalId"),
-        note: signal.getDataValue("note"),
-      };
+      messageResponse.Signal = signal.toJSON();
     }
   }
 
   return messageResponse;
+  } catch (error) {
+    throw badRequest(error);
+  }
 }
 
 export const getRecentConversations = async (

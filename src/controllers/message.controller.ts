@@ -11,38 +11,28 @@ import type {
 } from '../schemas/message.schema';
 import { getPagination } from '../utils/pagination';
 
-export const createMessage = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const sendMessage = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const data: SendMessageInput = req.body;
-    const sender = req.user;
+    const sender = req.user!;
 
-    if (!sender) {
-      return res.status(401).json({
-        success: false,
-        message: 'Unauthorized',
+    const message = await messageService.sendMessage(sender.userId, data);
+
+    if (message.Signal) {
+      const io = getSocketIo();
+      const notificationMessage = `${sender.firstName} has replied to your signal.`;
+
+      await createNotification(
+        message.Signal.senderId,
+        NotificationType.SIGNAL_REPLY,
+        notificationMessage,
+      );
+
+      io.to(message.Signal.senderId).emit('signal:reply', {
+        fromUser: sender.userId,
+        messagePreview: message.content,
+        signalId: message.Signal.signalId,
       });
-    }
-
-    const message = await messageService.createMessage(sender.userId, data);
-
-    if (data.signalId) {
-      const signal = await Signal.findByPk(data.signalId);
-      if (signal) {
-        const io = getSocketIo();
-        const notificationMessage = `${sender.firstName} has replied to your signal.`;
-
-        await createNotification(
-          signal.senderId,
-          NotificationType.SIGNAL_REPLY,
-          notificationMessage,
-        );
-
-        io.to(signal.senderId).emit('signal:reply', {
-          fromUser: sender.userId,
-          messagePreview: data.content,
-          signalId: data.signalId,
-        });
-      }
     }
 
     res.status(201).json({

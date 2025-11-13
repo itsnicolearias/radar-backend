@@ -1,7 +1,4 @@
-export interface ISignalSummary {
-  signalId: string;
-  note: string | null;
-}
+import type { ISignalResponse } from './signal.interface';
 
 export interface IMessageResponse {
   messageId: string;
@@ -11,7 +8,7 @@ export interface IMessageResponse {
   isRead: boolean;
   createdAt: Date;
   updatedAt: Date;
-  Signal?: ISignalSummary;
+  Signal?: ISignalResponse;
 }
 
 export interface ILastMessage {
