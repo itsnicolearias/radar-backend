@@ -7,7 +7,7 @@ class ProfileView extends Model {
   public viewerId!: string;
   public viewedId!: string;
   public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  //public readonly updatedAt!: Date;
 }
 
   ProfileView.init(
@@ -48,6 +48,7 @@ class ProfileView extends Model {
       modelName: 'ProfileView',
       tableName: 'profile_views',
       timestamps: true,
+      updatedAt: false,
     }
   );
 

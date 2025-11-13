@@ -10,6 +10,6 @@ export interface IProfileViewResponse {
   viewerId: string;
   viewedId: string;
   createdAt: Date;
-  updatedAt: Date;
+  //updatedAt: Date;
   Viewer?: IViewerInfo;
 }

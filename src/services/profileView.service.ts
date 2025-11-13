@@ -26,7 +26,7 @@ class ProfileViewService {
         viewerId: profileView.viewerId,
         viewedId: profileView.viewedId,
         createdAt: profileView.createdAt,
-        updatedAt: profileView.updatedAt,
+        //updatedAt: profileView.updatedAt,
       };
     } catch (error) {
       throw badRequest(error);
