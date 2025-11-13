@@ -195,6 +195,7 @@ export const getMessagesBetweenUsers = async (userId1: string, userId2: string) 
             },
           ],
         },
+        "Signal",
       ],
       order: [["createdAt", "ASC"]],
     });

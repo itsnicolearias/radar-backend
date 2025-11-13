@@ -4,7 +4,6 @@ import * as messageService from '../services/message.service';
 import { createNotification } from '../services/notification.service';
 import { NotificationType } from '../interfaces/notification.interface';
 import { getSocketIo } from '../config/socket';
-import Signal from '../models/signal.model';
 import type {
   SendMessageInput,
   MarkAsReadInput,
