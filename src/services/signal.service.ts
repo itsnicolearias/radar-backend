@@ -16,7 +16,7 @@ class SignalService {
           [Op.and]: sequelize.literal(`
             ST_DWithin(
               ST_MakePoint(${longitude}, ${latitude})::geography,
-              ST_MakePoint("sender"."last_longitude", "sender"."last_latitude")::geography,
+              ST_MakePoint("Sender"."last_longitude", "Sender"."last_latitude")::geography,
               ${radius}
             )
           `),
@@ -24,12 +24,8 @@ class SignalService {
         include: [
           {
             model: User,
-            as: 'sender',
-            where: {
-              lastLatitude: { [Op.ne]: null },
-              lastLongitude: { [Op.ne]: null },
-            },
-            attributes: [],
+            as: 'Sender',
+            attributes: [ "userId", "displayName" ],
           },
         ],
         attributes: {
@@ -38,7 +34,7 @@ class SignalService {
               sequelize.literal(`
                 ST_Distance(
                   ST_MakePoint(${longitude}, ${latitude})::geography,
-                  ST_MakePoint("sender"."last_longitude", "sender"."last_latitude")::geography
+                  ST_MakePoint("Sender"."last_longitude", "Sender"."last_latitude")::geography
                 )
               `),
               'distance',
