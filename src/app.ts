@@ -7,6 +7,7 @@ import routes from "./routes"
 import { handleError } from "./utils/errors"
 import logger from "./utils/logger"
 import { swaggerSpec } from "./config/swagger"
+//import { config } from "./config/config"
 
 dotenv.config()
 
@@ -24,7 +25,19 @@ app.use(
   })
 )
 
-app.use(cors())
+/*const whiteList: RegExp[] = [
+  new RegExp(config.clientUrl), // convierte el string en RegExp
+//.localhost:3000$/
+];*/
+
+const options: cors.CorsOptions = {
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: "*",
+  credentials: true,
+};
+
+
+app.use(cors(options))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
