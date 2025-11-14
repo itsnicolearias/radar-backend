@@ -16,11 +16,6 @@ const startServer = async () => {
     await sequelize.authenticate()
     logger.info("Database connection established successfully")
 
-    if (config.env === "development") {
-      await sequelize.sync({ alter: false })
-      logger.info("Database synchronized")
-    }
-
     try {
       await connectRedis()
       logger.info("Redis connection established")
