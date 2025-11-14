@@ -1,30 +1,47 @@
-import type { Response, NextFunction } from "express"
-import type { AuthRequest } from "../middlewares/auth.middleware"
-import * as messageService from "../services/message.service"
-import type { SendMessageInput, MarkAsReadInput } from "../schemas/message.schema"
+import type { Response, NextFunction } from 'express';
+import type { AuthRequest } from '../middlewares/auth.middleware';
+import * as messageService from '../services/message.service';
+import { createNotification } from '../services/notification.service';
+import { NotificationType } from '../interfaces/notification.interface';
+import { getSocketIo } from '../config/socket';
+import type {
+  SendMessageInput,
+  MarkAsReadInput,
+} from '../schemas/message.schema';
+import { getPagination } from '../utils/pagination';
 
 export const sendMessage = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const data: SendMessageInput = req.body
-    const senderId = req.user?.userId
+    const data: SendMessageInput = req.body;
+    const sender = req.user!;
 
-    if (!senderId) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized",
-      })
+    const message = await messageService.sendMessage(sender.userId, data);
+
+    if (message.Signal) {
+      const io = getSocketIo();
+      const notificationMessage = `${sender.firstName} has replied to your signal.`;
+
+      await createNotification(
+        message.Signal.senderId,
+        NotificationType.SIGNAL_REPLY,
+        notificationMessage,
+      );
+
+      io.to(message.Signal.senderId).emit('signal:reply', {
+        fromUser: sender.userId,
+        messagePreview: message.content,
+        signalId: message.Signal.signalId,
+      });
     }
-
-    const message = await messageService.sendMessage(senderId, data)
 
     res.status(201).json({
       success: true,
       data: message,
-    })
+    });
   } catch (error) {
-    return next(error)
+    return next(error);
   }
-}
+};
 
 export const getMessages = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
@@ -74,22 +91,59 @@ export const markAsRead = async (req: AuthRequest, res: Response, next: NextFunc
 
 export const getUnreadCount = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user?.userId
+    const userId = req.user?.userId;
 
     if (!userId) {
       return res.status(401).json({
         success: false,
-        message: "Unauthorized",
-      })
+        message: 'Unauthorized',
+      });
     }
 
-    const result = await messageService.getUnreadMessageCount(userId)
+    const result = await messageService.getUnreadMessageCount(userId);
 
     res.status(200).json({
       success: true,
       data: result,
-    })
+    });
   } catch (error) {
-    return next(error)
+    return next(error);
   }
-}
+};
+
+export const getRecentConversations = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Unauthorized',
+      });
+    }
+
+    const { page, limit, all } = getPagination(req.query);
+    const { conversations, total } = await messageService.getRecentConversations(
+      userId,
+      page,
+      limit,
+      all,
+    );
+
+    res.status(200).json({
+      success: true,
+      data: {
+        conversations,
+        page,
+        limit,
+        total,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+};

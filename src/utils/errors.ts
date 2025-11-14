@@ -13,7 +13,7 @@ export class AppError extends Error {
   }
 }
 
-export const handleError = (error: any) => {
+export const handleError = (error: Error) => {
   if (Boom.isBoom(error)) {
     return error
   }
@@ -22,6 +22,7 @@ export const handleError = (error: any) => {
     return Boom.boomify(error, { statusCode: error.statusCode })
   }
 
+  // eslint-disable-next-line no-console
   console.error("Unexpected error:", error)
   return Boom.internal("An unexpected error occurred")
 }

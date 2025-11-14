@@ -1,0 +1,32 @@
+import type { Response, NextFunction } from "express"
+import type { AuthRequest } from "../middlewares/auth.middleware"
+import * as radarService from "../services/radar.service"
+import type { GetNearbyUsersInput } from "../schemas/radar.schema"
+
+export const getNearby = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      })
+    }
+
+    const data: GetNearbyUsersInput = {
+      latitude: Number(req.query.latitude),
+      longitude: Number(req.query.longitude),
+      radius: req.query.radius ? Number(req.query.radius) : 1000,
+    }
+
+    const nearbyData = await radarService.getNearbyAll(userId, data)
+
+    return res.status(200).json({
+      success: true,
+      data: nearbyData,
+    })
+  } catch (error) {
+    return next(error)
+  }
+}

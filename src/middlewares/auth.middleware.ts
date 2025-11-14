@@ -6,6 +6,7 @@ export interface AuthRequest extends Request {
   user?: {
     userId: string
     email: string
+    firstName: string
   }
 }
 
@@ -23,6 +24,6 @@ export const authenticate = (req: AuthRequest, _res: Response, next: NextFunctio
     req.user = decoded
     next()
   } catch (error) {
-    next(unauthorized("Invalid or expired token"))
+    next(unauthorized(error))
   }
 }

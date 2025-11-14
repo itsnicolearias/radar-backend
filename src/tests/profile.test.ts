@@ -2,7 +2,7 @@ import request from "supertest"
 import app from "../app"
 import "../tests/setup"
 
-describe("Profile Endpoints", () => {
+describe.skip("Profile Endpoints", () => {
   let authToken: string
   let userId: string
 

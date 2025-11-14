@@ -1,10 +1,11 @@
-import { Connection, User } from "../models"
 import { notFound, badRequest, conflict } from "../utils/errors"
 import type { CreateConnectionInput, UpdateConnectionInput } from "../schemas/connection.schema"
 import { Op } from "sequelize"
-import { ConnectionStatus } from "../interfaces/connection.interface"
+import User from "../models/user.model"
+import Connection from "../models/connection.model"
+import { _ConnectionStatus, type IConnectionResponse } from "../interfaces/connection.interface"
 
-export const createConnection = async (senderId: string, data: CreateConnectionInput) => {
+export const createConnection = async (senderId: string, data: CreateConnectionInput): Promise<IConnectionResponse> => {
   try {
     if (senderId === data.receiverId) {
       throw badRequest("Cannot send connection request to yourself")
@@ -31,11 +32,12 @@ export const createConnection = async (senderId: string, data: CreateConnectionI
     const connection = await Connection.create({
       senderId,
       receiverId: data.receiverId,
+      status: _ConnectionStatus.PENDING,
     })
 
     return connection
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -51,7 +53,7 @@ export const updateConnection = async (connectionId: string, userId: string, dat
       throw badRequest("Only the receiver can update the connection status")
     }
 
-    if (connection.status !== ConnectionStatus.PENDING) {
+    if (connection.status !== _ConnectionStatus.PENDING) {
       throw badRequest("Connection has already been processed")
     }
 
@@ -59,7 +61,7 @@ export const updateConnection = async (connectionId: string, userId: string, dat
 
     return connection
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -68,16 +70,18 @@ export const getConnectionsByUserId = async (userId: string) => {
     const connections = await Connection.findAll({
       where: {
         [Op.or]: [{ senderId: userId }, { receiverId: userId }],
+        [Op.and]: [{status: "accepted"}],
+        
       },
       include: [
         {
           model: User,
-          as: "sender",
+          as: "Sender",
           attributes: ["userId", "firstName", "lastName", "email"],
         },
         {
           model: User,
-          as: "receiver",
+          as: "Receiver",
           attributes: ["userId", "firstName", "lastName", "email"],
         },
       ],
@@ -86,7 +90,35 @@ export const getConnectionsByUserId = async (userId: string) => {
 
     return connections
   } catch (error) {
-    throw error
+    throw badRequest(error);
+  }
+}
+
+export const getPendingConnections = async (userId: string) => {
+  try {
+    const connections = await Connection.findAll({
+      where: {
+        receiverId: userId, 
+        status: "pending"
+      },
+      include: [
+        {
+          model: User,
+          as: "Sender",
+          attributes: ["userId", "firstName", "lastName", "email"],
+        },
+        {
+          model: User,
+          as: "Receiver",
+          attributes: ["userId", "firstName", "lastName", "email"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    })
+
+    return connections;
+  } catch (error) {
+    throw badRequest(error);
   }
 }
 
@@ -106,6 +138,6 @@ export const deleteConnection = async (connectionId: string, userId: string) => 
 
     return { message: "Connection deleted successfully" }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }

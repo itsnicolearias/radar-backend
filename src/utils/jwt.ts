@@ -1,9 +1,11 @@
 import jwt from "jsonwebtoken"
 import { config } from "../config/config"
+import { badRequest } from "@hapi/boom"
 
 export interface JwtPayload {
   userId: string
   email: string
+  firstName: string
 }
 
 export const generateToken = (payload: JwtPayload): string => {
@@ -16,6 +18,6 @@ export const verifyToken = (token: string): JwtPayload => {
   try {
     return jwt.verify(token, config.jwtSecret) as JwtPayload
   } catch (error) {
-    throw new Error("Invalid or expired token")
+    throw badRequest(error)
   }
 }

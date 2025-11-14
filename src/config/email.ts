@@ -1,5 +1,6 @@
 import nodemailer, { type Transporter } from "nodemailer"
 import { config } from "./config"
+import { badRequest } from "@hapi/boom"
 
 interface EmailConfig {
   host: string
@@ -40,7 +41,7 @@ export const sendEmail = async (options: SendEmailOptions): Promise<void> => {
       text: options.text,
     })
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 

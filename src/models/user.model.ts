@@ -1,6 +1,12 @@
-import { DataTypes, Model } from "sequelize"
+import { DataTypes, Model, HasOneGetAssociationMixin, HasOneSetAssociationMixin, HasManyGetAssociationsMixin, BelongsToManyGetAssociationsMixin } from "sequelize"
+import type { ModelStatic } from "sequelize"
 import sequelize from "../config/sequelize"
 import type { UserAttributes, UserCreationAttributes } from "../interfaces/user.interface"
+import type Profile from "./profile.model"
+import type Event from "./event.model"
+import type Message from "./message.model"
+
+type ModelsMap = Record<string, ModelStatic<Model<Record<string, unknown>, Record<string, unknown>>>>;
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public userId!: string
@@ -8,13 +14,53 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   public lastName!: string
   public email!: string
   public passwordHash!: string
+  public birthDate!: Date | null
+  public displayName!: string | null
+  public emailVerificationToken!: string | null
   public isVerified!: boolean
+  public isVisible!: boolean
   public invisibleMode!: boolean
   public lastLatitude!: number | null
   public lastLongitude!: number | null
   public lastSeenAt!: Date | null
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
+
+  // Association mixins for profile (hasOne)
+  public getProfile!: HasOneGetAssociationMixin<Profile>
+  public setProfile!: HasOneSetAssociationMixin<Profile, string>
+  public Profile?: Profile
+
+  // Organized events (hasMany)
+  public getOrganizedEvents!: HasManyGetAssociationsMixin<Event>
+  public OrganizedEvents?: Event[]
+
+  // Interested events (belongsToMany)
+  public getInterestedEvents!: BelongsToManyGetAssociationsMixin<Event>
+  public InterestedEvents?: Event[]
+
+  // Messages (hasMany)
+  public getSentMessages!: HasManyGetAssociationsMixin<Message>
+  public getReceivedMessages!: HasManyGetAssociationsMixin<Message>
+  public SentMessages?: Message[]
+  public ReceivedMessages?: Message[]
+
+  public static associate(models: ModelsMap) {
+    User.hasMany(models.Event, {
+      foreignKey: "userId",
+      as: "OrganizedEvents",
+    });
+    User.belongsToMany(models.Event, {
+      through: "EventInterest",
+      as: "InterestedEvents",
+      foreignKey: "userId",
+    });
+    // One-to-one relation with Profile
+    User.hasOne(models.Profile, {
+      foreignKey: "userId",
+      as: "Profile",
+    })
+  }
 }
 
 User.init(
@@ -48,10 +94,30 @@ User.init(
       allowNull: false,
       field: "password_hash",
     },
+    birthDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: "birth_date",
+    },
+    displayName: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+      field: "display_name",
+    },
+    emailVerificationToken: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      field: "email_verification_token",
+    },
     isVerified: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
       field: "is_verified",
+    },
+    isVisible: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      field: "is_visible",
     },
     invisibleMode: {
       type: DataTypes.BOOLEAN,
@@ -89,7 +155,7 @@ User.init(
     tableName: "users",
     timestamps: true,
     underscored: true,
-  },
+  }
 )
 
 export default User

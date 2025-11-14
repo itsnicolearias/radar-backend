@@ -1,5 +1,6 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3"
 import { config } from "./config"
+import { badRequest } from "@hapi/boom"
 
 const s3Client = new S3Client({
   region: config.awsRegion,
@@ -27,7 +28,7 @@ export const uploadFile = async (options: UploadFileOptions): Promise<string> =>
     await s3Client.send(command)
     return `https://${config.awsS3Bucket}.s3.${config.awsRegion}.amazonaws.com/${options.key}`
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -40,7 +41,7 @@ export const deleteFile = async (key: string): Promise<void> => {
 
     await s3Client.send(command)
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -52,16 +53,22 @@ export const getFile = async (key: string): Promise<Buffer> => {
     })
 
     const response = await s3Client.send(command)
-    const stream = response.Body as any
+    const stream = response.Body as unknown as NodeJS.ReadableStream
     const chunks: Buffer[] = []
 
     return new Promise((resolve, reject) => {
-      stream.on("data", (chunk: Buffer) => chunks.push(chunk))
+      stream.on("data", (chunk: unknown) => {
+        if (Buffer.isBuffer(chunk)) {
+          chunks.push(chunk)
+        } else {
+          chunks.push(Buffer.from(String(chunk)))
+        }
+      })
       stream.on("error", reject)
       stream.on("end", () => resolve(Buffer.concat(chunks)))
     })
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 

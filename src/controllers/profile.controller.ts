@@ -5,8 +5,9 @@ import type { CreateProfileInput, UpdateProfileInput } from "../schemas/profile.
 
 export const getProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { userId } = req.params
-    const profile = await profileService.getProfileByUserId(userId)
+    const userId = req.user?.userId
+
+    const profile = await profileService.getProfileByUserId(String(userId))
 
     res.status(200).json({
       success: true,
@@ -42,7 +43,7 @@ export const createProfile = async (req: AuthRequest, res: Response, next: NextF
 
 export const updateProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { userId } = req.params
+    const userId = req.user?.userId
     const data: UpdateProfileInput = req.body
 
     if (req.user?.userId !== userId) {
@@ -52,7 +53,7 @@ export const updateProfile = async (req: AuthRequest, res: Response, next: NextF
       })
     }
 
-    const profile = await profileService.updateProfile(userId, data)
+    const profile = await profileService.updateProfile(String(userId), data)
 
     res.status(200).json({
       success: true,
@@ -65,7 +66,7 @@ export const updateProfile = async (req: AuthRequest, res: Response, next: NextF
 
 export const deleteProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const { userId } = req.params
+    const userId = req.user?.userId
 
     if (req.user?.userId !== userId) {
       return res.status(403).json({
@@ -74,7 +75,7 @@ export const deleteProfile = async (req: AuthRequest, res: Response, next: NextF
       })
     }
 
-    const result = await profileService.deleteProfile(userId)
+    const result = await profileService.deleteProfile(String(userId))
 
     res.status(200).json({
       success: true,

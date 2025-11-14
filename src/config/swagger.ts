@@ -64,6 +64,12 @@ const options: swaggerJsdoc.Options = {
             invisibleMode: {
               type: "boolean",
             },
+            lastLatitude: {
+              type: "integer",
+            },
+            lastLongitude: {
+              type: "integer",
+            },
             createdAt: {
               type: "string",
               format: "date-time",
@@ -197,6 +203,97 @@ const options: swaggerJsdoc.Options = {
             },
           },
         },
+        Event: {
+          type: "object",
+          properties: {
+            id: {
+              type: "string",
+              format: "uuid",
+            },
+            userId: {
+              type: "string",
+              format: "uuid",
+            },
+            title: {
+              type: "string",
+            },
+            description: {
+              type: "string",
+            },
+            location: {
+              type: "string",
+            },
+            latitude: {
+              type: "number",
+            },
+            longitude: {
+              type: "number",
+            },
+            startDate: {
+              type: "string",
+              format: "date-time",
+            },
+            endDate: {
+              type: "string",
+              format: "date-time",
+            },
+            isPublic: {
+              type: "boolean",
+            },
+            maxAttendees: {
+              type: "integer",
+            },
+            price: {
+              type: "number",
+            },
+            createdAt: {
+              type: "string",
+              format: "date-time",
+            },
+            updatedAt: {
+              type: "string",
+              format: "date-time",
+            },
+          },
+        },
+        CreateEvent: {
+          type: "object",
+          required: ["title", "startDate"],
+          properties: {
+            title: {
+              type: "string",
+            },
+            description: {
+              type: "string",
+            },
+            location: {
+              type: "string",
+            },
+            latitude: {
+              type: "number",
+            },
+            longitude: {
+              type: "number",
+            },
+            startDate: {
+              type: "string",
+              format: "date-time",
+            },
+            endDate: {
+              type: "string",
+              format: "date-time",
+            },
+            isPublic: {
+              type: "boolean",
+            },
+            maxAttendees: {
+              type: "integer",
+            },
+            price: {
+              type: "number",
+            },
+          },
+        },
       },
     },
     security: [
@@ -205,7 +302,7 @@ const options: swaggerJsdoc.Options = {
       },
     ],
   },
-  apis: ["./src/routes/*.ts"],
+  apis: ["./src/routes/*.ts", "./src/modules/events/routes/*.ts", "./src/schemas/*.ts"],
 }
 
 export const swaggerSpec = swaggerJsdoc(options)

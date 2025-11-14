@@ -1,18 +1,31 @@
-import { NotificationType } from "../interfaces/notification.interface"
+import { badRequest } from "@hapi/boom"
 import { Notification } from "../models"
 import type { MarkNotificationsAsReadInput } from "../schemas/notification.schema"
+import type {
+  INotificationResponse,
+  NotificationType,
+} from "../interfaces/notification.interface"
 
-export const createNotification = async (userId: string, type: NotificationType, message: string) => {
+export const createNotification = async (userId: string, type: NotificationType, message: string): Promise<INotificationResponse> => {
   try {
     const notification = await Notification.create({
       userId,
       type,
       message,
+      isRead: false,
     })
 
-    return notification
+    return {
+      notificationId: notification.notificationId,
+      userId: notification.userId,
+      type: notification.type,
+      message: notification.message,
+      isRead: notification.isRead,
+      createdAt: notification.createdAt,
+      updatedAt: notification.updatedAt,
+    };
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -25,7 +38,7 @@ export const getNotificationsByUserId = async (userId: string) => {
 
     return notifications
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -38,12 +51,12 @@ export const markNotificationsAsRead = async (userId: string, data: MarkNotifica
           notificationId: data.notificationIds,
           userId,
         },
-      },
+      }
     )
 
     return { message: "Notifications marked as read" }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -58,7 +71,7 @@ export const getUnreadNotificationCount = async (userId: string) => {
 
     return { count }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
 
@@ -73,6 +86,6 @@ export const deleteNotification = async (notificationId: string, userId: string)
 
     return { message: "Notification deleted successfully" }
   } catch (error) {
-    throw error
+    throw badRequest(error);
   }
 }
