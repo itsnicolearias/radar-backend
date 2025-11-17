@@ -31,7 +31,7 @@ app.use(
 ];*/
 
 const options: cors.CorsOptions = {
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   origin: "*",
   credentials: true,
 };
