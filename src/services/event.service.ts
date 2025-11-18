@@ -1,10 +1,10 @@
 import sequelize, { Op } from "sequelize";
 import { badRequest, notFound } from "@hapi/boom";
 import { TEvent } from "../interfaces/event.interface";
-import { GetNearbyUsersInput } from "../../../schemas/radar.schema";
-import Event from "../../../models/event.model";
-import EventInterest from "../../../models/eventInterest.model";
-import User from "../../../models/user.model";
+import { GetNearbyUsersInput } from "../schemas/radar.schema";
+import Event from "../models/event.model";
+import EventInterest from "../models/eventInterest.model";
+import User from "../models/user.model";
 
 class EventService {
   async getNearbyEvents(data: GetNearbyUsersInput) {

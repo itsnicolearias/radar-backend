@@ -2,7 +2,7 @@ import { User, Profile } from "../models"
 import sequelize, { Op } from "sequelize"
 import type { GetNearbyUsersInput } from "../schemas/radar.schema"
 import { badRequest } from "@hapi/boom"
-import EventService from "../modules/events/services/event.service"
+import EventService from "./event.service"
 import SignalService from "./signal.service"
 import type { IRadarUserResponse } from "../interfaces/radar.interface"
 

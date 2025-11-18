@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import eventService from "../services/event.service";
 import { TEvent } from "../interfaces/event.interface";
-import { AuthRequest } from "../../../middlewares/auth.middleware";
+import { AuthRequest } from "../middlewares/auth.middleware";
 
 class EventController {
   async create(req: AuthRequest, res: Response, next: NextFunction) {
