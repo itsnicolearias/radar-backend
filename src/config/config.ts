@@ -10,6 +10,7 @@ export const config = {
   env: process.env.NODE_ENV || "development",
   isProd: process.env.NODE_ENV === "production",
   port: Number.parseInt(process.env.PORT!),
+  url: process.env.URL || `http://localhost:${process.env.PORT}`,
 
   // Database
   dbUrl: process.env.DATABASE_URL || "",

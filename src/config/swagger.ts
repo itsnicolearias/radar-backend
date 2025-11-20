@@ -15,7 +15,7 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: config.isProd ? "https://api.radar.com" : `http://localhost:${config.port}`,
+        url: config.url,
         description: config.isProd ? "Production server" : "Development server",
       },
     ],
@@ -302,7 +302,7 @@ const options: swaggerJsdoc.Options = {
       },
     ],
   },
-  apis: ["./src/routes/*.ts", "./src/modules/events/routes/*.ts", "./src/schemas/*.ts"],
+  apis: ["./src/routes/*.ts", "./src/schemas/*.ts"],
 }
 
 export const swaggerSpec = swaggerJsdoc(options)

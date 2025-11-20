@@ -19,7 +19,9 @@ This document provides a comprehensive reference for all the API endpoints, incl
       "email": "string",
       "isVerified": "boolean",
       "displayName": "string | null",
-      "birthDate": "Date | null"
+      "birthDate": "Date | null",
+      "lastLatitude": "",
+      "lastLongitude": ""
     }
   }
   ```
@@ -39,7 +41,9 @@ This document provides a comprehensive reference for all the API endpoints, incl
       "email": "string",
       "isVerified": "boolean",
       "displayName": "string | null",
-      "birthDate": "Date | null"
+      "birthDate": "Date | null",
+      "lastLatitude": "",
+      "lastLongitude": ""
     }
   }
   ```

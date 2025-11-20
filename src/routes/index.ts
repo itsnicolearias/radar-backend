@@ -6,7 +6,7 @@ import connectionRoutes from "./connection.routes"
 import messageRoutes from "./message.routes"
 import notificationRoutes from "./notification.routes"
 import radarRoutes from "./radar.routes";
-import eventRoutes from "../modules/events/routes/event.routes";
+import eventRoutes from "./event.routes";
 import signalRoutes from "./signal.routes";
 
 const router = Router();

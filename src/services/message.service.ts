@@ -174,7 +174,7 @@ export const getMessagesBetweenUsers = async (userId1: string, userId2: string) 
         {
           model: User,
           as: "Sender",
-          attributes: ["userId", "firstName", "lastName"],
+          attributes: ["userId", "displayName"],
           include: [
             {
               model: Profile,
@@ -186,7 +186,7 @@ export const getMessagesBetweenUsers = async (userId1: string, userId2: string) 
         {
           model: User,
           as: "Receiver",
-          attributes: ["userId", "firstName", "lastName"],
+          attributes: ["userId", "displayName"],
           include: [
             {
               model: Profile,

@@ -1,11 +1,11 @@
 import { Router } from "express";
 import eventController from "../controllers/event.controller";
-import { validate } from "../../../middlewares/validation.middleware";
+import { validate } from "../middlewares/validation.middleware";
 import {
   createEventSchema,
   updateEventSchema,
 } from "../schemas/event.schema";
-import { authenticate } from "../../../middlewares/auth.middleware";
+import { authenticate } from "../middlewares/auth.middleware";
 
 const router = Router();
 

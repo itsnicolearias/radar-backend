@@ -77,12 +77,12 @@ export const getConnectionsByUserId = async (userId: string) => {
         {
           model: User,
           as: "Sender",
-          attributes: ["userId", "firstName", "lastName", "email"],
+          attributes: ["userId", "displayName", "email"],
         },
         {
           model: User,
           as: "Receiver",
-          attributes: ["userId", "firstName", "lastName", "email"],
+          attributes: ["userId", "displayName", "email"],
         },
       ],
       order: [["createdAt", "DESC"]],
@@ -105,12 +105,12 @@ export const getPendingConnections = async (userId: string) => {
         {
           model: User,
           as: "Sender",
-          attributes: ["userId", "firstName", "lastName", "email"],
+          attributes: ["userId", "displayName", "email"],
         },
         {
           model: User,
           as: "Receiver",
-          attributes: ["userId", "firstName", "lastName", "email"],
+          attributes: ["userId", "displayName", "email"],
         },
       ],
       order: [["createdAt", "DESC"]],
