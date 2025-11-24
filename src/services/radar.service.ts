@@ -31,7 +31,7 @@ export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput):
         {
           model: Profile,
           as: "Profile",
-          attributes: ["photoUrl", "bio", "age", "interests", "province"],
+          attributes: ["photoUrl", "bio", "age", "interests", "province", "showAge", "showLocation"],
         },
       ],
       attributes: {
