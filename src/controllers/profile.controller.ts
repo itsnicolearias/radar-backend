@@ -1,7 +1,7 @@
 import type { Response, NextFunction } from "express"
 import type { AuthRequest } from "../middlewares/auth.middleware"
 import * as profileService from "../services/profile.service"
-import type { CreateProfileInput, UpdateProfileInput } from "../schemas/profile.schema"
+import type { UpdateProfileInput } from "../schemas/profile.schema"
 
 export const getProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
@@ -18,28 +18,7 @@ export const getProfile = async (req: AuthRequest, res: Response, next: NextFunc
   }
 }
 
-export const createProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
-  try {
-    const data: CreateProfileInput = req.body
-    const userId = req.user?.userId
 
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized",
-      })
-    }
-
-    const profile = await profileService.createProfile(userId, data)
-
-    res.status(201).json({
-      success: true,
-      data: profile,
-    })
-  } catch (error) {
-    return next(error)
-  }
-}
 
 export const updateProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {

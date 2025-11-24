@@ -1,3 +1,6 @@
+import { User } from "../models";
+import { IUserResponse } from "./user.interface";
+
 export interface IProfileResponse {
   profileId: string;
   userId: string;
@@ -15,12 +18,7 @@ export interface IProfileResponse {
   interests: string[] | null;
   createdAt: Date;
   updatedAt: Date;
-  User?: {
-    userId: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
+  User?: Partial<IUserResponse> | User
 }
 
 export interface IDeleteProfileResponse {

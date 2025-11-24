@@ -3,7 +3,7 @@ import * as profileController from "../controllers/profile.controller"
 import ProfileViewController from "../controllers/profileView.controller"
 import { authenticate } from "../middlewares/auth.middleware"
 import { validate } from "../middlewares/validation.middleware"
-import { createProfileSchema, updateProfileSchema } from "../schemas/profile.schema"
+import { updateProfileSchema } from "../schemas/profile.schema"
 import { viewProfileSchema } from "../schemas/profileView.schema"
 
 const router = Router()
@@ -34,7 +34,6 @@ const router = Router()
  *         description: Unauthorized
  */
 router.get("/", authenticate, profileController.getProfile)
-router.post("/", authenticate, validate(createProfileSchema), profileController.createProfile)
 
 /**
  * @swagger
@@ -49,7 +48,13 @@ router.post("/", authenticate, validate(createProfileSchema), profileController.
  *       content:
  *         application/json:
  *           schema:
- *              $ref: '#/components/schemas/Profile'
+ *             type: object
+ *             properties:
+ *               Profile: 
+ *                 $ref: '#/components/schemas/Profile'
+ *               User: 
+ *                 $ref: '#/components/schemas/User'
+ *              
  *     responses:
  *       200:
  *         description: Profile updated successful
