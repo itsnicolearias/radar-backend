@@ -80,7 +80,7 @@ export const markAsRead = async (req: AuthRequest, res: Response, next: NextFunc
 
     const result = await messageService.markMessagesAsRead(userId, data)
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: result,
     })

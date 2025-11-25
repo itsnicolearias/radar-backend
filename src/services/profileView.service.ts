@@ -51,6 +51,7 @@ class ProfileViewService {
             attributes: ['userId', 'firstName', 'lastName', 'displayName'],
           },
         ],
+         order: [["createdAt", "DESC"]],
       });
 
       return profileViews;

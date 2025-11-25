@@ -4,6 +4,8 @@ import { Op } from "sequelize"
 import User from "../models/user.model"
 import Connection from "../models/connection.model"
 import { _ConnectionStatus, type IConnectionResponse } from "../interfaces/connection.interface"
+import { Profile, sequelize } from "../models"
+import { getUserById } from "./user.service"
 
 export const createConnection = async (senderId: string, data: CreateConnectionInput): Promise<IConnectionResponse> => {
   try {
@@ -67,6 +69,8 @@ export const updateConnection = async (connectionId: string, userId: string, dat
 
 export const getConnectionsByUserId = async (userId: string) => {
   try {
+    const logguedUser = await getUserById(userId);
+
     const connections = await Connection.findAll({
       where: {
         [Op.or]: [{ senderId: userId }, { receiverId: userId }],
@@ -77,12 +81,52 @@ export const getConnectionsByUserId = async (userId: string) => {
         {
           model: User,
           as: "Sender",
-          attributes: ["userId", "displayName", "email"],
+          attributes: {
+            include: [
+              [
+                sequelize.literal(`
+                  ST_Distance(
+                    ST_MakePoint(${logguedUser.lastLongitude}, ${logguedUser.lastLatitude})::geography,
+                    ST_MakePoint("Sender"."last_longitude", "Sender"."last_latitude")::geography
+                  )
+                `),
+                "distance", 
+              ],
+              "userId", "displayName", "email"
+            ],
+          }, 
+          include: [
+            {
+              model: Profile,
+              as: "Profile",
+              attributes: ["photoUrl", "bio", "age", "interests", "province", "showAge", "showLocation"],
+            },
+          ],
         },
         {
           model: User,
           as: "Receiver",
-          attributes: ["userId", "displayName", "email"],
+          attributes: {
+            include: [
+              [
+                sequelize.literal(`
+                  ST_Distance(
+                    ST_MakePoint(${logguedUser.lastLongitude}, ${logguedUser.lastLatitude})::geography,
+                    ST_MakePoint("Receiver"."last_longitude", "Receiver"."last_latitude")::geography
+                  )
+                `),
+                "distance", 
+              ],
+              "userId", "displayName", "email"
+            ],
+          }, 
+          include: [
+            {
+              model: Profile,
+              as: "Profile",
+              attributes: ["photoUrl", "bio", "age", "interests", "province", "showAge", "showLocation"],
+            },
+          ],
         },
       ],
       order: [["createdAt", "DESC"]],
@@ -96,6 +140,9 @@ export const getConnectionsByUserId = async (userId: string) => {
 
 export const getPendingConnections = async (userId: string) => {
   try {
+
+    const logguedUser = await getUserById(userId);
+
     const connections = await Connection.findAll({
       where: {
         receiverId: userId, 
@@ -105,12 +152,52 @@ export const getPendingConnections = async (userId: string) => {
         {
           model: User,
           as: "Sender",
-          attributes: ["userId", "displayName", "email"],
+          attributes: {
+            include: [
+              [
+                sequelize.literal(`
+                  ST_Distance(
+                    ST_MakePoint(${logguedUser.lastLongitude}, ${logguedUser.lastLatitude})::geography,
+                    ST_MakePoint("Sender"."last_longitude", "Sender"."last_latitude")::geography
+                  )
+                `),
+                "distance", 
+              ],
+              "userId", "displayName", "email"
+            ],
+          }, 
+          include: [
+            {
+              model: Profile,
+              as: "Profile",
+              attributes: ["photoUrl", "bio", "age", "interests", "province", "showAge", "showLocation"],
+            },
+          ],
         },
         {
           model: User,
           as: "Receiver",
-          attributes: ["userId", "displayName", "email"],
+          attributes: {
+            include: [
+              [
+                sequelize.literal(`
+                  ST_Distance(
+                    ST_MakePoint(${logguedUser.lastLongitude}, ${logguedUser.lastLatitude})::geography,
+                    ST_MakePoint("Receiver"."last_longitude", "Receiver"."last_latitude")::geography
+                  )
+                `),
+                "distance", 
+              ],
+              "userId", "displayName", "email"
+            ],
+          }, 
+          include: [
+            {
+              model: Profile,
+              as: "Profile",
+              attributes: ["photoUrl", "bio", "age", "interests", "province", "showAge", "showLocation"],
+            },
+          ],
         },
       ],
       order: [["createdAt", "DESC"]],
