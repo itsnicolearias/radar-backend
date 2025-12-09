@@ -3,33 +3,38 @@ import User from '../models/user.model';
 import sequelize, { Op } from 'sequelize';
 import boom, { badRequest } from '@hapi/boom';
 import type { ISignalResponse } from '../interfaces/signal.interface';
+import { GetNearbyUsersInput } from '../schemas/radar.schema';
 
 class SignalService {
-  async getNearbySignals(): Promise<ISignalResponse[]> {
+  async getNearbySignals(data: GetNearbyUsersInput): Promise<ISignalResponse[]> {
     try {
+      const { latitude, longitude, radius } = data;
       const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-      const nearbySignals = await Signal.findAll({
-        attributes: [
-          'senderId',
-          [sequelize.fn('MAX', sequelize.col('createdAt')), 'maxCreatedAt'],
-        ],
-        where: {
-          createdAt: {
-            [Op.gte]: twentyFourHoursAgo,
-          },
-        },
-        group: ['senderId'],
-        raw: true,
-      });
-
-      const latestSignalIds = nearbySignals.map((signal: any) => signal.maxCreatedAt);
+      const subquery = `
+        SELECT
+          "senderId",
+          MAX("createdAt") AS "maxCreatedAt"
+        FROM
+          signals
+        WHERE
+          "createdAt" >= '${twentyFourHoursAgo.toISOString()}'
+        GROUP BY
+          "senderId"
+      `;
 
       const signals = await Signal.findAll({
         where: {
-          createdAt: {
-            [Op.in]: latestSignalIds,
-          },
+          [Op.and]: [
+            sequelize.literal(`("Signal"."senderId", "Signal"."createdAt") IN (${subquery})`),
+            sequelize.literal(`
+              ST_DWithin(
+                ST_MakePoint(${longitude}, ${latitude})::geography,
+                ST_MakePoint("Sender"."last_longitude", "Sender"."last_latitude")::geography,
+                ${radius}
+              )
+            `),
+          ],
         },
         include: [
           {
@@ -39,6 +44,7 @@ class SignalService {
           },
         ],
         order: [['createdAt', 'DESC']],
+        limit: 50,
       });
 
       return signals as unknown as ISignalResponse[];
