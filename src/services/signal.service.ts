@@ -13,20 +13,20 @@ class SignalService {
 
       const subquery = `
         SELECT
-          "senderId",
-          MAX("createdAt") AS "maxCreatedAt"
+          "sender_id",
+          MAX("created_at") AS "maxCreatedAt"
         FROM
           signals
         WHERE
-          "createdAt" >= '${twentyFourHoursAgo.toISOString()}'
+          "created_at" >= '${twentyFourHoursAgo.toISOString()}'
         GROUP BY
-          "senderId"
+          "sender_id"
       `;
 
       const signals = await Signal.findAll({
         where: {
           [Op.and]: [
-            sequelize.literal(`("Signal"."senderId", "Signal"."createdAt") IN (${subquery})`),
+            sequelize.literal(`("Signal"."sender_id", "Signal"."created_at") IN (${subquery})`),
             sequelize.literal(`
               ST_DWithin(
                 ST_MakePoint(${longitude}, ${latitude})::geography,
@@ -43,7 +43,7 @@ class SignalService {
             attributes: ['userId', 'displayName'],
           },
         ],
-        order: [['createdAt', 'DESC']],
+        order: [['created_at', 'DESC']],
         limit: 50,
       });
 
