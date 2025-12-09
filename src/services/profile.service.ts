@@ -14,7 +14,7 @@ export const getProfileByUserId = async (userId: string): Promise<IProfileRespon
         {
           model: User,
           as: "User",
-          attributes: ["userId", "firstName", "lastName", "email", "displayName"],
+          attributes: ["userId", "firstName", "lastName", "email", "displayName", "lastLatitude", "lastLongitude", "lastSeenAt", "isVerified", "invisibleMode", "isVisible", "birthDate", "createdAt", "updatedAt"],
         },
       ],
     })
