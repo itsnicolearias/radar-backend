@@ -1,52 +1,47 @@
 import Signal from '../models/signal.model';
 import User from '../models/user.model';
 import sequelize, { Op } from 'sequelize';
-import { GetNearbyUsersInput } from '../schemas/radar.schema';
 import boom, { badRequest } from '@hapi/boom';
 import type { ISignalResponse } from '../interfaces/signal.interface';
 
 class SignalService {
-  async getNearbySignals(data: GetNearbyUsersInput): Promise<ISignalResponse[]> {
+  async getNearbySignals(): Promise<ISignalResponse[]> {
     try {
-      const { latitude, longitude, radius } = data;
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
       const nearbySignals = await Signal.findAll({
-        // Filter by sender location using a spatial WHERE literal (avoid HAVING/GROUP BY issues)
+        attributes: [
+          'senderId',
+          [sequelize.fn('MAX', sequelize.col('createdAt')), 'maxCreatedAt'],
+        ],
         where: {
-          [Op.and]: sequelize.literal(`
-            ST_DWithin(
-              ST_MakePoint(${longitude}, ${latitude})::geography,
-              ST_MakePoint("Sender"."last_longitude", "Sender"."last_latitude")::geography,
-              ${radius}
-            )
-          `),
+          createdAt: {
+            [Op.gte]: twentyFourHoursAgo,
+          },
+        },
+        group: ['senderId'],
+        raw: true,
+      });
+
+      const latestSignalIds = nearbySignals.map((signal: any) => signal.maxCreatedAt);
+
+      const signals = await Signal.findAll({
+        where: {
+          createdAt: {
+            [Op.in]: latestSignalIds,
+          },
         },
         include: [
           {
             model: User,
             as: 'Sender',
-            attributes: [ "userId", "displayName" ],
+            attributes: ['userId', 'displayName'],
           },
         ],
-        attributes: {
-          include: [
-            [
-              sequelize.literal(`
-                ST_Distance(
-                  ST_MakePoint(${longitude}, ${latitude})::geography,
-                  ST_MakePoint("Sender"."last_longitude", "Sender"."last_latitude")::geography
-                )
-              `),
-              'distance',
-            ],
-          ],
-        },
-        // spatial filter moved to WHERE
-        order: [[sequelize.literal('distance'), 'ASC']],
-        limit: 50,
+        order: [['createdAt', 'DESC']],
       });
 
-      return nearbySignals as unknown as ISignalResponse[];
+      return signals as unknown as ISignalResponse[];
     } catch (error) {
       throw badRequest(error);
     }
@@ -72,6 +67,24 @@ class SignalService {
     } catch (error) {
       throw badRequest(error);
     }
+  }
+
+  async getSignalById(signalId: string) {
+    const signal = await Signal.findByPk(signalId, {
+      include: [
+        {
+          model: User,
+          as: 'Sender',
+          attributes: ['userId', 'displayName'],
+        },
+      ],
+    });
+
+    if (!signal) {
+      throw boom.notFound('Signal not found');
+    }
+
+    return signal;
   }
 }
 

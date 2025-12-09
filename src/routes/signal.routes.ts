@@ -42,4 +42,32 @@ router.post(
   SignalController.sendSignal
 );
 
+/**
+ * @swagger
+ * /api/signals/{id}:
+ *   get:
+ *     summary: Get a signal by ID
+ *     tags: [Signals]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Signal found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Signal'
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Signal not found
+ */
+router.get('/:id', authenticate, SignalController.getSignalById);
+
 export default router;

@@ -32,11 +32,11 @@
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
-    "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.10.5",
     "@types/nodemailer": "^6.4.17",
+    "@types/pg": "^8.15.6",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "@types/supertest": "^6.0.2",
@@ -58,7 +58,6 @@
     "express": "^4.21.2",
     "express-rate-limit": "^8.2.1",
     "http": "0.0.1-security",
-    "jest": "^29.7.0",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "0.547.0",
     "morgan": "^1.10.0",
@@ -80,12 +79,15 @@
     "tailwind-merge": "3.3.1",
     "tailwindcss": "^4.1.9",
     "tailwindcss-animate": "1.0.7",
-    "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.46.2",
-    "zod": "^3.24.1",
-    "@types/pg": "^8.15.6"
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6"
   }
 }

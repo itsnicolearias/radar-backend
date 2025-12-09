@@ -48,13 +48,7 @@ router.get("/", authenticate, profileController.getProfile)
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               Profile: 
- *                 $ref: '#/components/schemas/Profile'
- *               User: 
- *                 $ref: '#/components/schemas/User'
- *              
+ *             $ref: '#/components/schemas/UpdateProfile'
  *     responses:
  *       200:
  *         description: Profile updated successful

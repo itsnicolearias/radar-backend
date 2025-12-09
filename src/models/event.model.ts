@@ -16,6 +16,7 @@ interface EventAttributes {
   isPublic: boolean
   maxAttendees?: number
   price?: number
+  category?: string
 }
 
 type EventCreationAttributes = Optional<EventAttributes, "eventId">
@@ -33,6 +34,7 @@ class Event extends Model<EventAttributes, EventCreationAttributes> implements E
   public isPublic!: boolean
   public maxAttendees?: number
   public price?: number
+  public category?: string
 
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
@@ -105,6 +107,10 @@ Event.init(
     },
     price: {
       type: DataTypes.DECIMAL(10, 2),
+    },
+    category: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   },
   {

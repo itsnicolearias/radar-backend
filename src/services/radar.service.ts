@@ -63,7 +63,7 @@ export const getNearbyAll = async (userId: string, data: GetNearbyUsersInput) =>
     const [users, events, signals] = await Promise.all([
       getNearbyUsers(userId, data),
       EventService.getNearbyEvents(data),
-      SignalService.getNearbySignals(data),
+      SignalService.getNearbySignals(),
     ]);
 
     return {
