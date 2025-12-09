@@ -59,7 +59,7 @@ export interface UserAttributes {
   lastSeenAt?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
-  Profile: Profile;
+  Profile?: Profile;
 }
 
 export interface UserCreationAttributes extends Omit<UserAttributes, 'userId'>, Record<string, unknown> {}

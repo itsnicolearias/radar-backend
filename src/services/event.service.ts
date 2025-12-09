@@ -86,9 +86,12 @@ class EventService {
     }
   }
 
-  async update(eventId: string, eventData: Partial<TEvent>) {
+  async update(eventId: string, eventData: Partial<TEvent>, userId: string) {
     try {
       const event = await this.findById(eventId);
+      if (event.userId !== userId) {
+        throw badRequest('You are not authorized to update this event', { statusCode: 403 });
+      }
       await event.update(eventData);
       return event;
     } catch (error) {
@@ -96,9 +99,12 @@ class EventService {
     }
   }
 
-  async delete(eventId: string) {
+  async delete(eventId: string, userId: string) {
     try {
       const event = await this.findById(eventId);
+      if (event.userId !== userId) {
+        throw badRequest('You are not authorized to delete this event', { statusCode: 403 });
+      }
       await event.destroy();
     } catch (error) {
       throw badRequest(error);

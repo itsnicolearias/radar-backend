@@ -50,11 +50,11 @@ router.get("/", authenticate, profileController.getProfile)
  *           schema:
  *             type: object
  *             properties:
- *               Profile: 
+ *               Profile:
  *                 $ref: '#/components/schemas/Profile'
- *               User: 
+ *               User:
  *                 $ref: '#/components/schemas/User'
- *              
+ *
  *     responses:
  *       200:
  *         description: Profile updated successful

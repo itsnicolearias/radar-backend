@@ -66,7 +66,7 @@ export const updateProfile = async (userId: string, data: UpdateProfileInput) =>
       User = await updateUser(userId, data.User)
     }
 
-    
+
 
     return {
       profile,
