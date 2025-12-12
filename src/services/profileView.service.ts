@@ -2,6 +2,7 @@ import ProfileView from '../models/profileView.model';
 import User from '../models/user.model';
 import boom, { badRequest } from '@hapi/boom';
 import type { IProfileViewResponse } from '../interfaces/profileView.interface';
+import { Profile } from '../models';
 
 class ProfileViewService {
   async createProfileView(viewerId: string, viewedId: string): Promise<IProfileViewResponse> {
@@ -49,6 +50,14 @@ class ProfileViewService {
             model: User,
             as: 'Viewer',
             attributes: ['userId', 'firstName', 'lastName', 'displayName'],
+            include: [
+              {
+                model: Profile,
+                attributes: ["photoUrl"],
+                as: "Profile"
+    
+              },
+          ],
           },
         ],
          order: [["createdAt", "DESC"]],
