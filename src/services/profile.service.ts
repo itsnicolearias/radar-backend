@@ -34,6 +34,7 @@ export const getProfileByUserId = async (userId: string): Promise<IProfileRespon
 export const updateProfile = async (userId: string, data: UpdateProfileInput) => {
   try {
     let User;
+    let profileInfo;
     const profile = await Profile.findOne({ where: { userId } })
 
     if (!profile) {
@@ -42,6 +43,7 @@ export const updateProfile = async (userId: string, data: UpdateProfileInput) =>
 
     if (data.Profile){
       await profile.update(data.Profile)
+      profileInfo = await profile.reload();
     }
 
     if (data.User){
@@ -51,7 +53,7 @@ export const updateProfile = async (userId: string, data: UpdateProfileInput) =>
 
 
     return {
-      Profile,
+      Profile: profileInfo,
       User,
     };
   } catch (error) {
