@@ -8,6 +8,7 @@ import notificationRoutes from "./notification.routes"
 import radarRoutes from "./radar.routes";
 import eventRoutes from "./event.routes";
 import signalRoutes from "./signal.routes";
+import { getSignedUrl } from "../controllers/file-upload.controller"
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use("/notifications", notificationRoutes);
 router.use("/radar", radarRoutes);
 router.use("/events", eventRoutes);
 router.use("/signals", signalRoutes);
+router.get('/get-signed-url', getSignedUrl)
 
 export default router;

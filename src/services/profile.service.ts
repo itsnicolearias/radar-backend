@@ -23,25 +23,7 @@ export const getProfileByUserId = async (userId: string): Promise<IProfileRespon
       throw notFound("Profile not found")
     }
 
-    return {
-      profileId: profile.profileId,
-      userId: profile.userId,
-      photoUrl: profile.photoUrl,
-      bio: profile.bio,
-      location: null, // missing in model
-      website: null, // missing in model
-      birthDate: null, // missing in model
-      gender: null, // missing in model
-      pronouns: null, // missing in model
-      height: null, // missing in model
-      zodiac: null, // missing in model
-      education: null, // missing in model
-      work: null, // missing in model
-      interests: profile.interests,
-      createdAt: profile.createdAt,
-      updatedAt: profile.updatedAt,
-      User: profile.User,
-    };
+    return profile;
   } catch (error) {
     throw badRequest(error);
   }
@@ -52,6 +34,7 @@ export const getProfileByUserId = async (userId: string): Promise<IProfileRespon
 export const updateProfile = async (userId: string, data: UpdateProfileInput) => {
   try {
     let User;
+    let profileInfo;
     const profile = await Profile.findOne({ where: { userId } })
 
     if (!profile) {
@@ -60,6 +43,7 @@ export const updateProfile = async (userId: string, data: UpdateProfileInput) =>
 
     if (data.Profile){
       await profile.update(data.Profile)
+      profileInfo = await profile.reload();
     }
 
     if (data.User){
@@ -69,7 +53,7 @@ export const updateProfile = async (userId: string, data: UpdateProfileInput) =>
 
 
     return {
-      profile,
+      Profile: profileInfo,
       User,
     };
   } catch (error) {
