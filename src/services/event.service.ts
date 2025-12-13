@@ -12,40 +12,31 @@ class EventService {
     try {
       const { latitude, longitude, radius } = data;
 
-      const sql = `
-        SELECT
-          e.event_id AS "eventId",
-          e.user_id AS "userId",
-          e.title AS "title",
-          e.description AS "description",
-          e.location AS "location",
-          e.latitude AS "latitude",
-          e.longitude AS "longitude",
-          e.start_date AS "startDate",
-          e.end_date AS "endDate",
-          e.is_public AS "isPublic",
-          e.max_attendees AS "maxAttendees",
-          e.price AS "price",
-          e.category AS "category",
-          e.created_at AS "createdAt",
-          e.updated_at AS "updatedAt",
-          ST_Distance(
-            ST_MakePoint(:lng, :lat)::geography,
-            ST_MakePoint(e.longitude, e.latitude)::geography
-          ) AS "distance"
-        FROM events e
-        WHERE ST_DWithin(
-          ST_MakePoint(:lng, :lat)::geography,
-          ST_MakePoint(e.longitude, e.latitude)::geography,
-          :radius
-        )
-        ORDER BY "distance" ASC
-        LIMIT 50`;
-
-      const nearbyEvents = await sequelize.query<(TEvent & { distance: number })>(sql, {
-        replacements: { lng: longitude, lat: latitude, radius },
-        type: QueryTypes.SELECT,
-      });
+      const nearbyEvents = await Event.findAll({
+          attributes: {
+            include: [
+              [
+                sequelize.fn(
+                  'ST_Distance',
+                  sequelize.cast(sequelize.fn('ST_MakePoint', longitude, latitude), 'geography'),
+                  sequelize.cast(sequelize.fn('ST_MakePoint', sequelize.col('longitude'), sequelize.col('latitude')), 'geography')
+                ),
+                'distance',
+              ],
+            ],
+          },
+          where: sequelize.where(
+            sequelize.fn(
+              'ST_DWithin',
+              sequelize.cast(sequelize.fn('ST_MakePoint', longitude, latitude), 'geography'),
+              sequelize.cast(sequelize.fn('ST_MakePoint', sequelize.col('longitude'), sequelize.col('latitude')), 'geography'),
+              radius
+            ),
+            true
+          ),
+          order: [[sequelize.literal('distance'), 'ASC']],
+          limit: 50,
+        });
 
       return nearbyEvents;
     } catch (error) {
