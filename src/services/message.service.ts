@@ -135,11 +135,11 @@ export const getRecentConversations = async (
             "userId", "displayName", "email"
           ],
         }, 
-        raw: true,
+        //raw: true,
         include: [
           {
             model: Profile,
-            attributes: ["photoUrl"],
+            attributes: [ "photoUrl", "age"],
             as: "Profile"
 
           },
