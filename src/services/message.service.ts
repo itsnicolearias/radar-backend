@@ -122,24 +122,31 @@ export const getRecentConversations = async (
 
       const otherUser = await User.findByPk(otherUserId, {
         attributes: {
+          exclude: ["passwordHash", "emailVerificationToken", "isVerified", "email", "birthDate", "firstName", "lastName"],
           include: [
             [
-              sequelize.literal(`
-                ST_Distance(
-                  ST_MakePoint(${logguedUser.lastLongitude}, ${logguedUser.lastLatitude})::geography,
-                  ST_MakePoint(last_longitude, last_latitude)::geography
+              sequelize.fn(
+                'ST_Distance',
+                sequelize.cast(
+                  sequelize.fn('ST_MakePoint', logguedUser.lastLongitude, logguedUser.lastLatitude),
+                  'geography'
+                ),
+                sequelize.cast(
+                  sequelize.fn('ST_MakePoint', sequelize.col('last_longitude'), sequelize.col('last_latitude')),
+                  'geography'
                 )
-              `),
-              "distance", 
+              ),
+              'distance',
             ],
-            "userId", "displayName", "email"
+            "userId", "displayName"
           ],
+          
         }, 
         raw: true,
         include: [
           {
             model: Profile,
-            attributes: ["photoUrl"],
+            attributes: [ "photoUrl", "age"],
             as: "Profile"
 
           },
@@ -194,17 +201,22 @@ export const getMessagesBetweenUsers = async (userId1: string, userId2: string) 
           model: User,
           as: "Sender",
           attributes: {
+            exclude: ["passwordHash", "emailVerificationToken", "isVerified", "email", "birthDate", "firstName", "lastName"],
             include: [
               [
-                sequelize.literal(`
-                  ST_Distance(
-                    ST_MakePoint(${logguedUser.lastLongitude}, ${logguedUser.lastLatitude})::geography,
-                    ST_MakePoint("Sender"."last_longitude", "Sender"."last_latitude")::geography
+                sequelize.fn(
+                  'ST_Distance',
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', logguedUser.lastLongitude, logguedUser.lastLatitude),
+                    'geography'
+                  ),
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', sequelize.col('Sender.last_longitude'), sequelize.col('Sender.last_latitude')),
+                    'geography'
                   )
-                `),
-                "distance", 
+                ),
+                'distance',
               ],
-              "userId", "displayName", "email"
             ],
           }, 
           include: [
@@ -219,17 +231,22 @@ export const getMessagesBetweenUsers = async (userId1: string, userId2: string) 
           model: User,
           as: "Receiver",
           attributes: {
+            exclude: ["passwordHash", "emailVerificationToken", "isVerified", "email", "birthDate", "firstName", "lastName"],
             include: [
               [
-                sequelize.literal(`
-                  ST_Distance(
-                    ST_MakePoint(${logguedUser.lastLongitude}, ${logguedUser.lastLatitude})::geography,
-                    ST_MakePoint("Receiver"."last_longitude", "Receiver"."last_latitude")::geography
+                sequelize.fn(
+                  'ST_Distance',
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', logguedUser.lastLongitude, logguedUser.lastLatitude),
+                    'geography'
+                  ),
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', sequelize.col('Receiver.last_longitude'), sequelize.col('Receiver.last_latitude')),
+                    'geography'
                   )
-                `),
-                "distance", 
+                ),
+                'distance',
               ],
-              "userId", "displayName", "email"
             ],
           }, 
           include: [

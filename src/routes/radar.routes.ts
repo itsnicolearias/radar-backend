@@ -1,6 +1,8 @@
 import { Router } from "express"
 import * as radarController from "../controllers/radar.controller"
 import { authenticate } from "../middlewares/auth.middleware"
+import { validate } from "../middlewares/validation.middleware"
+import { geoQuerySchema } from "../schemas/geo.schema"
 
 const router = Router()
 
@@ -59,6 +61,6 @@ const router = Router()
  *       401:
  *         description: Unauthorized
  */
-router.get("/nearby", authenticate, radarController.getNearby)
+router.get("/nearby", authenticate, validate(geoQuerySchema), radarController.getNearby)
 
 export default router

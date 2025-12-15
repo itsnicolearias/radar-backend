@@ -82,17 +82,23 @@ export const getConnectionsByUserId = async (userId: string) => {
           model: User,
           as: "Sender",
           attributes: {
+            exclude: ["passwordHash", "emailVerificationToken", "isVerified", "email", "birthDate", "firstName", "lastName"],
             include: [
               [
-                sequelize.literal(`
-                  ST_Distance(
-                    ST_MakePoint(${logguedUser.lastLongitude}, ${logguedUser.lastLatitude})::geography,
-                    ST_MakePoint("Sender"."last_longitude", "Sender"."last_latitude")::geography
+                sequelize.fn(
+                  'ST_Distance',
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', logguedUser.lastLongitude, logguedUser.lastLatitude),
+                    'geography'
+                  ),
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', sequelize.col('Sender.last_longitude'), sequelize.col('Sender.last_latitude')),
+                    'geography'
                   )
-                `),
-                "distance", 
+                ),
+                'distance',
               ],
-              "userId", "displayName", "email"
+              "userId", "displayName"
             ],
           }, 
           include: [
@@ -107,17 +113,23 @@ export const getConnectionsByUserId = async (userId: string) => {
           model: User,
           as: "Receiver",
           attributes: {
+            exclude: ["passwordHash", "emailVerificationToken", "isVerified", "email", "birthDate", "firstName", "lastName"],
             include: [
               [
-                sequelize.literal(`
-                  ST_Distance(
-                    ST_MakePoint(${logguedUser.lastLongitude}, ${logguedUser.lastLatitude})::geography,
-                    ST_MakePoint("Receiver"."last_longitude", "Receiver"."last_latitude")::geography
+                sequelize.fn(
+                  'ST_Distance',
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', logguedUser.lastLongitude, logguedUser.lastLatitude),
+                    'geography'
+                  ),
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', sequelize.col('Receiver.last_longitude'), sequelize.col('Receiver.last_latitude')),
+                    'geography'
                   )
-                `),
-                "distance", 
+                ),
+                'distance',
               ],
-              "userId", "displayName", "email"
+              "userId", "displayName"
             ],
           }, 
           include: [
@@ -153,17 +165,23 @@ export const getPendingConnections = async (userId: string) => {
           model: User,
           as: "Sender",
           attributes: {
+            exclude: ["passwordHash", "emailVerificationToken", "isVerified", "email", "birthDate", "firstName", "lastName"],
             include: [
               [
-                sequelize.literal(`
-                  ST_Distance(
-                    ST_MakePoint(${logguedUser.lastLongitude}, ${logguedUser.lastLatitude})::geography,
-                    ST_MakePoint("Sender"."last_longitude", "Sender"."last_latitude")::geography
+                sequelize.fn(
+                  'ST_Distance',
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', logguedUser.lastLongitude, logguedUser.lastLatitude),
+                    'geography'
+                  ),
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', sequelize.col('Sender.last_longitude'), sequelize.col('Sender.last_latitude')),
+                    'geography'
                   )
-                `),
-                "distance", 
+                ),
+                'distance',
               ],
-              "userId", "displayName", "email"
+              "userId", "displayName"
             ],
           }, 
           include: [
@@ -178,17 +196,23 @@ export const getPendingConnections = async (userId: string) => {
           model: User,
           as: "Receiver",
           attributes: {
+            exclude: ["passwordHash", "emailVerificationToken", "isVerified", "email", "birthDate", "firstName", "lastName"],
             include: [
               [
-                sequelize.literal(`
-                  ST_Distance(
-                    ST_MakePoint(${logguedUser.lastLongitude}, ${logguedUser.lastLatitude})::geography,
-                    ST_MakePoint("Receiver"."last_longitude", "Receiver"."last_latitude")::geography
+                sequelize.fn(
+                  'ST_Distance',
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', logguedUser.lastLongitude, logguedUser.lastLatitude),
+                    'geography'
+                  ),
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', sequelize.col('Receiver.last_longitude'), sequelize.col('Receiver.last_latitude')),
+                    'geography'
                   )
-                `),
-                "distance", 
+                ),
+                'distance',
               ],
-              "userId", "displayName", "email"
+              "userId", "displayName"
             ],
           }, 
           include: [

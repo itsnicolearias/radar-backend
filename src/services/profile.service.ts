@@ -1,10 +1,10 @@
 import { notFound } from "../utils/errors"
 import type { UpdateProfileInput } from "../schemas/profile.schema"
-import { badRequest } from "@hapi/boom"
+import { badData, badRequest } from "@hapi/boom"
 import Profile from "../models/profile.model"
 import User from "../models/user.model"
 import type { IProfileResponse } from "../interfaces/profile.interface"
-import { updateUser } from "./user.service"
+import { sequelize } from "../models"
 
 export const getProfileByUserId = async (userId: string): Promise<IProfileResponse> => {
   try {
@@ -33,28 +33,37 @@ export const getProfileByUserId = async (userId: string): Promise<IProfileRespon
 
 export const updateProfile = async (userId: string, data: UpdateProfileInput) => {
   try {
-    let User;
+    let userInfo;
     let profileInfo;
     const profile = await Profile.findOne({ where: { userId } })
+    const user = await User.findByPk(userId)
 
-    if (!profile) {
+    if (!profile || !user) {
       throw notFound("Profile not found")
     }
 
-    if (data.Profile){
-      await profile.update(data.Profile)
+    const t = await sequelize.transaction();
+
+    try {   
+      if (data.Profile){
+      await profile.update(data.Profile, { transaction: t })
       profileInfo = await profile.reload();
     }
 
     if (data.User){
-      User = await updateUser(userId, data.User)
+      await user.update(data.User, { transaction: t })
+      userInfo = await user.reload();
+
     }
-
-
+    await t.commit();
+    } catch (error) {
+      await t.rollback();
+      throw badData(error);
+    }
 
     return {
       Profile: profileInfo,
-      User,
+      User: userInfo,
     };
   } catch (error) {
     throw badRequest(error);

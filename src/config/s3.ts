@@ -11,16 +11,21 @@ const s3 = new S3Client({
   },
 });
 
-export async function generateUploadUrl(fileName: string, fileType: string) {
+export async function generateUploadUrl(fileName: string, fileType: string, userId: string) {
   try {
+
+    const extension = fileType === "image/png" ? "png" : "jpg";
+    const key = `profiles/${userId}/${crypto.randomUUID()}.${extension}`
+
     const command = new PutObjectCommand({
     Bucket: config.awsS3Bucket,
-    Key: fileName,
+    Key: key,
     ContentType: fileType
   });
+  
 
   const signedUrl = await getSignedUrl(s3, command, { expiresIn: 60 });
-  const fileUrl = `https://${config.awsS3Bucket}.s3.${config.awsRegion}.amazonaws.com/${fileName}`;
+  const fileUrl = `https://${config.awsS3Bucket}.s3.${config.awsRegion}.amazonaws.com/${key}`;
 
    return {signedUrl, fileUrl};
   } catch (error) {
