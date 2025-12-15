@@ -18,6 +18,10 @@ class SignalService {
           s.sender_id AS "senderId",
           s.note AS "note",
           s.created_at AS "createdAt",
+          ST_Distance(
+            ST_MakePoint(:lng, :lat)::geography,
+            ST_MakePoint(u.last_longitude, u.last_latitude)::geography
+          ) AS "distance",
           u.user_id AS "Sender.userId",
           u.display_name AS "Sender.displayName"
         FROM signals s

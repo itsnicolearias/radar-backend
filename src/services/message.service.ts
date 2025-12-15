@@ -138,7 +138,7 @@ export const getRecentConversations = async (
               ),
               'distance',
             ],
-            "userId", "displayName", "email"
+            "userId", "displayName"
           ],
           
         }, 
