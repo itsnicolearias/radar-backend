@@ -12,6 +12,8 @@ import type {
 import { _ConnectionStatus } from '../interfaces/connection.interface';
 import { getNearbyUsers } from './radar.service';
 import { IRadarUserResponse } from '../interfaces/radar.interface';
+import { sequelize } from '../models';
+import { getUserById } from './user.service';
 
 export const sendMessage = async (senderId: string, data: SendMessageInput): Promise<IMessageResponse> => {
   try {
@@ -104,6 +106,8 @@ export const getRecentConversations = async (
       order: [['createdAt', 'DESC']],
     })
 
+    const logguedUser = await getUserById(userId);
+
     // 2️⃣ Agrupar por el otro usuario
     const seen = new Set<string>()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -117,12 +121,32 @@ export const getRecentConversations = async (
       seen.add(otherUserId)
 
       const otherUser = await User.findByPk(otherUserId, {
-        attributes: ['userId', 'displayName', 'isVerified', "firstName", "lastName"],
+        attributes: {
+          exclude: ["passwordHash", "emailVerificationToken", "isVerified", "email", "birthDate", "firstName", "lastName"],
+          include: [
+            [
+              sequelize.fn(
+                'ST_Distance',
+                sequelize.cast(
+                  sequelize.fn('ST_MakePoint', logguedUser.lastLongitude, logguedUser.lastLatitude),
+                  'geography'
+                ),
+                sequelize.cast(
+                  sequelize.fn('ST_MakePoint', sequelize.col('last_longitude'), sequelize.col('last_latitude')),
+                  'geography'
+                )
+              ),
+              'distance',
+            ],
+            "userId", "displayName"
+          ],
+          
+        }, 
         raw: true,
         include: [
           {
             model: Profile,
-            attributes: ["photoUrl"],
+            attributes: [ "photoUrl", "age"],
             as: "Profile"
 
           },
@@ -163,6 +187,8 @@ export const getRecentConversations = async (
 
 export const getMessagesBetweenUsers = async (userId1: string, userId2: string) => {
   try {
+    const logguedUser = await getUserById(userId1);
+
     const messages = await Message.findAll({
       where: {
         [Op.or]: [
@@ -174,24 +200,60 @@ export const getMessagesBetweenUsers = async (userId1: string, userId2: string) 
         {
           model: User,
           as: "Sender",
-          attributes: ["userId", "displayName"],
+          attributes: {
+            exclude: ["passwordHash", "emailVerificationToken", "isVerified", "email", "birthDate", "firstName", "lastName"],
+            include: [
+              [
+                sequelize.fn(
+                  'ST_Distance',
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', logguedUser.lastLongitude, logguedUser.lastLatitude),
+                    'geography'
+                  ),
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', sequelize.col('Sender.last_longitude'), sequelize.col('Sender.last_latitude')),
+                    'geography'
+                  )
+                ),
+                'distance',
+              ],
+            ],
+          }, 
           include: [
             {
               model: Profile,
-              attributes: ["photoUrl"],
               as: "Profile",
+              attributes: ["photoUrl", "bio", "age", "interests", "province", "showAge", "showLocation"],
             },
           ],
         },
         {
           model: User,
           as: "Receiver",
-          attributes: ["userId", "displayName"],
+          attributes: {
+            exclude: ["passwordHash", "emailVerificationToken", "isVerified", "email", "birthDate", "firstName", "lastName"],
+            include: [
+              [
+                sequelize.fn(
+                  'ST_Distance',
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', logguedUser.lastLongitude, logguedUser.lastLatitude),
+                    'geography'
+                  ),
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', sequelize.col('Receiver.last_longitude'), sequelize.col('Receiver.last_latitude')),
+                    'geography'
+                  )
+                ),
+                'distance',
+              ],
+            ],
+          }, 
           include: [
             {
               model: Profile,
-              attributes: ["photoUrl"],
               as: "Profile",
+              attributes: ["photoUrl", "bio", "age", "interests", "province", "showAge", "showLocation"],
             },
           ],
         },

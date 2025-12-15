@@ -14,6 +14,18 @@ class SignalController {
       next(error);
     }
   }
+
+  async getSignalById(req: AuthRequest, res: Response, next: NextFunction) {
+    try {
+      const { id: signalId } = req.params;
+
+      const signal = await SignalService.getSignalById(signalId);
+
+      res.status(200).json(signal);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new SignalController();

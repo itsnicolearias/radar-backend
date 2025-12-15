@@ -139,7 +139,7 @@ export const resendVerificationEmail = async (email: string): Promise<IResendVer
 
 export const loginUser = async (data: LoginUserInput): Promise<AuthResponse> => {
   try {
-    const user = await User.findOne({ where: { email: data.email } })
+    const user = await User.findOne({ where: { email: data.email }, include: "Profile" })
 
     if (!user) {
       throw unauthorized("Invalid email or password")
@@ -170,7 +170,8 @@ export const loginUser = async (data: LoginUserInput): Promise<AuthResponse> => 
         displayName: user.displayName,
         birthDate: user.birthDate,
         lastLatitude: user.lastLatitude,
-        lastLongitude: user.lastLongitude
+        lastLongitude: user.lastLongitude,
+        Profile: user.Profile
       },
     }
   } catch (error) {

@@ -1,9 +1,10 @@
 import { notFound } from "../utils/errors"
-import type { CreateProfileInput, UpdateProfileInput } from "../schemas/profile.schema"
-import { badRequest } from "@hapi/boom"
+import type { UpdateProfileInput } from "../schemas/profile.schema"
+import { badData, badRequest } from "@hapi/boom"
 import Profile from "../models/profile.model"
 import User from "../models/user.model"
 import type { IProfileResponse } from "../interfaces/profile.interface"
+import { sequelize } from "../models"
 
 export const getProfileByUserId = async (userId: string): Promise<IProfileResponse> => {
   try {
@@ -13,7 +14,7 @@ export const getProfileByUserId = async (userId: string): Promise<IProfileRespon
         {
           model: User,
           as: "User",
-          attributes: ["userId", "firstName", "lastName", "email"],
+          attributes: ["userId", "firstName", "lastName", "email", "displayName", "lastLatitude", "lastLongitude", "lastSeenAt", "isVerified", "invisibleMode", "isVisible", "birthDate", "createdAt", "updatedAt"],
         },
       ],
     })
@@ -22,95 +23,47 @@ export const getProfileByUserId = async (userId: string): Promise<IProfileRespon
       throw notFound("Profile not found")
     }
 
-    return {
-      profileId: profile.profileId,
-      userId: profile.userId,
-      photoUrl: profile.photoUrl,
-      bio: profile.bio,
-      location: null, // missing in model
-      website: null, // missing in model
-      birthDate: null, // missing in model
-      gender: null, // missing in model
-      pronouns: null, // missing in model
-      height: null, // missing in model
-      zodiac: null, // missing in model
-      education: null, // missing in model
-      work: null, // missing in model
-      interests: profile.interests,
-      createdAt: profile.createdAt,
-      updatedAt: profile.updatedAt,
-      User: profile.User,
-    };
+    return profile;
   } catch (error) {
     throw badRequest(error);
   }
 }
 
-export const createProfile = async (userId: string, data: CreateProfileInput): Promise<IProfileResponse> => {
+
+
+export const updateProfile = async (userId: string, data: UpdateProfileInput) => {
   try {
-    const existingProfile = await Profile.findOne({ where: { userId } })
-
-    if (existingProfile) {
-      return updateProfile(userId, data)
-    }
-
-    const profile = await Profile.create({
-      userId,
-      ...data,
-    })
-
-    return {
-      profileId: profile.profileId,
-      userId: profile.userId,
-      photoUrl: profile.photoUrl,
-      bio: profile.bio,
-      location: null, // missing in model
-      website: null, // missing in model
-      birthDate: null, // missing in model
-      gender: null, // missing in model
-      pronouns: null, // missing in model
-      height: null, // missing in model
-      zodiac: null, // missing in model
-      education: null, // missing in model
-      work: null, // missing in model
-      interests: profile.interests,
-      createdAt: profile.createdAt,
-      updatedAt: profile.updatedAt,
-      User: profile.User,
-    };
-  } catch (error) {
-    throw badRequest(error);
-  }
-}
-
-export const updateProfile = async (userId: string, data: UpdateProfileInput): Promise<IProfileResponse> => {
-  try {
+    let userInfo;
+    let profileInfo;
     const profile = await Profile.findOne({ where: { userId } })
+    const user = await User.findByPk(userId)
 
-    if (!profile) {
+    if (!profile || !user) {
       throw notFound("Profile not found")
     }
 
-    await profile.update(data)
+    const t = await sequelize.transaction();
+
+    try {   
+      if (data.Profile){
+      await profile.update(data.Profile, { transaction: t })
+      profileInfo = await profile.reload();
+    }
+
+    if (data.User){
+      await user.update(data.User, { transaction: t })
+      userInfo = await user.reload();
+
+    }
+    await t.commit();
+    } catch (error) {
+      await t.rollback();
+      throw badData(error);
+    }
 
     return {
-      profileId: profile.profileId,
-      userId: profile.userId,
-      photoUrl: profile.photoUrl,
-      bio: profile.bio,
-      location: null, // missing in model
-      website: null, // missing in model
-      birthDate: null, // missing in model
-      gender: null, // missing in model
-      pronouns: null, // missing in model
-      height: null, // missing in model
-      zodiac: null, // missing in model
-      education: null, // missing in model
-      work: null, // missing in model
-      interests: profile.interests,
-      createdAt: profile.createdAt,
-      updatedAt: profile.updatedAt,
-      User: profile.User,
+      Profile: profileInfo,
+      User: userInfo,
     };
   } catch (error) {
     throw badRequest(error);

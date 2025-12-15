@@ -1,26 +1,8 @@
-export interface IProfileResponse {
-  profileId: string;
-  userId: string;
-  photoUrl: string | null;
-  bio: string | null;
-  location: string | null;
-  website: string | null;
-  birthDate: Date | null;
-  gender: string | null;
-  pronouns: string | null;
-  height: number | null;
-  zodiac: string | null;
-  education: string | null;
-  work: string | null;
-  interests: string[] | null;
-  createdAt: Date;
-  updatedAt: Date;
-  User?: {
-    userId: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-  };
+import { User } from "../models";
+import { IUserResponse } from "./user.interface";
+
+export type IProfileResponse = ProfileAttributes & {
+  User?: Partial<IUserResponse> | User
 }
 
 export interface IDeleteProfileResponse {

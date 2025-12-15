@@ -1,52 +1,57 @@
 import Signal from '../models/signal.model';
 import User from '../models/user.model';
-import sequelize, { Op } from 'sequelize';
-import { GetNearbyUsersInput } from '../schemas/radar.schema';
+import { sequelize } from '../models';
+import { QueryTypes } from 'sequelize';
 import boom, { badRequest } from '@hapi/boom';
 import type { ISignalResponse } from '../interfaces/signal.interface';
+import { GetNearbyUsersInput } from '../schemas/radar.schema';
 
 class SignalService {
   async getNearbySignals(data: GetNearbyUsersInput): Promise<ISignalResponse[]> {
     try {
       const { latitude, longitude, radius } = data;
+      const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
-      const nearbySignals = await Signal.findAll({
-        // Filter by sender location using a spatial WHERE literal (avoid HAVING/GROUP BY issues)
-        where: {
-          [Op.and]: sequelize.literal(`
-            ST_DWithin(
-              ST_MakePoint(${longitude}, ${latitude})::geography,
-              ST_MakePoint("Sender"."last_longitude", "Sender"."last_latitude")::geography,
-              ${radius}
-            )
-          `),
+      const sql = `
+        SELECT
+          s.signal_id AS "signalId",
+          s.sender_id AS "senderId",
+          s.note AS "note",
+          s.created_at AS "createdAt",
+          ST_Distance(
+            ST_MakePoint(:lng, :lat)::geography,
+            ST_MakePoint(u.last_longitude, u.last_latitude)::geography
+          ) AS "distance",
+          u.user_id AS "Sender.userId",
+          u.display_name AS "Sender.displayName"
+        FROM signals s
+        JOIN users u ON u.user_id = s.sender_id
+        JOIN (
+          SELECT sender_id, MAX(created_at) AS max_created_at
+          FROM signals
+          WHERE created_at >= :since
+          GROUP BY sender_id
+        ) latest ON latest.sender_id = s.sender_id AND latest.max_created_at = s.created_at
+        WHERE ST_DWithin(
+          ST_MakePoint(:lng, :lat)::geography,
+          ST_MakePoint(u.last_longitude, u.last_latitude)::geography,
+          :radius
+        )
+        ORDER BY s.created_at DESC
+        LIMIT 50`;
+
+      const signals = await sequelize.query<ISignalResponse>(sql, {
+        replacements: {
+          lng: longitude,
+          lat: latitude,
+          radius,
+          since: twentyFourHoursAgo,
         },
-        include: [
-          {
-            model: User,
-            as: 'Sender',
-            attributes: [ "userId", "displayName" ],
-          },
-        ],
-        attributes: {
-          include: [
-            [
-              sequelize.literal(`
-                ST_Distance(
-                  ST_MakePoint(${longitude}, ${latitude})::geography,
-                  ST_MakePoint("Sender"."last_longitude", "Sender"."last_latitude")::geography
-                )
-              `),
-              'distance',
-            ],
-          ],
-        },
-        // spatial filter moved to WHERE
-        order: [[sequelize.literal('distance'), 'ASC']],
-        limit: 50,
+        type: QueryTypes.SELECT,
+        nest: true,
       });
 
-      return nearbySignals as unknown as ISignalResponse[];
+      return signals;
     } catch (error) {
       throw badRequest(error);
     }
@@ -72,6 +77,24 @@ class SignalService {
     } catch (error) {
       throw badRequest(error);
     }
+  }
+
+  async getSignalById(signalId: string) {
+    const signal = await Signal.findByPk(signalId, {
+      include: [
+        {
+          model: User,
+          as: 'Sender',
+          attributes: ['userId', 'displayName'],
+        },
+      ],
+    });
+
+    if (!signal) {
+      throw boom.notFound('Signal not found');
+    }
+
+    return signal;
   }
 }
 

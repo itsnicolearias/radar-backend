@@ -18,37 +18,52 @@ export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput):
         invisibleMode: false,
         lastLatitude: { [Op.ne]: null } as unknown as number,
         lastLongitude: { [Op.ne]: null } as unknown as number,
-        // Move the spatial filter into the WHERE clause to avoid needing GROUP BY
-        [Op.and]: sequelize.literal(`
-          ST_DWithin(
-            ST_MakePoint(${longitude}, ${latitude})::geography,
-            ST_MakePoint(last_longitude, last_latitude)::geography,
-            ${radius}
+        // Spatial filter using parameterized functions
+        [Op.and]: [
+          sequelize.where(
+            sequelize.fn(
+              'ST_DWithin',
+              sequelize.cast(
+                sequelize.fn('ST_MakePoint', longitude, latitude),
+                'geography'
+              ),
+              sequelize.cast(
+                sequelize.fn('ST_MakePoint', sequelize.col('last_longitude'), sequelize.col('last_latitude')),
+                'geography'
+              ),
+              radius
+            ),
+            true
           )
-        `),
+        ],
       },
       include: [
         {
           model: Profile,
           as: "Profile",
-          attributes: ["photoUrl", "bio", "age", "interests", "province"],
+          attributes: ["photoUrl", "bio", "age", "interests", "province", "showAge", "showLocation"],
         },
       ],
       attributes: {
-        exclude: ["passwordHash", "emailVerificationToken"],
+        exclude: ["passwordHash", "emailVerificationToken", "isVerified", "email", "birthDate", "firstName", "lastName"],
         include: [
           [
-            sequelize.literal(`
-              ST_Distance(
-                ST_MakePoint(${longitude}, ${latitude})::geography,
-                ST_MakePoint(last_longitude, last_latitude)::geography
+            sequelize.fn(
+              'ST_Distance',
+              sequelize.cast(
+                sequelize.fn('ST_MakePoint', longitude, latitude),
+                'geography'
+              ),
+              sequelize.cast(
+                sequelize.fn('ST_MakePoint', sequelize.col('last_longitude'), sequelize.col('last_latitude')),
+                'geography'
               )
-            `),
-            "distance",
+            ),
+            'distance',
           ],
         ],
       },
-      order: [[sequelize.literal("distance"), "ASC"]],
+      order: [[sequelize.literal('distance'), 'ASC']],
       limit: 50,
     })
 

@@ -9,7 +9,7 @@ export const updateUserSchema = z.object({
   firstName: z.string().min(2).optional(),
   lastName: z.string().min(2).optional(),
   displayName: z.string().min(1).max(50).optional(),
-  birthDate: z.string().datetime().optional(),
+  birthDate: z.date().optional(),
   invisibleMode: z.boolean().optional(),
 })
 

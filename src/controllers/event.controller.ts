@@ -43,11 +43,16 @@ class EventController {
     }
   }
 
-  async update(req: Request, res: Response, next: NextFunction) {
+  async update(req: AuthRequest, res: Response, next: NextFunction) {
     try {
+      if (!req.user) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
       const event = await eventService.update(
         req.params.eventId,
-        req.body as Partial<TEvent>
+        req.body as Partial<TEvent>,
+        req.user.userId,
       );
       res.json(event);
     } catch (error) {
@@ -55,9 +60,13 @@ class EventController {
     }
   }
 
-  async delete(req: Request, res: Response, next: NextFunction) {
+  async delete(req: AuthRequest, res: Response, next: NextFunction) {
     try {
-      await eventService.delete(req.params.eventId);
+      if (!req.user) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
+      await eventService.delete(req.params.eventId, req.user.userId);
       res.status(204).send();
     } catch (error) {
       next(error);

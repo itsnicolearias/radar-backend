@@ -1,3 +1,4 @@
+import { Profile } from "../models"
 import { IProfileResponse } from "./profile.interface"
 
 export interface IUserResponse {
@@ -58,6 +59,7 @@ export interface UserAttributes {
   lastSeenAt?: Date | null;
   createdAt?: Date;
   updatedAt?: Date;
+  Profile?: Profile;
 }
 
 export interface UserCreationAttributes extends Omit<UserAttributes, 'userId'>, Record<string, unknown> {}
