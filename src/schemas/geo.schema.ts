@@ -18,6 +18,7 @@ export const latitudeSchema = z.preprocess(
   (v) => toNumber(v),
   z
     .number({ required_error: "latitude is required", invalid_type_error: "latitude must be a number" })
+    .finite({ message: "latitude must be a finite number" })
     .min(-90, { message: "latitude must be >= -90" })
     .max(90, { message: "latitude must be <= 90" })
 )
