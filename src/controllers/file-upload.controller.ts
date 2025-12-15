@@ -1,8 +1,14 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { generateUploadUrl } from "../config/s3";
+import { AuthRequest } from "../middlewares/auth.middleware";
 
-export const getSignedUrl = async (req: Request, res: Response, next: NextFunction) => {
+export const getSignedUrl = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
+    if (!req.user) {
+        res.status(401).json({ message: 'Unauthorized' });
+        return;
+      }
+
     const { fileName, fileType } = req.query;
     if (!fileName || !fileType) {
     return res.status(400).json({ error: "Missing parameters in file upload" });
@@ -16,7 +22,7 @@ export const getSignedUrl = async (req: Request, res: Response, next: NextFuncti
       return res.status(400).json({ error: "Invalid file type. Only JPEG and PNG are allowed." });
     }
 
-    const link = await generateUploadUrl(fileName, fileType)
+    const link = await generateUploadUrl(fileName, fileType, req.user.userId)
     res.json(link)
   } catch (error) {
     return next(error)

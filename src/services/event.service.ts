@@ -5,7 +5,6 @@ import Event from "../models/event.model";
 import EventInterest from "../models/eventInterest.model";
 import User from "../models/user.model";
 import { sequelize } from "../models";
-import { QueryTypes } from "sequelize";
 
 class EventService {
   async getNearbyEvents(data: GetNearbyUsersInput) {
