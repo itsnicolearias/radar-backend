@@ -105,7 +105,7 @@ export const getMyPendingConnections = async (req: AuthRequest, res: Response, n
       })
     }
 
-    const connections = await connectionService.getPendingConnections(userId)
+    const connections = await connectionService.getMyPendingConnections(userId)
 
     res.status(200).json({
       success: true,
