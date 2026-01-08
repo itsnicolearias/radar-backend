@@ -94,6 +94,28 @@ export const getPendingConnections = async (req: AuthRequest, res: Response, nex
   }
 }
 
+export const getMyPendingConnections = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user?.userId
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized",
+      })
+    }
+
+    const connections = await connectionService.getMyPendingConnections(userId)
+
+    res.status(200).json({
+      success: true,
+      data: connections,
+    })
+  } catch (error) {
+    return next(error)
+  }
+}
+
 export const deleteConnection = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { connectionId } = req.params

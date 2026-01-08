@@ -236,6 +236,72 @@ export const getPendingConnections = async (userId: string) => {
   }
 }
 
+export const getMyPendingConnections = async (userId: string) => {
+  try {
+
+    const logguedUser = await getUserById(userId);
+
+    const connections = await Connection.findAll({
+      where: {
+        senderId: userId, 
+        status: "pending"
+      },
+      include: [
+        {
+          model: User,
+          as: "Sender",
+          attributes: {
+            exclude: ["passwordHash", "emailVerificationToken", "isVerified", "email", "birthDate", "firstName", "lastName"],
+          }, 
+          include: [
+            {
+              model: Profile,
+              as: "Profile",
+              attributes: ["photoUrl", "bio", "age", "interests", "province", "showAge", "showLocation"],
+            },
+          ],
+        },
+        {
+          model: User,
+          as: "Receiver",
+          attributes: {
+            exclude: ["passwordHash", "emailVerificationToken", "isVerified", "email", "birthDate", "firstName", "lastName"],
+            include: [
+              [
+                sequelize.fn(
+                  'ST_Distance',
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', logguedUser.lastLongitude, logguedUser.lastLatitude),
+                    'geography'
+                  ),
+                  sequelize.cast(
+                    sequelize.fn('ST_MakePoint', sequelize.col('Receiver.last_longitude'), sequelize.col('Receiver.last_latitude')),
+                    'geography'
+                  )
+                ),
+                'distance',
+              ],
+              "userId", "displayName"
+            ],
+          }, 
+          include: [
+            {
+              model: Profile,
+              as: "Profile",
+              attributes: ["photoUrl", "bio", "age", "interests", "province", "showAge", "showLocation"],
+            },
+          ],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    })
+
+    return connections;
+  } catch (error) {
+    throw badRequest(error);
+  }
+}
+
 export const deleteConnection = async (connectionId: string, userId: string) => {
   try {
     const connection = await Connection.findByPk(connectionId)

@@ -23,9 +23,11 @@ class SignalService {
             ST_MakePoint(u.last_longitude, u.last_latitude)::geography
           ) AS "distance",
           u.user_id AS "Sender.userId",
-          u.display_name AS "Sender.displayName"
+          u.display_name AS "Sender.displayName",
+          p.photo_url AS "Sender.Profile.photoUrl"
         FROM signals s
         JOIN users u ON u.user_id = s.sender_id
+        JOIN profiles p ON p.user_id = u.user_id
         JOIN (
           SELECT sender_id, MAX(created_at) AS max_created_at
           FROM signals
