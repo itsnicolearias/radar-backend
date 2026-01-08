@@ -109,6 +109,33 @@ router.get("/pendings", authenticate, connectionController.getPendingConnections
 
 /**
  * @swagger
+ * /api/connections/pendings/me:
+ *   get:
+ *     summary: Get my pendings connections
+ *     tags: [Connections]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of connections
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Connection'
+ *       401:
+ *         description: Unauthorized
+ */
+router.get("/pendings/me", authenticate, connectionController.getMyPendingConnections)
+
+/**
+ * @swagger
  * /api/connections/{connectionId}:
  *   patch:
  *     summary: update a connection
