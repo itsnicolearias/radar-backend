@@ -252,23 +252,6 @@ export const getMyPendingConnections = async (userId: string) => {
           as: "Sender",
           attributes: {
             exclude: ["passwordHash", "emailVerificationToken", "isVerified", "email", "birthDate", "firstName", "lastName"],
-            include: [
-              [
-                sequelize.fn(
-                  'ST_Distance',
-                  sequelize.cast(
-                    sequelize.fn('ST_MakePoint', logguedUser.lastLongitude, logguedUser.lastLatitude),
-                    'geography'
-                  ),
-                  sequelize.cast(
-                    sequelize.fn('ST_MakePoint', sequelize.col('Sender.last_longitude'), sequelize.col('Sender.last_latitude')),
-                    'geography'
-                  )
-                ),
-                'distance',
-              ],
-              "userId", "displayName"
-            ],
           }, 
           include: [
             {
