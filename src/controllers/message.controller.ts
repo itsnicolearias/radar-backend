@@ -7,8 +7,26 @@ import { getSocketIo } from '../config/socket';
 import type {
   SendMessageInput,
   MarkAsReadInput,
+  GetUploadUrlInput,
 } from '../schemas/message.schema';
 import { getPagination } from '../utils/pagination';
+
+export const getUploadUrl = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const { chatId } = req.params;
+    const data: GetUploadUrlInput = req.body;
+    const user = req.user!;
+
+    const result = await messageService.generateUploadUrl(user.userId, chatId, data);
+
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
 
 export const sendMessage = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {

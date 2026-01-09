@@ -18,11 +18,13 @@ export const getSignedUrl = async (req: AuthRequest, res: Response, next: NextFu
     return res.status(400).json({ error: "Parameters must be strings in file upload." });
     }
 
-    if (fileType !== "image/jpeg" && fileType !== "image/png") {
-      return res.status(400).json({ error: "Invalid file type. Only JPEG and PNG are allowed." });
+    const allowedImageTypes = ["image/jpeg", "image/png", "image/gif"];
+
+    if (!allowedImageTypes.includes(fileType)) {
+      return res.status(400).json({ error: "Invalid file type." });
     }
 
-    const link = await generateUploadUrl(fileName, fileType, req.user.userId)
+    const link = await generateUploadUrl(fileType, req.user.userId, 'profile');
     res.json(link)
   } catch (error) {
     return next(error)
