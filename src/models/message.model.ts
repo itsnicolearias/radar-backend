@@ -16,7 +16,11 @@ class Message
   public senderId!: string
   public receiverId!: string
   public signalId?: string | null
-  public content!: string
+  public content!: string | null
+  public type!: 'text' | 'image' | 'audio'
+  public mediaKey!: string | null
+  public mediaMimeType!: string | null
+  public mediaDuration!: number | null
   public iv!: string | null
   public authTag!: string | null
   public isRead!: boolean
@@ -71,9 +75,11 @@ Message.init(
     },
     content: {
       type: DataTypes.TEXT,
-      allowNull: false,
+      allowNull: true,
         set(value: string) {
-          this.setDataValue("content", encryptText(value))
+          if (value) {
+            this.setDataValue("content", encryptText(value))
+          }
         },
         get() {
           const rawValue = this.getDataValue("content")
@@ -81,6 +87,26 @@ Message.init(
           return decryptText(rawValue)
         },
       },
+    type: {
+      type: DataTypes.ENUM('text', 'image', 'audio'),
+      defaultValue: 'text',
+      allowNull: false,
+    },
+    mediaKey: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'media_key',
+    },
+    mediaMimeType: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'media_mime_type',
+    },
+    mediaDuration: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      field: 'media_duration',
+    },
     iv: {
       type: DataTypes.STRING,
       allowNull: true,

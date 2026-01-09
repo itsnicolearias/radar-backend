@@ -1,7 +1,8 @@
 import { notFound, badRequest } from '../utils/errors';
-import type { SendMessageInput, MarkAsReadInput } from '../schemas/message.schema';
+import type { SendMessageInput, MarkAsReadInput, GetUploadUrlInput } from '../schemas/message.schema';
 import { Op } from 'sequelize';
 import Message from "../models/message.model"
+import { generateUploadUrl as generateS3UploadUrl } from '../config/s3';
 import Signal from '../models/signal.model';
 import User from "../models/user.model";
 import Connection from "../models/connection.model";
@@ -14,6 +15,24 @@ import { getNearbyUsers } from './radar.service';
 import { IRadarUserResponse } from '../interfaces/radar.interface';
 import { sequelize } from '../models';
 import { getUserById } from './user.service';
+
+export const generateUploadUrl = async (userId: string, chatId: string, data: GetUploadUrlInput) => {
+  try {
+    const userIds = chatId.split('-');
+    if (!userIds.includes(userId)) {
+      throw badRequest("You are not a member of this chat");
+    }
+
+    const { mimeType } = data;
+    const result = await generateS3UploadUrl(mimeType, userId, 'chat', chatId);
+    return {
+      uploadUrl: result.signedUrl,
+      mediaKey: result.key,
+    };
+  } catch (error) {
+    throw badRequest(error);
+  }
+};
 
 export const sendMessage = async (senderId: string, data: SendMessageInput): Promise<IMessageResponse> => {
   try {
@@ -68,13 +87,44 @@ export const sendMessage = async (senderId: string, data: SendMessageInput): Pro
     }
   }
 
-  const message = await Message.create({
-    senderId,
-    receiverId: data.receiverId,
-    content: data.content,
-    signalId: data.signalId,
-    isRead: false,
-  });
+  let message;
+  switch (data.type) {
+    case 'text':
+      message = await Message.create({
+        senderId,
+        receiverId: data.receiverId,
+        content: data.content,
+        signalId: data.signalId,
+        isRead: false,
+        type: 'text',
+      });
+      break;
+    case 'image':
+      message = await Message.create({
+        senderId,
+        receiverId: data.receiverId,
+        mediaKey: data.mediaKey,
+        mediaMimeType: data.mediaMimeType,
+        signalId: data.signalId,
+        isRead: false,
+        type: 'image',
+      });
+      break;
+    case 'audio':
+      message = await Message.create({
+        senderId,
+        receiverId: data.receiverId,
+        mediaKey: data.mediaKey,
+        mediaMimeType: data.mediaMimeType,
+        mediaDuration: data.mediaDuration,
+        signalId: data.signalId,
+        isRead: false,
+        type: 'audio',
+      });
+      break;
+    default:
+      throw badRequest('Invalid message type');
+  }
 
   const messageResponse: IMessageResponse = message.toJSON();
 
@@ -169,6 +219,10 @@ export const getRecentConversations = async (
           createdAt: msg.createdAt,
           isRead: msg.isRead,
           senderId: msg.senderId,
+          type: msg.type,
+          mediaKey: msg.mediaKey,
+          mediaMimeType: msg.mediaMimeType,
+          mediaDuration: msg.mediaDuration,
         },
         unreadCount,
       })
