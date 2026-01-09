@@ -10,10 +10,11 @@ export interface INotificationResponse {
 }
 
 export enum NotificationType {
-  MESSAGE = "message",
+  NEW_MESSAGE = "new_message",
   CONNECTION_REQUEST = "connection_request",
   CONNECTION_ACCEPT = "connection_accept",
   SIGNAL_REPLY = "signal_reply",
+  PROFILE_VIEWED = "profile_viewed",
 }
 export interface IMarkNotificationsAsReadResponse {
   message: string

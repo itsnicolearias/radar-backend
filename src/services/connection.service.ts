@@ -6,6 +6,8 @@ import Connection from "../models/connection.model"
 import { _ConnectionStatus, type IConnectionResponse } from "../interfaces/connection.interface"
 import { Profile, sequelize } from "../models"
 import { getUserById } from "./user.service"
+import { createNotification } from "./notification.service"
+import { NotificationType } from "../interfaces/notification.interface"
 
 export const createConnection = async (senderId: string, data: CreateConnectionInput): Promise<IConnectionResponse> => {
   try {
@@ -17,6 +19,8 @@ export const createConnection = async (senderId: string, data: CreateConnectionI
     if (!receiver) {
       throw notFound("Receiver not found")
     }
+
+    const sender = await User.findByPk(senderId)
 
     const existingConnection = await Connection.findOne({
       where: {
@@ -37,6 +41,13 @@ export const createConnection = async (senderId: string, data: CreateConnectionI
       status: _ConnectionStatus.PENDING,
     })
 
+    await createNotification(
+      data.receiverId,
+      NotificationType.CONNECTION_REQUEST,
+      `${sender?.displayName} te ha enviado una solicitud de amistad`
+
+    )
+
     return connection
   } catch (error) {
     throw badRequest(error);
@@ -45,7 +56,15 @@ export const createConnection = async (senderId: string, data: CreateConnectionI
 
 export const updateConnection = async (connectionId: string, userId: string, data: UpdateConnectionInput) => {
   try {
-    const connection = await Connection.findByPk(connectionId)
+    const connection = await Connection.findOne({ where: { connectionId },  include: [
+        {
+          model: User,
+          as: "Receiver",
+          attributes: {
+            include: [ "userId", "displayName" ],
+          }  
+        }]
+      })
 
     if (!connection) {
       throw notFound("Connection not found")
@@ -60,6 +79,12 @@ export const updateConnection = async (connectionId: string, userId: string, dat
     }
 
     await connection.update({ status: data.status })
+
+    await createNotification(
+      connection.senderId,
+      NotificationType.CONNECTION_ACCEPT,
+      `${connection.Receiver?.displayName} ha aceptado solicitud de amistad`
+    )
 
     return connection
   } catch (error) {
