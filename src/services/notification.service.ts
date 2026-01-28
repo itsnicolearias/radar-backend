@@ -1,5 +1,5 @@
 import { badRequest } from "@hapi/boom"
-import { Notification } from "../models"
+import { Notification, Profile, User } from "../models"
 import type { MarkNotificationsAsReadInput } from "../schemas/notification.schema"
 import type {
   INotificationResponse,
@@ -34,6 +34,23 @@ export const getNotificationsByUserId = async (userId: string) => {
     const notifications = await Notification.findAll({
       where: { userId },
       order: [["createdAt", "DESC"]],
+      include: [
+        {
+                model: User,
+                as: "User",
+                attributes: {
+                  exclude: ["passwordHash", "emailVerificationToken", "isVerified", "email", "birthDate", "firstName", "lastName"],
+                  include: [ "userId", "displayName"  ],
+                }, 
+                include: [
+                  {
+                    model: Profile,
+                    as: "Profile",
+                    attributes: ["photoUrl"],
+                  },
+                ],
+              },
+      ]        
     })
 
     return notifications

@@ -3,6 +3,8 @@ import User from '../models/user.model';
 import boom, { badRequest } from '@hapi/boom';
 import type { IProfileViewResponse } from '../interfaces/profileView.interface';
 import { Profile } from '../models';
+import { createNotification } from './notification.service';
+import { NotificationType } from '../interfaces/notification.interface';
 
 class ProfileViewService {
   async createProfileView(viewerId: string, viewedId: string): Promise<IProfileViewResponse> {
@@ -21,6 +23,12 @@ class ProfileViewService {
         viewerId,
         viewedId,
       });
+
+      await createNotification(
+        viewedId,
+        NotificationType.PROFILE_VIEWED,
+        `Un usuario ha visto tu perfil`
+      )
 
       return {
         profileViewId: profileView.profileViewId,

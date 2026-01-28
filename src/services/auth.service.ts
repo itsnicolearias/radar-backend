@@ -10,6 +10,7 @@ import User from "../models/user.model"
 import { Profile, Subscription, SubscriptionPlan } from "../models"
 import { UserAttributes } from "../interfaces/user.interface"
 import type { IResendVerificationEmailResponse, IVerifyEmailResponse } from "../interfaces/auth.interface"
+import { verifyAccountTemplate } from "../templates/verify-email"
 
 export interface AuthResponse {
   token: string
@@ -64,17 +65,11 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
       firstName: user.firstName,
     })
 
-      const verificationUrl = `${config.clientUrl || "http://localhost:3000"}/verify-email/${emailVerificationToken}`
+      const verificationUrl = `${config.url}/api/auth/verify-email/${emailVerificationToken}`
       await sendEmail({
         to: user.email,
         subject: "Welcome to Radar - Verify Your Email",
-        html: `
-          <h1>Welcome ${user.firstName}!</h1>
-          <p>Thank you for registering with Radar.</p>
-          <p>Please verify your email by clicking the link below:</p>
-          <a href="${verificationUrl}">Verify Email</a>
-          <p>Or copy and paste this link: ${verificationUrl}</p>
-        `,
+        html: verifyAccountTemplate(user.firstName, verificationUrl),
       })
 
     return {
@@ -117,19 +112,13 @@ export const resendVerificationEmail = async (email: string): Promise<IResendVer
     });
 
     const verificationUrl = `${
-      config.clientUrl || 'http://localhost:3000'
-    }/verify-email/${emailVerificationToken}`;
+      config.url
+    }/api/auth/verify-email/${emailVerificationToken}`;
     await sendEmail({
       to: user.email,
       subject: 'Welcome to Radar - Verify Your Email',
-      html: `
-        <h1>Welcome ${user.firstName}!</h1>
-        <p>Thank you for registering with Radar.</p>
-        <p>Please verify your email by clicking the link below:</p>
-        <a href="${verificationUrl}">Verify Email</a>
-        <p>Or copy and paste this link: ${verificationUrl}</p>
-      `,
-    });
+      html: verifyAccountTemplate(user.firstName, verificationUrl),
+      });
 
     return { message: 'Verification email sent' };
   } catch (error) {

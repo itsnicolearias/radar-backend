@@ -5,6 +5,7 @@ import type {
   LoginUserInput,
   ResendVerificationEmailInput,
 } from '../schemas/auth.schema';
+import { config } from '../config/config';
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -56,12 +57,14 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
   try {
     const { token } = req.params
 
-    const result = await authService.verifyEmail(token)
+     if (typeof token !== "string") {
+      return res.status(400).json({ message: "Token is required" })
+    }
 
-    res.status(200).json({
-      success: true,
-      data: result,
-    })
+    await authService.verifyEmail(token)
+
+    return res.redirect(`${config.clientUrl}/verified`)
+
   } catch (error) {
     next(error)
   }

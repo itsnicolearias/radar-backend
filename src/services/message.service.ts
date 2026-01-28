@@ -14,6 +14,8 @@ import { getNearbyUsers } from './radar.service';
 import { IRadarUserResponse } from '../interfaces/radar.interface';
 import { sequelize } from '../models';
 import { getUserById } from './user.service';
+import { createNotification } from './notification.service';
+import { NotificationType } from '../interfaces/notification.interface';
 
 export const sendMessage = async (senderId: string, data: SendMessageInput): Promise<IMessageResponse> => {
   try {
@@ -83,7 +85,22 @@ export const sendMessage = async (senderId: string, data: SendMessageInput): Pro
     if (signal) {
       messageResponse.Signal = signal.toJSON();
     }
+
+    await createNotification(
+    data.receiverId,
+    NotificationType.NEW_MESSAGE,
+    `${sender?.displayName} ha respondido tu señal`
+  )
+
+  } else {
+    await createNotification(
+    data.receiverId,
+    NotificationType.NEW_MESSAGE,
+    `${sender?.displayName} te ha enviado un nuevo mensaje`
+  )
   }
+
+  
 
   return messageResponse;
   } catch (error) {
