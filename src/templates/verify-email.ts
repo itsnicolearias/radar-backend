@@ -42,7 +42,7 @@ export function verifyAccountTemplate(firstName: string, link: string)  {
                     <tr>
                     <td align="center" style="padding-bottom:24px;">
                         <a
-                        href="{{verification_link}}"
+                        href="${link}"
                         target="_blank"
                         style="
                             display:inline-block;
@@ -67,7 +67,7 @@ export function verifyAccountTemplate(firstName: string, link: string)  {
                         Si el botón no funciona, copiá y pegá este link en tu navegador:
                         </p>
                         <p style="word-break:break-all; margin:8px 0 0 0;">
-                        <a href="{{verification_link}}" style="color:#00FFB3;">
+                        <a href="${link}" style="color:#00FFB3;">
                             ${link}
                         </a>
                         </p>
