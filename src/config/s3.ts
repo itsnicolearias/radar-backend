@@ -11,7 +11,7 @@ const s3 = new S3Client({
   },
 });
 
-export async function generateUploadUrl(fileName: string, fileType: string, userId: string) {
+export async function generateUploadUrl(_fileName: string, fileType: string, userId: string) {
   try {
 
     const extension = fileType === "image/png" ? "png" : "jpg";
