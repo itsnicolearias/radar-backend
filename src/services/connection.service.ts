@@ -32,20 +32,15 @@ export const createConnection = async (senderId: string, data: CreateConnectionI
     })
 
     if (existingConnection) {
-      throw conflict("Connection request already exists")
+    const sender = await User.findByPk(senderId)
+    if (!sender) {
+      throw notFound("Sender not found")
     }
-
-    const connection = await Connection.create({
-      senderId,
-      receiverId: data.receiverId,
-      status: _ConnectionStatus.PENDING,
-    })
 
     await createNotification(
       data.receiverId,
       NotificationType.CONNECTION_REQUEST,
-      `${sender?.displayName} te ha enviado una solicitud de amistad`
-
+      `${sender.displayName} te ha enviado una solicitud de amistad`
     )
 
     return connection
