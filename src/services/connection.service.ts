@@ -21,6 +21,9 @@ export const createConnection = async (senderId: string, data: CreateConnectionI
     }
 
     const sender = await User.findByPk(senderId)
+    if (!sender) {
+      throw notFound("Sender not found")
+    }
 
     const existingConnection = await Connection.findOne({
       where: {
@@ -31,19 +34,24 @@ export const createConnection = async (senderId: string, data: CreateConnectionI
       },
     })
 
-    if (existingConnection) {
-    const sender = await User.findByPk(senderId)
-    if (!sender) {
-      throw notFound("Sender not found")
+     if (existingConnection) {
+      throw conflict("Connection request already exists")
     }
+
+    const connection = await Connection.create({
+      senderId,
+      receiverId: data.receiverId,
+      status: _ConnectionStatus.PENDING,
+    })
 
     await createNotification(
       data.receiverId,
       NotificationType.CONNECTION_REQUEST,
-      `${sender.displayName} te ha enviado una solicitud de amistad`
+      `${sender?.displayName} te ha enviado una solicitud de amistad`
+
     )
 
-    return connection
+    return connection;
   } catch (error) {
     throw badRequest(error);
   }
