@@ -7,7 +7,7 @@ import routes from "./routes"
 import { handleError } from "./utils/errors"
 import logger from "./utils/logger"
 import { swaggerSpec } from "./config/swagger"
-//import { config } from "./config/config"
+import { config } from "./config/config"
 
 dotenv.config()
 
@@ -25,14 +25,15 @@ app.use(
   })
 )
 
-/*const whiteList: RegExp[] = [
+const whiteList: RegExp[] = [
   new RegExp(config.clientUrl), // convierte el string en RegExp
-//.localhost:3000$/
-];*/
+  new RegExp("localhost:3000$"),
+  new RegExp("localhost:8081$"),
+];
 
 const options: cors.CorsOptions = {
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  origin: "*",
+  origin: whiteList,
   credentials: true,
 };
 

@@ -61,18 +61,7 @@ export function verifyAccountTemplate(firstName: string, link: string)  {
                     </tr>
 
                     <!-- Fallback link -->
-                    <tr>
-                    <td style="color:#A0A4AA; font-size:12px; line-height:1.5;">
-                        <p style="margin:0;">
-                        Si el botón no funciona, copiá y pegá este link en tu navegador:
-                        </p>
-                        <p style="word-break:break-all; margin:8px 0 0 0;">
-                        <a href="${link}" style="color:#00FFB3;">
-                            ${link}
-                        </a>
-                        </p>
-                    </td>
-                    </tr>
+
 
                 </table>
 

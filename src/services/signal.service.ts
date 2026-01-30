@@ -5,12 +5,18 @@ import { QueryTypes } from 'sequelize';
 import boom, { badRequest } from '@hapi/boom';
 import type { ISignalResponse } from '../interfaces/signal.interface';
 import { GetNearbyUsersInput } from '../schemas/radar.schema';
+import { getUserById } from './user.service';
 
 class SignalService {
-  async getNearbySignals(data: GetNearbyUsersInput): Promise<ISignalResponse[]> {
+  async getNearbySignals(data: GetNearbyUsersInput, userId: string): Promise<ISignalResponse[]> {
     try {
-      const { latitude, longitude, radius } = data;
+      const { radius } = data;
       const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+      const logguedUser = await getUserById(userId);
+
+      const latitude = logguedUser.lastLatitude
+      const longitude = logguedUser.lastLongitude
 
       const sql = `
         SELECT

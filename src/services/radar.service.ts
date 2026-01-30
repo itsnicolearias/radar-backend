@@ -5,10 +5,16 @@ import { badRequest } from "@hapi/boom"
 import EventService from "./event.service"
 import SignalService from "./signal.service"
 import type { IRadarUserResponse } from "../interfaces/radar.interface"
+import { getUserById } from "./user.service"
 
 export const getNearbyUsers = async (userId: string, data: GetNearbyUsersInput): Promise<IRadarUserResponse[]> => {
   try {
-    const { latitude, longitude, radius } = data
+    const { radius } = data
+
+    const logguedUser = await getUserById(userId);
+
+    const latitude = logguedUser.lastLatitude
+    const longitude = logguedUser.lastLongitude
 
     const nearbyUsers = await User.findAll({
       where: {
@@ -78,7 +84,7 @@ export const getNearbyAll = async (userId: string, data: GetNearbyUsersInput) =>
     const [users, events, signals] = await Promise.all([
       getNearbyUsers(userId, data),
       EventService.getNearbyEvents(data),
-      SignalService.getNearbySignals(data),
+      SignalService.getNearbySignals(data, userId),
     ]);
 
     return {
