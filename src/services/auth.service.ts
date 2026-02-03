@@ -68,7 +68,7 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
       const verificationUrl = `${config.url}/api/auth/verify-email/${emailVerificationToken}`
       await sendEmail({
         to: user.email,
-        subject: "Welcome to Radar - Verify Your Email",
+        subject: "Bienvenido a Radar",
         html: verifyAccountTemplate(user.firstName, verificationUrl),
       })
 
@@ -116,7 +116,7 @@ export const resendVerificationEmail = async (email: string): Promise<IResendVer
     }/api/auth/verify-email/${emailVerificationToken}`;
     await sendEmail({
       to: user.email,
-      subject: 'Welcome to Radar - Verify Your Email',
+      subject: 'Bienvenido a Radar',
       html: verifyAccountTemplate(user.firstName, verificationUrl),
       });
 
