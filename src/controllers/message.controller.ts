@@ -43,6 +43,29 @@ export const sendMessage = async (req: AuthRequest, res: Response, next: NextFun
   }
 };
 
+export const deleteMessage = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const { messageId } = req.params;
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Unauthorized',
+      });
+    }
+
+    const result = await messageService.deleteMessage(messageId, userId);
+
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 export const getMessages = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { userId } = req.params
