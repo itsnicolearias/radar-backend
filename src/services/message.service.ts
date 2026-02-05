@@ -119,6 +119,11 @@ export const getRecentConversations = async (
     const messages = await Message.findAll({
       where: {
         [Op.or]: [{ senderId: userId }, { receiverId: userId }],
+        [Op.not]: {
+          deletedFor: {
+            [Op.contains]: [userId],
+          },
+        },
       },
       order: [['createdAt', 'DESC']],
     })
@@ -175,6 +180,11 @@ export const getRecentConversations = async (
           senderId: otherUserId,
           receiverId: userId,
           isRead: false,
+          [Op.not]: {
+            deletedFor: {
+              [Op.contains]: [userId],
+            },
+          },
         },
       })
 
@@ -212,6 +222,11 @@ export const getMessagesBetweenUsers = async (userId1: string, userId2: string) 
           { senderId: userId1, receiverId: userId2 },
           { senderId: userId2, receiverId: userId1 },
         ],
+        [Op.not]: {
+          deletedFor: {
+            [Op.contains]: [userId1],
+          },
+        },
       },
       include: [
         {
@@ -293,6 +308,11 @@ export const markMessagesAsRead = async (userId: string, data: MarkAsReadInput) 
         where: {
           messageId: data.messageIds,
           receiverId: userId,
+          [Op.not]: {
+            deletedFor: {
+              [Op.contains]: [userId],
+            },
+          },
         },
       }
     )
@@ -309,6 +329,11 @@ export const getUnreadMessageCount = async (userId: string) => {
       where: {
         receiverId: userId,
         isRead: false,
+        [Op.not]: {
+          deletedFor: {
+            [Op.contains]: [userId],
+          },
+        },
       },
     })
 
@@ -317,3 +342,57 @@ export const getUnreadMessageCount = async (userId: string) => {
     throw badRequest(error);
   }
 }
+
+export const deleteMessage = async (messageId: string, userId: string) => {
+  try {
+    const message = await Message.findByPk(messageId);
+    if (!message) {
+      throw notFound("Message not found");
+    }
+
+    if (message.senderId !== userId && message.receiverId !== userId) {
+      throw badRequest("You are not a participant in this conversation");
+    }
+
+    if (!message.deletedFor.includes(userId)) {
+      const updatedDeletedFor = [...message.deletedFor, userId];
+      await message.update({ deletedFor: updatedDeletedFor });
+    }
+
+    return { message: "Message deleted successfully" };
+  } catch (error) {
+    throw badRequest(error);
+  }
+};
+
+export const deleteConversation = async (userId: string, otherUserId: string) => {
+  const transaction = await sequelize.transaction();
+  try {
+    await Message.update(
+      {
+        deletedFor: sequelize.literal(`COALESCE(deleted_for, '[]'::jsonb) || jsonb_build_array(:userId)`)
+      },
+      {
+        where: {
+          [Op.or]: [
+            { senderId: userId, receiverId: otherUserId },
+            { senderId: otherUserId, receiverId: userId },
+          ],
+          [Op.not]: {
+            deletedFor: {
+              [Op.contains]: [userId],
+            },
+          },
+        },
+        replacements: { userId },
+        transaction,
+      }
+    );
+
+    await transaction.commit();
+    return { message: "Conversation deleted successfully" };
+  } catch (error) {
+    await transaction.rollback();
+    throw badRequest(error);
+  }
+};
