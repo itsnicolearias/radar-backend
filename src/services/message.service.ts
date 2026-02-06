@@ -368,10 +368,7 @@ export const deleteMessage = async (messageId: string, userId: string) => {
 export const deleteConversation = async (userId: string, otherUserId: string) => {
   const transaction = await sequelize.transaction();
   try {
-    await Message.update(
-      {
-        deletedFor: sequelize.literal(`COALESCE(deleted_for, '[]'::jsonb) || jsonb_build_array(:userId)`)
-      },
+    const messages = await Message.findAll(
       {
         where: {
           [Op.or]: [
@@ -384,12 +381,23 @@ export const deleteConversation = async (userId: string, otherUserId: string) =>
             },
           },
         },
-        replacements: { userId },
-        transaction,
+        //transaction,
       }
     );
 
-    await transaction.commit();
+    messages.forEach(async m => {
+      const message = await Message.findByPk(m.messageId);
+      if (message) {
+        await message.update({ deletedFor: [...message.deletedFor, userId] });
+        //message.deletedFor = [...message.deletedFor, userId];
+      //await message.save({ transaction });
+      //await transaction.commit();
+      }
+      
+      
+    });
+
+    //await transaction.commit();
     return { message: "Conversation deleted successfully" };
   } catch (error) {
     await transaction.rollback();

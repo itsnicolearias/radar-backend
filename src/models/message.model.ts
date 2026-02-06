@@ -29,6 +29,7 @@ class Message
   public Sender?: User
   public Receiver?: User
   public Signal?: Signal
+  public deletedFor:  string[] = []
 }
 
 Message.init(
@@ -94,6 +95,12 @@ Message.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
       field: "is_read",
+    },
+    deletedFor: {
+      type: DataTypes.JSONB,
+      allowNull: false,
+      defaultValue: [],
+      field: 'deleted_for',
     },
     createdAt: {
       type: DataTypes.DATE,
