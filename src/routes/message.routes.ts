@@ -211,4 +211,29 @@ router.patch("/read", authenticate, validate(markAsReadSchema), messageControlle
  */
 router.get("/unread/count", authenticate, messageController.getUnreadCount)
 
+/**
+ * @swagger
+ * /api/messages/{messageId}:
+ *   delete:
+ *     summary: Delete a message (soft delete)
+ *     tags: [Messages]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: messageId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the message to delete
+ *     responses:
+ *       200:
+ *         description: Message deleted successfully
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Message not found
+ */
+router.delete("/:messageId", authenticate, messageController.deleteMessage)
+
 export default router

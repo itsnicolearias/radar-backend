@@ -100,6 +100,26 @@ router.get("/", eventController.findAll);
  *               $ref: '#/components/schemas/Event'
  *       404:
  *         description: The event was not found
+ *   delete:
+ *     summary: Delete an event
+ *     tags: [Events]
+ *     parameters:
+ *       - in: path
+ *         name: eventId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: The event id
+ *     responses:
+ *       200:
+ *         description: The event description by id
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Event'
+ *       404:
+ *         description: The event was not found
  */
 router.get("/:eventId", authenticate, eventController.findById);
 router.put(

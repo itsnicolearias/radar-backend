@@ -54,6 +54,7 @@ export interface MessageAttributes {
   signalId?: string | null;
   content: string;
   isRead: boolean;
+  deletedFor?: string[];
   iv?: string | null;
   authTag?: string | null;
   createdAt?: Date;
