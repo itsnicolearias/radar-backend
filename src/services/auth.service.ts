@@ -10,6 +10,7 @@ import { Profile, Subscription, SubscriptionPlan } from "../models"
 import { UserAttributes } from "../interfaces/user.interface"
 import type { IResendVerificationEmailResponse, IVerifyEmailResponse } from "../interfaces/auth.interface"
 import { sendVerificationEmail } from "./email.service"
+import { DEFAULT_LANGUAGE } from "../interfaces/profile.interface"
 
 export interface AuthResponse {
   token: string
@@ -43,7 +44,7 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
 
     await Profile.create({
       userId: user.userId,
-      language: data.language || "en",
+      language: data.language || DEFAULT_LANGUAGE,
     })
 
     const freePlan = await SubscriptionPlan.findOne({ where: { name: "Free" } });
