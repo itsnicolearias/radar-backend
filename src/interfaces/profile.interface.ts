@@ -1,5 +1,9 @@
-import { User } from "../models";
-import { IUserResponse } from "./user.interface";
+import type { User } from "../models";
+import type { IUserResponse } from "./user.interface";
+
+export const SUPPORTED_LANGUAGES = ["es", "en"] as const;
+export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
+export const DEFAULT_LANGUAGE: SupportedLanguage = "es";
 
 export type IProfileResponse = ProfileAttributes & {
   User?: Partial<IUserResponse> | User
@@ -12,6 +16,7 @@ export interface IDeleteProfileResponse {
 export interface ProfileAttributes {
   profileId: string;
   userId: string;
+  language: SupportedLanguage;
   photoUrl?: string | null;
   bio?: string | null;
   location?: string | null;
@@ -34,4 +39,6 @@ export interface ProfileAttributes {
   distanceRadius?: number;
 }
 
-export interface ProfileCreationAttributes extends Omit<ProfileAttributes, 'profileId'>, Record<string, unknown> {}
+export interface ProfileCreationAttributes extends Omit<ProfileAttributes, "profileId" | "language">, Record<string, unknown> {
+  language?: SupportedLanguage;
+}
