@@ -2,7 +2,6 @@ import bcrypt from "bcrypt"
 import crypto from "crypto"
 import { generateToken } from "../utils/jwt"
 import { unauthorized, conflict, notFound } from "../utils/errors"
-import { sendEmail } from "../config/email"
 import { config } from "../config/config"
 import type { RegisterUserInput, LoginUserInput } from "../schemas/auth.schema"
 import { badRequest } from "@hapi/boom"
@@ -10,7 +9,8 @@ import User from "../models/user.model"
 import { Profile, Subscription, SubscriptionPlan } from "../models"
 import { UserAttributes } from "../interfaces/user.interface"
 import type { IResendVerificationEmailResponse, IVerifyEmailResponse } from "../interfaces/auth.interface"
-import { verifyAccountTemplate } from "../templates/verify-email"
+import { sendVerificationEmail } from "./email.service"
+import { DEFAULT_LANGUAGE } from "../interfaces/profile.interface"
 
 export interface AuthResponse {
   token: string
@@ -44,6 +44,7 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
 
     await Profile.create({
       userId: user.userId,
+      language: data.language || DEFAULT_LANGUAGE,
     })
 
     const freePlan = await SubscriptionPlan.findOne({ where: { name: "Free" } });
@@ -66,10 +67,11 @@ export const registerUser = async (data: RegisterUserInput): Promise<AuthRespons
     })
 
       const verificationUrl = `${config.url}/api/auth/verify-email/${emailVerificationToken}`
-      await sendEmail({
+      await sendVerificationEmail({
+        userId: user.userId,
         to: user.email,
-        subject: "Bienvenido a Radar",
-        html: verifyAccountTemplate(user.firstName, verificationUrl),
+        userName: user.firstName,
+        verificationUrl,
       })
 
     return {
@@ -114,11 +116,12 @@ export const resendVerificationEmail = async (email: string): Promise<IResendVer
     const verificationUrl = `${
       config.url
     }/api/auth/verify-email/${emailVerificationToken}`;
-    await sendEmail({
+    await sendVerificationEmail({
+      userId: user.userId,
       to: user.email,
-      subject: 'Bienvenido a Radar',
-      html: verifyAccountTemplate(user.firstName, verificationUrl),
-      });
+      userName: user.firstName,
+      verificationUrl,
+    });
 
     return { message: 'Verification email sent' };
   } catch (error) {

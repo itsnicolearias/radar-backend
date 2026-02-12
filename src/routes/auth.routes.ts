@@ -28,6 +28,7 @@ const router = Router();
  *               - lastName
  *               - email
  *               - password
+ *               - language
  *             properties:
  *               firstName:
  *                 type: string
@@ -43,6 +44,10 @@ const router = Router();
  *                 type: string
  *                 format: password
  *                 example: SecurePass123!
+ *               language:
+ *                 type: string
+ *                 enum: [en, es, fr, de, it]
+ *                 example: en
  *     responses:
  *       201:
  *         description: User registered successfully
