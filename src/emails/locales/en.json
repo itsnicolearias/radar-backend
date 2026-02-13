@@ -1,0 +1,9 @@
+{
+  "verifyEmail": {
+    "subject": "Welcome to Radar",
+    "title": "Hi {{userName}}",
+    "description": "Click the button below to verify your email and access all Radar features.",
+    "button": "Verify email",
+    "footer": "© 2026 Radar. All rights reserved."
+  }
+}

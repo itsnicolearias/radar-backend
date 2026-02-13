@@ -8,6 +8,7 @@ export interface IAuthResponse {
     isVerified: boolean
     displayName: string | null
     birthDate: Date | null
+    language?: string
   }
 }
 

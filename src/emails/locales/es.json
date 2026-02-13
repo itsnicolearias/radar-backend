@@ -1,0 +1,9 @@
+{
+  "verifyEmail": {
+    "subject": "Bienvenido a Radar",
+    "title": "Hola {{userName}}",
+    "description": "Haz clic en el siguiente botón para verificar tu correo y acceder a todas las funcionalidades de Radar.",
+    "button": "Verificar correo",
+    "footer": "© 2026 Radar. Todos los derechos reservados."
+  }
+}

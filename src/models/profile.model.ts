@@ -1,10 +1,8 @@
 import { DataTypes, Model, BelongsToGetAssociationMixin } from "sequelize"
 import sequelize from "../config/sequelize"
 import type User from "./user.model"
-import type {
-  ProfileAttributes,
-  ProfileCreationAttributes,
-} from "../interfaces/profile.interface"
+import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from "../interfaces/profile.interface"
+import type { ProfileAttributes, ProfileCreationAttributes, SupportedLanguage } from "../interfaces/profile.interface"
 
 type ModelsMap = Record<string, import('sequelize').ModelStatic<import('sequelize').Model<Record<string, unknown>, Record<string, unknown>>>>;
 
@@ -14,6 +12,7 @@ class Profile
 {
   public profileId!: string
   public userId!: string
+  public language!: SupportedLanguage
   public bio!: string | null
   public age!: number | null
   public country!: string | null
@@ -53,6 +52,14 @@ Profile.init(
       },
       onDelete: "CASCADE",
       field: "user_id",
+    },
+    language: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: DEFAULT_LANGUAGE,
+      validate: {
+        isIn: [SUPPORTED_LANGUAGES],
+      },
     },
     bio: {
       type: DataTypes.TEXT,
