@@ -175,9 +175,9 @@ export const verifyEmail = async (token: string): Promise<IVerifyEmailResponse> 
   try {
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
-    const user = await User.findOne({ where: { emailVerificationToken: hashedToken } })
+    const user = await User.findOne({ where: { emailVerificationToken: hashedToken }, include: "Profile" })
 
-    if (!user) {
+    if (!user || !user.Profile) {
       throw notFound("Invalid or expired verification token")
     }
 
@@ -214,6 +214,7 @@ export const verifyEmail = async (token: string): Promise<IVerifyEmailResponse> 
         isVerified: user.isVerified,
         displayName: user.displayName,
         birthDate: user.birthDate,
+        language: user.Profile.language,
       },
     }
   } catch (error) {
