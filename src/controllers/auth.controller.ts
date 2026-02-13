@@ -61,9 +61,10 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
       return res.status(400).json({ message: "Token is required" })
     }
 
-    await authService.verifyEmail(token)
+    const ressponse = await authService.verifyEmail(token)
+    const lang = ressponse.user.language;
 
-    return res.redirect(`${config.clientUrl}/verified`)
+    return res.redirect(`${config.clientUrl}/${lang}/verified`)
 
   } catch (error) {
     next(error)
