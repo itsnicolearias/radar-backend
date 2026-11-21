@@ -351,6 +351,19 @@ This document provides a comprehensive reference for all the API endpoints, incl
 
 ## Profiles (`/api/profiles`)
 
+### POST `/api/profile/photo`
+
+- **Description:** Upload or replace the authenticated user's profile image.
+- **Authentication:** Bearer token
+- **Content-Type:** `multipart/form-data`
+- **File field:** `image` (JPEG, PNG, or WebP; maximum 5 MB)
+- **Response:** Returns `data.photoUrl` as the provider's secure URL and
+  `data.photoStorageProvider`. Previous images are deleted only after the new image
+  has been stored and the profile update has committed. A `warning` is returned if
+  cleanup of the previous image fails.
+- **Storage:** `IMAGE_STORAGE_PROVIDER=cloudinary` uploads to
+  `radar/profile-images`; Cloudinary credentials are never sent to the client.
+
 ### GET /
 
 - **Description:** Get my profile
