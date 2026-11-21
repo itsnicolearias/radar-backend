@@ -1,9 +1,17 @@
 import { NextFunction, Response } from "express";
 import { generateUploadUrl } from "../config/s3";
 import { AuthRequest } from "../middlewares/auth.middleware";
+import { getImageStorageProvider } from "../services/image-storage.service";
 
 export const getSignedUrl = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
+    if (getImageStorageProvider() !== "s3") {
+      return res.status(409).json({
+        success: false,
+        message: "Use POST /api/profile/photo with multipart field 'image' when IMAGE_STORAGE_PROVIDER=cloudinary.",
+      });
+    }
+
     if (!req.user) {
         res.status(401).json({ message: 'Unauthorized' });
         return;

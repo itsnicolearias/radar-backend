@@ -5,6 +5,7 @@ import { authenticate } from "../middlewares/auth.middleware"
 import { validate } from "../middlewares/validation.middleware"
 import { updateProfileSchema } from "../schemas/profile.schema"
 import { viewProfileSchema } from "../schemas/profileView.schema"
+import { receiveProfileImage } from "../middlewares/profile-image-upload.middleware"
 
 const router = Router()
 
@@ -81,6 +82,7 @@ router.get("/", authenticate, profileController.getProfile)
  *               $ref: '#/components/schemas/Error'
  */
 router.patch("/", authenticate, validate(updateProfileSchema), profileController.updateProfile)
+router.post("/photo", authenticate, receiveProfileImage, profileController.updateProfilePhoto)
 router.delete("/", authenticate, profileController.deleteProfile)
 
 /**

@@ -11,6 +11,7 @@ A social networking backend API built with Node.js, TypeScript, Express, Sequeli
 - Notifications system
 - Location tracking
 - AWS S3 integration for file uploads
+- Cloudinary profile image storage (selectable with `IMAGE_STORAGE_PROVIDER`)
 - Email notifications with Nodemailer
 - Redis caching (optional)
 - **Swagger API Documentation**
@@ -28,7 +29,8 @@ A social networking backend API built with Node.js, TypeScript, Express, Sequeli
 - **Real-time**: Socket.io
 - **Validation**: Zod
 - **Authentication**: JWT + bcrypt
-- **Cloud Storage**: AWS S3
+- **Cloud Storage**: AWS S3 and Cloudinary
+- **Profile image storage**: Cloudinary by default; AWS S3 remains available for the legacy signed-URL flow
 - **Email**: Nodemailer
 - **Cache**: Redis (optional)
 - **Documentation**: Swagger/OpenAPI
@@ -65,10 +67,18 @@ npm install
 
 3. Copy `.env.example` to `.env` and configure your environment variables
 
+   For Cloudinary profile uploads, set `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and
+   `CLOUDINARY_API_SECRET`. Set `IMAGE_STORAGE_PROVIDER=cloudinary` (default), or use
+   `IMAGE_STORAGE_PROVIDER=s3` to retain the existing signed-URL upload endpoint.
+
 4. Run migrations:
 \`\`\`bash
 npm run migrations:run
 \`\`\`
+
+The profile image metadata migration adds nullable `photo_storage_provider` and
+`cloudinary_public_id` columns. Existing `photo_url` values are preserved so profiles
+with older S3 images continue to display.
 
 5. Start the development server:
 \`\`\`bash
@@ -123,6 +133,8 @@ The Swagger UI provides:
 - `PATCH /api/users/:id/location` - Update user location
 
 ### Profiles
+- `POST /api/profile/photo` - Upload or replace your profile image (multipart field `image`, JPEG/PNG/WebP, max 5 MB)
+- `GET /api/get-signed-url` - Existing AWS S3 signed upload URL (`IMAGE_STORAGE_PROVIDER=s3`)
 - `GET /api/profiles/:userId` - Get user profile
 - `POST /api/profiles` - Create profile
 - `PATCH /api/profiles/:userId` - Update profile

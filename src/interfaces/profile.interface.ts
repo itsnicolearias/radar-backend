@@ -4,6 +4,7 @@ import type { IUserResponse } from "./user.interface";
 export const SUPPORTED_LANGUAGES = ["es", "en"] as const;
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 export const DEFAULT_LANGUAGE: SupportedLanguage = "es";
+export type PhotoStorageProvider = "cloudinary" | "s3";
 
 export type IProfileResponse = ProfileAttributes & {
   User?: Partial<IUserResponse> | User
@@ -18,6 +19,8 @@ export interface ProfileAttributes {
   userId: string;
   language: SupportedLanguage;
   photoUrl?: string | null;
+  photoStorageProvider?: PhotoStorageProvider | null;
+  cloudinaryPublicId?: string | null;
   bio?: string | null;
   location?: string | null;
   website?: string | null;
