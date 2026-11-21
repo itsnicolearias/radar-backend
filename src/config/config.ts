@@ -29,6 +29,12 @@ export const config = {
   awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
   awsS3Bucket: process.env.AWS_S3_BUCKET || "",
 
+  // Image storage
+  imageStorageProvider: process.env.IMAGE_STORAGE_PROVIDER || "cloudinary",
+  cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME || "",
+  cloudinaryApiKey: process.env.CLOUDINARY_API_KEY || "",
+  cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET || "",
+
   // Redis
   redisUrl: process.env.REDIS_URL || "",
 

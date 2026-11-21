@@ -18,6 +18,8 @@ class Profile
   public country!: string | null
   public province!: string | null
   public photoUrl!: string | null
+  public photoStorageProvider!: "cloudinary" | "s3" | null
+  public cloudinaryPublicId!: string | null
   public interests!: string[] | null
   public showAge!: boolean
   public showLocation!: boolean
@@ -81,6 +83,19 @@ Profile.init(
       type: DataTypes.TEXT,
       allowNull: true,
       field: "photo_url",
+    },
+    photoStorageProvider: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      field: "photo_storage_provider",
+      validate: {
+        isIn: [["cloudinary", "s3"]],
+      },
+    },
+    cloudinaryPublicId: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      field: "cloudinary_public_id",
     },
     interests: {
       type: DataTypes.JSONB,

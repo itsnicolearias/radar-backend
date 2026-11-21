@@ -17,7 +17,7 @@ const toNumber = (value: unknown) => {
 export const latitudeSchema = z.preprocess(
   (v) => toNumber(v),
   z
-    .number({ required_error: "latitude is required", invalid_type_error: "latitude must be a number" })
+    .number()
     .finite({ message: "latitude must be a finite number" })
     .min(-90, { message: "latitude must be >= -90" })
     .max(90, { message: "latitude must be <= 90" })
@@ -26,7 +26,7 @@ export const latitudeSchema = z.preprocess(
 export const longitudeSchema = z.preprocess(
   (v) => toNumber(v),
   z
-    .number({ required_error: "longitude is required", invalid_type_error: "longitude must be a number" })
+    .number()
     .finite({ message: "longitude must be a finite number" })
     .min(-180, { message: "longitude must be >= -180" })
     .max(180, { message: "longitude must be <= 180" })
@@ -35,10 +35,11 @@ export const longitudeSchema = z.preprocess(
 export const radiusSchema = z.preprocess(
   (v) => (v === undefined ? undefined : toNumber(v)),
   z
-    .number({ invalid_type_error: "radius must be a number" })
+    .number()
     .finite({ message: "radius must be a finite number" })
     .gt(0, { message: "radius must be > 0" })
     .max(50000, { message: "radius must be <= 50000" })
+  
 )
 
 export const geoQuerySchema = z.object({
