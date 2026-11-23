@@ -1,5 +1,7 @@
 import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from "../interfaces/profile.interface"
 import type { SupportedLanguage } from "../interfaces/profile.interface"
+import enTranslations from "./locales/en.json"
+import esTranslations from "./locales/es.json"
 
 export interface EmailTranslation {
   subject: string
@@ -11,6 +13,11 @@ export interface EmailTranslation {
 
 type EmailNamespaceTranslations = Record<string, EmailTranslation>
 
+const translationsByLanguage: Record<SupportedLanguage, EmailNamespaceTranslations> = {
+  en: enTranslations,
+  es: esTranslations,
+}
+
 const isSupportedLanguage = (language: string): language is SupportedLanguage => {
   return SUPPORTED_LANGUAGES.includes(language as SupportedLanguage)
 }
@@ -19,9 +26,8 @@ const normalizeLanguage = (language: string): SupportedLanguage => {
   return isSupportedLanguage(language) ? language : DEFAULT_LANGUAGE
 }
 
-const loadLanguageTranslations = async (language: SupportedLanguage): Promise<EmailNamespaceTranslations> => {
-  const translationsModule = await import(`./locales/${language}.json`)
-  return translationsModule.default as EmailNamespaceTranslations
+const loadLanguageTranslations = (language: SupportedLanguage): EmailNamespaceTranslations => {
+  return translationsByLanguage[language]
 }
 
 export const getEmailTranslations = async (
@@ -29,7 +35,7 @@ export const getEmailTranslations = async (
   namespace: string
 ): Promise<EmailTranslation> => {
   const safeLanguage = normalizeLanguage(language)
-  const translations = await loadLanguageTranslations(safeLanguage)
+  const translations = loadLanguageTranslations(safeLanguage)
   const namespaceTranslations = translations[namespace]
 
   if (namespaceTranslations) {
@@ -37,7 +43,7 @@ export const getEmailTranslations = async (
   }
 
   if (safeLanguage !== DEFAULT_LANGUAGE) {
-    const fallbackTranslations = await loadLanguageTranslations(DEFAULT_LANGUAGE)
+    const fallbackTranslations = loadLanguageTranslations(DEFAULT_LANGUAGE)
     const fallbackNamespaceTranslations = fallbackTranslations[namespace]
     if (fallbackNamespaceTranslations) {
       return fallbackNamespaceTranslations
